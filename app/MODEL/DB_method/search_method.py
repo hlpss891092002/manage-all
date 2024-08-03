@@ -70,7 +70,7 @@ def get_media_data():
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""Select id, media_name from media;
+        sql="""Select id, name from media;
         """
         cursor.execute(sql)
         result = cursor.fetchall()
@@ -85,7 +85,7 @@ def get_stage_data():
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""Select id, stage_name from stage;
+        sql="""Select id, name from stage;
         """
         cursor.execute(sql)
         result = cursor.fetchall()
@@ -163,11 +163,11 @@ def get_staff_data():
         cursor.close()
         con.close()
 
-def get_produce_record_data(condition):
+def get_produce_record_data_from_condition(condition):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety, media.media_name as media, staff.name as producer, staff.account as producer_id, stage.stage_name as stage, DATE_FORMAT(produce_record.manufacturing_date, "%Y/%m/%d")  as test
+        sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety, media.name as media, staff.name as producer, staff.account as producer_id, stage.name as stage, DATE_FORMAT(produce_record.manufacturing_date, "%Y/%m/%d")  as date, produce_record.mother_produce_id, produce_record.in_stock, produce_record.consumed_reason
         FROM  produce_record 
         INNER JOIN  variety
         ON  produce_record.variety_id = variety.id
@@ -178,32 +178,53 @@ def get_produce_record_data(condition):
         INNER JOIN  stage
         ON  produce_record.stage_id = stage.id
         """
-
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
             val = list()
-            print(condition)
+            # print(condition)
             columns = list(condition.keys())
             print(columns)
             for column in columns:
                 if columns.index(column) == 0 :
-                    condition_individual=f"""produce_record.{column} = %s"""
-                    val.append(condition[f"{column}"])
-                    sql = sql  + condition_individual
-                    
+                    if column == "id" or column == "manufacturing_date" or column == "mother_produce_id" or column == "consumed_reason" :
+                        condition_individual=f""" produce_record.{column} = %s"""
+                        val.append(condition[f"{column}"])
+                        sql = sql  + condition_individual
+                    elif column == "producer":
+                        condition_individual=f""" staff.name = %s"""
+                        val.append(condition[f"{column}"])
+                        sql = sql  + condition_individual
+                    else:
+                        condition_individual=f""" {column}.name = %s"""
+                        val.append(condition[f"{column}"])
+                        sql = sql  + condition_individual
                 else:
-                    condition_individual=f""" AND produce_record.{column} = %s"""
-                    val.append(condition[f"{column}"])
-                    sql = sql  + condition_individual
+                    if column == "id" or column == "manufacturing_date" or column == "mother_produce" or column == "consumed_reason"  :
+                        condition_individual=f""" AND produce_record.{column} = %s"""
+                        val.append(condition[f"{column}"])
+                        sql = sql  + condition_individual
+                    elif column == "producer":
+                        condition_individual=f""" AND staff.name = %s"""
+                        val.append(condition[f"{column}"])
+                        sql = sql  + condition_individual
+                    else:
+                        condition_individual=f""" AND {column}.name = %s"""
+                        val.append(condition[f"{column}"])
+                        sql = sql  + condition_individual
             print(sql)
-            print(val)
+            # print(val)
             cursor.execute(sql,val)
         else:
+            pass
+            # print(sql)
             cursor.execute(sql)
         
         result = cursor.fetchall()
-        print (result)
+        if(len(result) == 0):
+            return None
+        else:   
+            return result
     except Exception as e:
         raise e
     finally:

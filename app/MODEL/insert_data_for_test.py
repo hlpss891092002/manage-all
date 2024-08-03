@@ -76,13 +76,13 @@ def insert_test_base_data():
     insert_order(1, 2, 40000, shipping_time)
     insert_order(1, 3, 70000, shipping_time)
 # insert_test_base_data()
-staff_list =[3,4,5,6,7,8,9]
+staff_list =["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
 mother_stock_data=[]
 def insert_stock_data_for_test():
     start = time()
     for staff in staff_list:
         count = 0
-        while count < 10000:
+        while count < 2:
             uuid1 = uuid.uuid4()
             uuid2 = uuid.uuid4()
             uuid_final = str(uuid1) + str(uuid2)

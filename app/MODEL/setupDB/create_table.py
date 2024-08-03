@@ -61,14 +61,14 @@ sql_staff ="""CREATE TABLE staff(
 
 simple_sql_media = """CREATE TABLE media(
             id BIGINT AUTO_INCREMENT,
-            media_name varchar(10) NOT NULL UNIQUE,
+            name varchar(10) NOT NULL UNIQUE,
             description  varchar(255),
             PRIMARY KEY (id)     
 )"""
 
 simple_sql_stage = """CREATE TABLE stage(
             id BIGINT AUTO_INCREMENT,
-            stage_name varchar(10) NOT NULL UNIQUE,
+            name varchar(10) NOT NULL UNIQUE,
             description  varchar(255),
             PRIMARY KEY (id)       
 )"""
@@ -114,11 +114,12 @@ sql_client_order = """CREATE TABLE client_order (
 
 sql_produce_record = """CREATE TABLE produce_record(
             id varchar(255),
-            variety_id BIGINT,
-            media_id BIGINT,
-            producer_id BIGINT,
-            stage_id BIGINT,
-            manufacturing_date datetime NOT NULL DEFAULT(CURRENT_TIME()),
+            variety_id BIGINT not null,
+            media_id BIGINT not null,
+            producer_id BIGINT not null,
+            stage_id BIGINT not null,
+            manufacturing_date date NOT NULL DEFAULT(CURRENT_TIME()),
+            manufacturing_time datetime NOT NULL DEFAULT(CURRENT_TIME()),
             mother_produce_id varchar(255),
             in_stock BOOL NOT NULL,
             consumed_reason varchar(255) ,

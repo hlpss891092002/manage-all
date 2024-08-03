@@ -65,17 +65,17 @@ def insert_staff( name, email, cellphone, account, password, authorization_id, i
         cursor.close()
         con.close()
 
-def insert_media(media_name, description):
+def insert_media(name, description):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
-        sql="""INSERT INTO media(media_name, description)
+        sql="""INSERT INTO media(name, description)
         VALUES (%s, %s);
         """
-        val=(media_name, description)
+        val=(name, description)
         cursor.execute(sql,val)
         con.commit()
-        print(f"insert {media_name} media")
+        print(f"insert {name} media")
         return True
     except Exception as e:
         print(f"{e}")
@@ -84,17 +84,17 @@ def insert_media(media_name, description):
         cursor.close()
         con.close()
 
-def insert_stage(stage_name, description):
+def insert_stage(name, description):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
-        sql="""INSERT INTO stage(stage_name, description)
+        sql="""INSERT INTO stage(name, description)
         VALUES (%s, %s);
         """
-        val=(stage_name, description)
+        val=(name, description)
         cursor.execute(sql,val)
         con.commit()
-        print(f"insert {stage_name} stage")
+        print(f"insert {name} stage")
         return True
     except Exception as e:
         print(f"{e}")

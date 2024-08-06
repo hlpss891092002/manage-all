@@ -40,7 +40,16 @@ def create_table(sql):
 simple_sql_authorization_level = """CREATE TABLE authorization(
             id BIGINT auto_increment, 
             job_position varchar(100) NOT NULL,
-            authorization varchar(255) NOT NULL,
+            authorization bool NOT NULL,
+            category bool NOT NULL, 
+            client bool NOT NULL, 
+            client_order bool NOT NULL, 
+            current_stock bool NOT NULL, 
+            media bool NOT NULL, 
+            produce_record bool NOT NULL, 
+            staff bool NOT NULL, 
+            stage bool NOT NULL, 
+            variety bool NOT NULL,
             PRIMARY KEY(id)
 )"""
 
@@ -50,7 +59,7 @@ sql_staff ="""CREATE TABLE staff(
             name varchar(255) NOT NULL,
             email varchar(255),
             cellphone varchar(10),       
-            account varchar(255) NOT NULL,
+            account varchar(255) NOT NULL UNIQUE,
             password varchar(255) NOT NULL,
             authorization_id BIGINT NOT NULL,
             in_employment bool NOT NULL,
@@ -82,7 +91,7 @@ simple_sql_category = """CREATE TABLE category(
 
 simple_sql_client = """CREATE TABLE client(
             id BIGINT AUTO_INCREMENT, 
-            name varchar(255) NOT NULL,
+            name varchar(255) NOT NULL UNIQUE,
             description varchar (255),
             PRIMARY KEY (id)
 )"""
@@ -93,7 +102,6 @@ sql_variety = """CREATE TABLE variety(
             variety_code varchar(255) NOT NULL UNIQUE,  
             name varchar(255) NOT NULL,
             description varchar(255), 
-            photo varchar(1000) NOT NULL,
             category_id BIGINT NOT NULL,
             PRIMARY KEY (id),
             FOREIGN KEY (category_id) REFERENCES category(id)

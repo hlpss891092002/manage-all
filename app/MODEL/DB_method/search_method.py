@@ -4,6 +4,7 @@ import os
 from time import time
 from datetime import datetime
 from dotenv import load_dotenv
+from fastapi import  HTTPException
 
 load_dotenv()
 
@@ -23,93 +24,7 @@ try:
 except Exception as e:
     print(f'database connection fail {e}')
 
-def get_table_columns(table_name):
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql=f"""SHOW COLUMNS FROM {table_name};
-        """
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        columns_list = []
-        for column in result:
-            column["Field"] = column["Field"].replace("_id", "")
-            columns_list.append(column["Field"])
-        return(columns_list)
-        # print(f"get media list")
-    except Exception as e:
-        raise e
-    finally:
-        cursor.close()
-        con.close()
 
-
-def get_variety_data():
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""Select variety.id, variety.variety_code, variety.description, category.category
-        FROM variety 
-        INNER JOIN  category
-        WHERE variety.category_id = category.id;
-        """
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        variety_list = []
-        for variety in result:
-            variety_list.append(variety)
-        return(variety_list)
-        # print(f"get media list")
-    except Exception as e:
-        raise e
-    finally:
-        cursor.close()
-        con.close()
-
-def get_media_data():
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""Select id, name from media;
-        """
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result
-    except Exception as e:
-        raise e
-    finally:
-        cursor.close()
-        con.close()
-
-def get_stage_data():
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""Select id, name from stage;
-        """
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result
-    except Exception as e:
-        raise e
-    finally:
-        cursor.close()
-        con.close()
-
-def get_category_data():
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""Select id, category from category;
-        """
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result
-    except Exception as e:
-        raise e
-    finally:
-        cursor.close()
-        con.close()
 
 def get_client_data():
     con = connection_pool.get_connection()
@@ -146,6 +61,28 @@ def get_client_order_data():
         cursor.close()
         con.close()
 
+def get_variety_data():
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql="""Select variety.id, variety.variety_code, variety.description, category.category
+        FROM variety 
+        INNER JOIN  category
+        WHERE variety.category_id = category.id;
+        """
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        variety_list = []
+        for variety in result:
+            variety_list.append(variety)
+        return(variety_list)
+        # print(f"get media list")
+    except Exception as e:
+        raise e
+    finally:
+        cursor.close()
+        con.close()
+
 def get_staff_data():
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
@@ -162,6 +99,149 @@ def get_staff_data():
     finally:
         cursor.close()
         con.close()
+
+def get_category_data(condition):
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql="""Select category, description from category
+        """
+        if condition :
+            sql_condition=f"""  where  """
+            sql = sql + sql_condition
+            val = list()
+            print(condition)
+            print(sql)
+            columns = list(condition.keys())
+            print(columns)
+            for column in columns:
+                if columns.index(column) == 0 :
+                    condition_individual=f""" {column} = %s"""
+                    val.append(condition[f"{column}"])
+                    sql = sql  + condition_individual
+                else:
+                    condition_individual=f""" AND {column} = %s"""
+                    val.append(condition[f"{column}"])
+                    sql = sql  + condition_individual
+            
+            cursor.execute(sql,val)
+        else:
+            cursor.execute(sql)
+        result = cursor.fetchall()
+        if(len(result) == 0):
+            return None
+        else:
+            return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
+def get_client_data(condition):
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql="""Select name, description from client
+        """
+        if condition :
+            sql_condition=f"""  where  """
+            sql = sql + sql_condition
+            val = list()
+            print(condition)
+            columns = list(condition.keys())
+            print(columns)
+            for column in columns:
+                if columns.index(column) == 0 :
+                    condition_individual=f""" {column} = %s"""
+                    val.append(condition[f"{column}"])
+                    sql = sql  + condition_individual
+                else:
+                    condition_individual=f""" AND {column} = %s"""
+                    val.append(condition[f"{column}"])
+                    sql = sql  + condition_individual
+            cursor.execute(sql,val)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        if(len(result) == 0):
+            return None
+        else:
+            return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
+def get_media_data(condition):
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql="""Select name, description from media
+        """
+        if condition :
+            sql_condition=f"""  where  """
+            sql = sql + sql_condition
+            val = list()
+            print(condition)
+            columns = list(condition.keys())
+            print(columns)
+            for column in columns:
+                if columns.index(column) == 0 :
+                    condition_individual=f""" {column} = %s"""
+                    val.append(condition[f"{column}"])
+                    sql = sql  + condition_individual
+                else:
+                    condition_individual=f""" AND {column} = %s"""
+                    val.append(condition[f"{column}"])
+                    sql = sql  + condition_individual
+            cursor.execute(sql,val)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        if(len(result) == 0):
+            return None
+        else:
+            return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
+def get_stage_data(condition):
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql="""Select name, description from stage
+        """
+        if condition :
+            sql_condition=f"""  where  """
+            sql = sql + sql_condition
+            val = list()
+            print(condition)
+            columns = list(condition.keys())
+            print(columns)
+            for column in columns:
+                if columns.index(column) == 0 :
+                    condition_individual=f""" {column} = %s"""
+                    val.append(condition[f"{column}"])
+                    sql = sql  + condition_individual
+                else:
+                    condition_individual=f""" AND {column} = %s"""
+                    val.append(condition[f"{column}"])
+                    sql = sql  + condition_individual
+            cursor.execute(sql,val)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        if(len(result) == 0):
+            return None
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
 
 def get_produce_record_data_from_condition(condition):
     con = connection_pool.get_connection()
@@ -191,8 +271,12 @@ def get_produce_record_data_from_condition(condition):
                         condition_individual=f""" produce_record.{column} = %s"""
                         val.append(condition[f"{column}"])
                         sql = sql  + condition_individual
-                    elif column == "producer":
-                        condition_individual=f""" staff.name = %s"""
+                    elif column == "producer_id":
+                        condition_individual=f""" staff.account = %s"""
+                        val.append(condition[f"{column}"])
+                        sql = sql  + condition_individual
+                    elif column == "variety_code":
+                        condition_individual=f""" variety.variety_code = %s"""
                         val.append(condition[f"{column}"])
                         sql = sql  + condition_individual
                     else:
@@ -212,22 +296,36 @@ def get_produce_record_data_from_condition(condition):
                         condition_individual=f""" AND {column}.name = %s"""
                         val.append(condition[f"{column}"])
                         sql = sql  + condition_individual
-            print(sql)
+
             # print(val)
             cursor.execute(sql,val)
         else:
-            pass
-            # print(sql)
             cursor.execute(sql)
-        
         result = cursor.fetchall()
         if(len(result) == 0):
             return None
         else:   
             return result
     except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
+def get_current_stock(condition):
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql="""SELECT produce_record_id FROM  current_stock
+        where produce_record_id = %s
+        """
+        val = (condition,)
+        cursor.execute(sql,val)
+        result = cursor.fetchall()
+        print(result)
+        return result
+    except Exception as e:
         raise e
     finally:
         cursor.close()
         con.close()
- 

@@ -23,22 +23,32 @@ try:
 except Exception as e:
     print(f'database connection fail {e}')
 
-def delete_stock_data(production_id):
+def get_table_columns(table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""DELETE
-        FROM current_stock 
-        WHERE produce_record_id = %s;
+        sql=f"""SHOW COLUMNS FROM {table_name};
         """
-        val = (production_id, )
-        cursor.execute(sql,val)
-        con.commit()
-        return True
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        columns_list = []
+        for column in result:
+            columnName = column["Field"]
+            if columnName == "mother_produce_id" or columnName == "producer_id" :
+                columns_list.append(columnName)
+                continue
+            elif columnName == "variety_id":
+                print(columnName)
+                columnName = columnName.replace("_id", "_code")
+                columns_list.append(columnName)
+                continue
+            columnName = column["Field"].replace("_id", "")
+            columns_list.append(columnName)
+        print(columns_list)
+        return(columns_list)
         # print(f"get media list")
     except Exception as e:
-        raise(f"error {e} on delete_stock_def")  
+        raise e
     finally:
         cursor.close()
         con.close()
-

@@ -5,7 +5,8 @@ import mysql.connector.pooling
 import random
 import threading
 import multiprocessing as mp
-from DB_method.insert_method import *
+from DB_method.add_method import *
+from authorization.autho_tables import *
 from time import time
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
@@ -15,17 +16,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
+table_list = ["authorization", 'category', 'client', 'client_order', 'current_stock', 'media', 'produce_record', 'staff', 'stage', 'variety']
 def insert_authorization_for_test():
-    insert_authorization("manager", "1")
-    insert_authorization("Systems Engineer", "1")
-    insert_authorization("Administrator", "2")
-    insert_authorization("Operator Leader", "3")
-    insert_authorization("Operator", "4")
-# insert_authorization_for_test()
+    insert_authorization("manager", False, True, True, True, True, True, True, True, True, True)
+    insert_authorization("Systems Engineer",  True, True, True, True, True, True, True, True, True, True)
+    insert_authorization("Administrator", False, True, True, True, True, True, True, False, True, True)
+    insert_authorization("Operator Leader",  False, False, False, False, True, True, True, False, True, True)
+    insert_authorization("Operator",  False, False, False, False, True, False, True, False, False, False)
+insert_authorization_for_test()
 def insert_staffs_for_test():
     staff_name = ["a","b","c","d","e","f","g","h","i","j","k"]
-
+    body = {}
+    
     month = datetime.now().strftime('%Y%m')
     count = 0
     cellphone = "0912345678" 
@@ -36,93 +38,99 @@ def insert_staffs_for_test():
         authorization = 0
 
         if(staff == "a"):
-            authorization  =  1
+            authorization  =  "manager"
         elif(staff == "b"):
-            authorization  =  2
+            authorization  =  "Systems Engineer"
         elif(staff == "c"):
-            authorization  =  3
+            authorization  =  "Administrator"
         elif(staff == "d"):
-            authorization  =  4
+            authorization  =  "Operator Leader"
         else:
-            authorization  =  5
-        insert_staff( staff, email,cellphone, staff_id, staff_id, authorization)
+            authorization  =  "Operator"
+        body["name"] = staff
+        body["email"] = email
+        body["cellphone"] = cellphone
+        body["account"] = staff_id
+        body["password"] = staff_id
+        body["authorization"] = authorization
+        insert_staff(body)
         count +=1
-# insert_staffs_for_test()
-def insert_test_base_data():
-    # insert media
-    insert_media("test", "for description")
-    # # insert stage
-    insert_stage("begin", " for begin")
-    insert_stage("middle", " for middle")
-    insert_stage("final", " for final")
-    # insert category 
-    insert_category("a", "for a")
-    insert_category("b", "for b")
-    insert_category("c", "for c")
-    # #  insert client
-    insert_client("name", "give me money")
-    insert_client("name2", "give me more money")
-    insert_client("name3", "give me huge money")
-    # #  insert variety
-    insert_variety("AAABZ001", "read_name", "description", "photo", 1)
-    insert_variety("AAABZ002", "read_name2", "description2", "photo", 2)
-    insert_variety("AAABZ003", "read_name3", "description3", "photo", 3)
-    # # #  insert order
-    today = datetime.now()
-    shipping_time = (today + timedelta(days=365))
-    insert_order(1, 1, 10000, shipping_time)
-    insert_order(2, 2, 20000, shipping_time)
-    insert_order(3, 3, 30000, shipping_time)
-    insert_order(1, 2, 40000, shipping_time)
-    insert_order(1, 3, 70000, shipping_time)
-# insert_test_base_data()
-staff_list =["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
-mother_stock_data=[]
-def insert_stock_data_for_test():
-    start = time()
-    for staff in staff_list:
-        count = 0
-        while count < 2:
-            uuid1 = uuid.uuid4()
-            uuid2 = uuid.uuid4()
-            uuid_final = str(uuid1) + str(uuid2)
-            insert_production(uuid_final, 1, 1, staff, 1)
-            insert_current_stock(uuid_final)
-            mother_stock_data.append(uuid_final)
-            count += 1
-    end = time()
-    print(f"time1 = %.2f, mount = {len(mother_stock_data)}" % (end -start))
-    # print(len(mother_stock_data))
-sub_mother_stock_data=[]
-def insert_consume_stock_data_for_test():
-    start = time()
-    for mother_stock in mother_stock_data:
-        num = random.randint(0, 6)
-        staff = staff_list[num]
-        count = 0
-        while count <=2 :
-            uuid1 = uuid.uuid4()
-            uuid2 = uuid.uuid4()
-            uuid_final = str(uuid1) + str(uuid2)
-            insert_production(uuid_final, 1, 1, staff, 2, mother_stock)
-            insert_current_stock(uuid_final)
-            consume_mother_stock(mother_stock, "consumed")
-            sub_mother_stock_data.append(uuid_final)
-            count +=1
-    end = time()
-    print(f"time2 = %.2f, mount = {len(sub_mother_stock_data)}" % (end -start))
+insert_staffs_for_test()
+# def insert_test_base_data():
+#     # insert media
+#     insert_media("test", "for description")
+#     # # insert stage
+#     insert_stage("begin", " for begin")
+#     insert_stage("middle", " for middle")
+#     insert_stage("final", " for final")
+#     # insert category 
+#     insert_category("a", "for a")
+#     insert_category("b", "for b")
+#     insert_category("c", "for c")
+#     # #  insert client
+#     insert_client("name", "give me money")
+#     insert_client("name2", "give me more money")
+#     insert_client("name3", "give me huge money")
+#     # #  insert variety
+#     insert_variety("AAABZ001", "read_name", "description", "photo", 1)
+#     insert_variety("AAABZ002", "read_name2", "description2", "photo", 2)
+#     insert_variety("AAABZ003", "read_name3", "description3", "photo", 3)
+#     # # #  insert order
+#     today = datetime.now()
+#     shipping_time = (today + timedelta(days=365))
+#     insert_order(1, 1, 10000, shipping_time)
+#     insert_order(2, 2, 20000, shipping_time)
+#     insert_order(3, 3, 30000, shipping_time)
+#     insert_order(1, 2, 40000, shipping_time)
+#     insert_order(1, 3, 70000, shipping_time)
+# # insert_test_base_data()
+# staff_list =["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
+# mother_stock_data=[]
+# def insert_stock_data_for_test():
+#     start = time()
+#     for staff in staff_list:
+#         count = 0
+#         while count < 10000:
+#             uuid1 = uuid.uuid4()
+#             uuid2 = uuid.uuid4()
+#             uuid_final = str(uuid1) + str(uuid2)
+#             insert_production(uuid_final, 1, 1, staff, 1)
+#             insert_current_stock(uuid_final)
+#             mother_stock_data.append(uuid_final)
+#             count += 1
+#     end = time()
+#     print(f"time1 = %.2f, mount = {len(mother_stock_data)}" % (end -start))
+#     # print(len(mother_stock_data))
+# sub_mother_stock_data=[]
+# def insert_consume_stock_data_for_test():
+#     start = time()
+#     for mother_stock in mother_stock_data:
+#         num = random.randint(0, 6)
+#         staff = staff_list[num]
+#         count = 0
+#         while count <=2 :
+#             uuid1 = uuid.uuid4()
+#             uuid2 = uuid.uuid4()
+#             uuid_final = str(uuid1) + str(uuid2)
+#             insert_production(uuid_final, 1, 1, staff, 2, mother_stock)
+#             insert_current_stock(uuid_final)
+#             consume_mother_stock(mother_stock, "consumed")
+#             sub_mother_stock_data.append(uuid_final)
+#             count +=1
+#     end = time()
+#     print(f"time2 = %.2f, mount = {len(sub_mother_stock_data)}" % (end -start))
     
 
-def multi_threads_test():
-    start = time()
-    # thread1 = threading.Thread()
-    insert_stock_data_for_test()
-    # thread1.start()
-    # thread2 = threading.Thread()
-    insert_consume_stock_data_for_test()
-    # thread2.start()
-    end = time()
-    print(f"multithread time = %.2f" % (end -start))
+# def multi_threads_test():
+#     start = time()
+#     # thread1 = threading.Thread()
+#     insert_stock_data_for_test()
+#     # thread1.start()
+#     # thread2 = threading.Thread()
+#     insert_consume_stock_data_for_test()
+#     # thread2.start()
+#     end = time()
+#     print(f"multithread time = %.2f" % (end -start))
 
 
 
@@ -132,5 +140,5 @@ def multi_threads_test():
 # with ThreadPoolExecutor(max_workers=4) as executor:
 #     executor.submit(insert_stock_data_for_test())
 #     executor.submit(insert_consume_stock_data_for_test())
-multi_threads_test()
+# multi_threads_test()
 

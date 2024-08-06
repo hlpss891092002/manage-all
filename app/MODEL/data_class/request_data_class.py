@@ -7,20 +7,20 @@ class authorization_class(BaseModel):
     authorization: str
     
 class staff_class(BaseModel):
-    id : int
     name : str
-    email : str
-    cellphone : str
+    email : Union[EmailStr, None]
+    cellphone : Union[str, None]
     account : str
     password : str
-    authorization_id : int
+    job_position :str
+    
 
 class media_class(BaseModel):
-    media_name: str
+    name: str
     description: str
 
 class stage_class(BaseModel):
-    stage_name: str
+    name: str
     description: str
 
 class category_class(BaseModel):
@@ -32,28 +32,24 @@ class client_class(BaseModel):
     description: str
 
 class variety_class(BaseModel):
-    id : str
+    variety_code : str
     name : str
     description : str
-    photo : str
-    category_id : int
+    category : str
 
 class order_class(BaseModel):
-    client_id : str
-    variety_id : str
+    client : str
+    variety_code : str
     amount : int
-    creation_date : datetime
-    shipping_date : datetime
-
-# class production_class(BaseModel):
-#   id:str
-#   variety_id : str
-#   media_id : int
-#   producer_id : int
-#   stage_id : int
-#   mother_produce_id : Union[str, None]
-#   in_stock : bool 
-#   consumed_reason : Union[str, None]
+    shipping_date: datetime
+class produce_record_class(BaseModel):
+  id:str
+  variety : str
+  media : str
+  producer_id : str
+  stage : str
+  mother_produce_id : Union[str, None]
+  consumed_reason : Union[str, None]
 
 
 

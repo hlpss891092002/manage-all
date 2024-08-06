@@ -11,3 +11,4 @@ class error_message(BaseModel):
 ok_message_200 =  response_one_line_200(
 	ok = True
 )
+

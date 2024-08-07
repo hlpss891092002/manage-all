@@ -2,23 +2,21 @@ import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_r
 import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
-const inputContainer = document.querySelector(".input-container")
 const updateSubList = document.querySelector("#update-sub-list")
-const submitBtn = document.querySelector(".submit-btn")
+const inputContainer = document.querySelector(".input-container")
+const searchInputContainer = document.querySelector(".search-input-container")
+const searchBtn = document.querySelector(".search-btn")
+const updateBtn = document.querySelector(".update-btn")
 const table = document.querySelector(".table")
 const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
 let staffId = ""
-let variety_dict ={}
-let media_dict = {}
-let stage_dict = { }
-
 
 async function initialPage(){
   let account = await getAccountFromAutho()
   staffId = account
-  renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, inputContainer, tableName, router)
+  renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, inputContainer, tableName, router, searchInputContainer)
   signOutFunction()
   showSideBlockFromRouter(router)
 
@@ -38,9 +36,7 @@ async function initialPage(){
   
 }
 
-
-
-async function sent_input_search_and_render_table(body,){
+async function sent_input_search_and_render_table(body){
   let result = await sentFetchWithBody("post", body, `/api/search/${tableName}`)
   console.log(result)
   if(!result["data"]){
@@ -48,6 +44,16 @@ async function sent_input_search_and_render_table(body,){
   }else{
     render_result_table(result["data"])
   }
+};
+
+async function sent_input_update(body){
+  let result = await sentFetchWithBody("put", body, `/api/update/${tableName}`)
+  console.log(result)
+  // if(!result["data"]){
+  //   table.innerText = "no data"
+  // }else{
+  //   render_result_table(result["data"])
+  // }
 };
 
 async function render_result_table(search_result) {
@@ -66,14 +72,14 @@ async function render_result_table(search_result) {
   })
   table.appendChild(columnNameContainer)
   //append row value
-  search_result.forEach((element)=>{
-    console.log(element)
-    const columnValues = Object.values(element)
+  search_result.forEach((elementName)=>{
+    const columnValues = Object.values(elementName)
     const row = document.createElement("div")
-    row.className = "table-row"
+    row.className = `table-row `
     columnValues.forEach((element)=>{
         let rowValue = document.createElement("div")
-        rowValue.className ="row-value"
+        rowValue.className = `row-value ${elementName}`
+        rowValue.setAttribute("contenteditable", "true")
         rowValue.innerText = element 
         row.appendChild(rowValue)  
       })
@@ -87,35 +93,56 @@ window.addEventListener("load", (e)=>{
   initialPage()
 })
 
-submitBtn.addEventListener("click", (e)=>{
-  const allData = document.querySelectorAll(".form-control");
-
+searchBtn.addEventListener("click", (e)=>{
+  const data = document.querySelector(".update-index");
   let body = {};
-  for (let data of allData){
-    let value =  data.value;
-    if( value === ""){
-      continue
-    }
-    
-    if(media_dict[`${value}`]){
-      value = media_dict[`${value}`]
-    }
-    if(stage_dict[`${value}`]){
-      value = stage_dict[`${value}`]
-    }
-    if(variety_dict[`${value}`]){
-      value = variety_dict[`${value}`]
-    }
-    const classList = data.classList;
-    let columnName = classList[1].split("-")[0]
-    if ( columnName === "mother_produce" ){
-      let inputTitle = columnName +"_id";
-      body[`${inputTitle}`] = value ;
+  let value =  data.value;
+    console.log(value)
+    if (value === ""){
+      body = {}
     }else{
+      const classList = data.classList;
+      console.log(classList)
+      let columnName = classList[2].split("-")[1]
+      console.log(columnName)
       body[`${columnName}`] = value ;
+      console.log(columnName)
+      console.log(body)
     }
-
-  };
  sent_input_search_and_render_table(body);
 })
 
+updateBtn.addEventListener("click",((e)=>{
+  const updateItemArray = document.querySelectorAll(".update-item")
+  console.log(updateItemArray)
+  const updateIndex = document.querySelector(".update-index")
+  const updateIndexValue = updateIndex.value
+  console.log(updateIndexValue)
+  let body = {}
+  let updateItems = {}
+  if (updateIndexValue !== ""){
+    for (let updateItem of updateItemArray){
+    const updateItemValue = updateItem.value
+      if(updateItemValue !== ""){
+      const columnName = updateItem.classList[1].split("-")[0]
+      updateItems[`${columnName}`] = updateItemValue
+      }else{
+        continue
+      }
+    }
+    console.log(Object.keys(updateItems).length)
+    if(Object.keys(updateItems).length === 0){
+      alert("please input update value")
+    }else{
+      body["updateItems"] = updateItems
+      body["updateIndex"] = updateIndexValue
+      sent_input_update(body)
+    }
+    
+  }else{
+    alert("please input update index")
+  }
+
+  console.log(body)
+  
+}))

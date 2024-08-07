@@ -20,13 +20,13 @@
         <div class="navbar-nav">
           <button type="button" class="btn btn-link">personal page</button>
           <button type="button" class="btn btn-link">setting</button>
-          <button type="text" class="sigin-out">sigin-out</button>
+          <button type="text" class="sign-out">sign-out</button>
         </div>
       </div>
     </div>
   </nav>
   <main>
-    <div class="container text-center" id="main-container">
+    <div  id="main-container">
       <div class="row align-items-start">
         <div class="col-4 sidebar-">
           <ul class="list-group list-group-flush"  >
@@ -35,10 +35,12 @@
             <ul class="list-group  collapse" id="add-sub-list">
             </ul>
             <li class="list-group-item" data-bs-toggle="collapse" data-bs-target="#search-sub-list">search</li>
-              <ul class="list-group  collapse" id="search-sub-list">
-              </ul>
-            
-            <li class="list-group-item">update</li>
+            <ul class="list-group  collapse" id="search-sub-list">
+            </ul>
+            <li class="list-group-item " id="side-block-update" data-bs-toggle="collapse" data-bs-target="#update-sub-list">update
+            </li>
+            <ul class="list-group  collapse" id="update-sub-list">
+            </ul>
             <li class="list-group-item">delete</li>
           </ul>
         </div>

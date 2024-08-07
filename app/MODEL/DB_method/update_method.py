@@ -25,11 +25,11 @@ except Exception as e:
     print(f'database connection fail {e}')
 
 
-def get_category_data(condition):
+def update_category_data(condition):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""Select category, description from category
+        sql="""UPDATE category, description from category
         """
         if condition :
             sql_condition=f"""  where  """
@@ -266,7 +266,7 @@ def get_staff_data(condition):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""SELECT staff.account, staff.name, staff.email, staff.cellphone,  staff.in_employment , authorization.job_position  FROM  staff 
+        sql="""SELECT  staff.name, staff.email, staff.cellphone, staff.account, staff.in_employment , authorization.job_position  FROM  staff 
         INNER JOIN authorization 
         ON staff.authorization_id = authorization.id
         """

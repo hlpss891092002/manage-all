@@ -6,11 +6,12 @@ from fastapi.responses import  JSONResponse
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import Annotated
+from app.CONTROL.jwt_function import user_validation
 from app.MODEL.data_class.user_data import sign_in_data
 from app.MODEL.data_class.response_class import error_message
 from app.MODEL.DB_method.sigin_method import check_user
-from app.MODEL.authorization.autho_tables import get_table_list_from_auth
-from app.CONTROL.jwt_function import user_validation
+from app.MODEL.authorization.autho_tables import get_table_list_from_auth, show_table
+from app.MODEL.DB_method.common_method import *
 
 load_dotenv()
 router = APIRouter()
@@ -52,7 +53,15 @@ async def check_staff_exist(body: sign_in_data):
 @router.get("/api/staff/tables")
 async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
     try:
+      #  table_list = show_table()
        account = payload["account"]
-       return get_table_list_from_auth(account)
+       tableList = []
+       result = get_table_list_from_auth(account)
+       tableNameList = result.keys()
+       for table in tableNameList:
+          if result[f"{table}"]: 
+             tableList.append(table)
+       print(tableList)
+       return tableList
     except Exception as e:
        raise HTTPException(status_code=500, detail=f"server error {e}")

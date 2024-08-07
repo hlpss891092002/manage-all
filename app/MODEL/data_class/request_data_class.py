@@ -44,7 +44,7 @@ class order_class(BaseModel):
     shipping_date: datetime
 class produce_record_class(BaseModel):
   id:str
-  variety : str
+  variety_code : str
   media : str
   producer_id : str
   stage : str

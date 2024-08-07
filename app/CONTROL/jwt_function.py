@@ -26,8 +26,3 @@ def user_validation(token: Annotated[str, Depends(oauth2_scheme)]):
           status_code=status.HTTP_403_FORBIDDEN,
           detail=f"invalidation token : {str(e)}",
           headers={"WWW-Authenticate": "Bearer"})
-    except Exception as e :
-        raise HTTPException(
-          status_code=status.HTTP_403_FORBIDDEN,
-          detail=f"invalidation token : {str(e)}",
-          headers={"WWW-Authenticate": "Bearer"})

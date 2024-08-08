@@ -4,7 +4,9 @@ const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
 const inputContainer = document.querySelector(".input-container")
 const updateSubList = document.querySelector("#update-sub-list")
+const deleteSubList = document.querySelector("#delete-sub-list")
 const submitBtn = document.querySelector(".submit-btn")
+const tableTitleContainer = document.querySelector(".table-title-container")
 const table = document.querySelector(".table")
 const query = window.location.search
 const tableName = query.slice(1, query.length)
@@ -18,7 +20,7 @@ let stage_dict = { }
 async function initialPage(){
   let account = await getAccountFromAutho()
   staffId = account
-  renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, inputContainer, tableName, router)
+  renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction()
   showSideBlockFromRouter(router)
 
@@ -38,7 +40,10 @@ async function initialPage(){
   
 }
 
-
+function clearMessageAndTable(){
+  table.innerText = ""
+  tableTitleContainer.innerText = ""
+}
 
 async function sent_input_search_and_render_table(body,){
   let result = await sentFetchWithBody("post", body, `/api/search/${tableName}`)
@@ -51,6 +56,14 @@ async function sent_input_search_and_render_table(body,){
 };
 
 async function render_result_table(search_result) {
+  const resultKeys = Object.keys(search_result)
+  const resultCount = resultKeys.length
+  const tableTitle = document.createElement("div")
+  const DataCount = document.createElement("div")
+  tableTitleContainer.appendChild(tableTitle)
+  tableTitleContainer.appendChild(DataCount)
+  tableTitle.innerText = `Table ${tableName}`
+  DataCount.innerText = ` Amount of row ${resultCount}`
   table.textContent = ""
   let columnNameArray  =  Object.keys(search_result[0])
   const columnNameContainer = document.createElement("div")
@@ -88,8 +101,8 @@ window.addEventListener("load", (e)=>{
 })
 
 submitBtn.addEventListener("click", (e)=>{
+  clearMessageAndTable()
   const allData = document.querySelectorAll(".form-control");
-
   let body = {};
   for (let data of allData){
     let value =  data.value;

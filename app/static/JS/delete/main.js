@@ -7,10 +7,11 @@ const deleteSubList = document.querySelector("#delete-sub-list")
 const inputContainer = document.querySelector(".input-container")
 const searchInputContainer = document.querySelector(".search-input-container")
 const searchBtn = document.querySelector(".search-btn")
-const updateBtn = document.querySelector(".update-btn")
+const deleteBtn = document.querySelector(".delete-btn")
 const tableTitleContainer = document.querySelector(".table-title-container")
 const table = document.querySelector(".table")
 const message = document.querySelector(".message")
+
 const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
@@ -46,14 +47,14 @@ function clearMessageAndTable(){
 }
 
 function search_and_render(){
-  const data = document.querySelector(".update-index");
+  const deleteIndex = document.querySelector(".delete-index");
   let body = {};
-  let value =  data.value;
+  let value =  deleteIndex.value;
     console.log(value)
     if (value === ""){
       body = {}
     }else{
-      const classList = data.classList;
+      const classList = deleteIndex.classList;
       console.log(classList)
       let columnName = classList[2].split("-")[1]
       console.log(columnName)
@@ -74,23 +75,6 @@ async function sent_input_search_and_render_table(body){
   }
 };
 
-async function sent_input_update(body){
-  let result = await sentFetchWithBody("put", body, `/api/update/${tableName}`)
-  console.log(result)
-  if(!result["ok"]){
-    const errorMessage = result["message"]
-    if( errorMessage.includes("variety is invalid") ){
-      message.innerText = " Please check input value"
-    }else{
-      message.innerText = errorMessage
-    }
-    
-  }else{
-    message.innerText = "update success"
-    search_and_render()
-  }
-};
-
 async function render_result_table(search_result) {
   const resultKeys = Object.keys(search_result)
   const resultCount = resultKeys.length
@@ -98,8 +82,6 @@ async function render_result_table(search_result) {
   const DataCount = document.createElement("div")
   tableTitleContainer.appendChild(tableTitle)
   tableTitleContainer.appendChild(DataCount)
-  tableTitle.innerText = `Table ${tableName}`
-  DataCount.innerText = ` Amount of row ${resultCount}`
   table.textContent = ""
   let columnNameArray  =  Object.keys(search_result[0])
   const columnNameContainer = document.createElement("div")
@@ -110,7 +92,7 @@ async function render_result_table(search_result) {
   columnNameArray.forEach((element)=>{
     let columnName =  document.createElement("div")
     columnName.className = "column-name"
-    columnName .innerText = element
+    columnName.innerText = element
     columnNameContainer.appendChild(columnName)
   })
   table.appendChild(columnNameContainer)
@@ -128,8 +110,29 @@ async function render_result_table(search_result) {
       })
     rowContainer.appendChild(row)
     })
+  tableTitle.innerText = `Table ${tableName}`
+  DataCount.innerText = ` Amount of row ${resultCount}`
   table.appendChild(rowContainer)
 
+};
+
+async function sent_input_delete(body){
+  const result = await sentFetchWithBody("delete", body, `/api/delete/${tableName}`)
+  console.log(result)
+  if(!result["ok"]){
+    const errorMessage = result["message"]
+    if( errorMessage.includes("variety is invalid") ){
+      message.innerText = " Please check input value"
+    }else if (errorMessage.includes("Cannot delete")){
+      message.innerText = " This data were linked by order data. Please check the input value."
+    }else{
+      message.innerText = errorMessage
+    }
+    
+  }else{
+    message.innerText = "delete success"
+    search_and_render()
+  }
 };
 
 window.addEventListener("load", (e)=>{
@@ -141,44 +144,21 @@ searchBtn.addEventListener("click", (e)=>{
   search_and_render()
 })
 
-updateBtn.addEventListener("click",((e)=>{
+deleteBtn.addEventListener("click", (e)=>{
   clearMessageAndTable()
-  const updateItemArray = document.querySelectorAll(".update-item")
-  console.log(updateItemArray)
-  const updateIndex = document.querySelector(".update-index")
-  const updateIndexColumnName = (updateIndex.classList[2].split("-")[1])
-  const updateIndexValue = updateIndex.value
-  console.log(updateIndexValue)
+  const deleteIndex = document.querySelector(".delete-index")
+  const deleteIndexValue = deleteIndex.value
+  const deleteIndexColumnName = (deleteIndex.classList[2].split("-")[1])
+  
   let body = {}
-  let updateItems = {}
-  let updateIndexDict ={}
-  updateIndexDict[`${updateIndexColumnName}`] = updateIndexValue
-  if (updateIndexValue !== ""){
-    for (let updateItem of updateItemArray){
-    const updateItemValue = updateItem.value
-      if(updateItemValue !== ""){
-      const columnName = updateItem.classList[1].split("-")[0]
-      updateItems[`${columnName}`] = updateItemValue
-      if(updateIndexColumnName === columnName){
-        updateIndex.value = updateItemValue
-      }
-      }else{
-        continue
-      }
-    }
-    console.log(Object.keys(updateItems).length)
-    if(Object.keys(updateItems).length === 0){
-      alert("please input update value")
-    }else{
-      body["updateIndex"] = updateIndexDict
-      body["updateItems"] = updateItems
-      const result = sent_input_update(body)
-    }
-    
+  let deleteIndexDict ={}
+  console.log(deleteIndexValue)
+  if (deleteIndexValue !== ""){
+    deleteIndexDict[`${deleteIndexColumnName}`] = deleteIndexValue
+    body["deleteIndex"] = deleteIndexDict
+    sent_input_delete(body)
+    deleteIndex.value = ""
   }else{
     alert("please input update index")
   }
-
-  console.log(body)
-  
-}))
+})

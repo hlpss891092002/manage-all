@@ -3,6 +3,7 @@ import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockF
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
 const updateSubList = document.querySelector("#update-sub-list")
+const deleteSubList = document.querySelector("#delete-sub-list")
 const inputContainer = document.querySelector(".input-container")
 const submitBtn = document.querySelector(".submit-btn")
 const responseMessage = document.querySelector(".response-message")
@@ -20,7 +21,7 @@ console.log(tableName)
 async function initialPage(){
   let account = await getAccountFromAutho()
   staffId = account
-  renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, inputContainer, tableName, router)
+  renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction(tableName )
   showSideBlockFromRouter(router)
 

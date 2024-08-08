@@ -31,10 +31,12 @@ def get_category_data(condition):
     try:
         sql="""Select category, description from category
         """
+        sql_order = "ORDER BY id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
             val = list()
+            
             print(condition)
             print(sql)
             columns = list(condition.keys())
@@ -46,9 +48,10 @@ def get_category_data(condition):
                     condition_individual=f""" AND {column} = %s"""
                 val.append(condition[f"{column}"])
                 sql = sql  + condition_individual
-            
+            sql = sql + sql_order
             cursor.execute(sql,val)
         else:
+            sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
         if(len(result) == 0):
@@ -67,6 +70,7 @@ def get_client_data(condition):
     try:
         sql="""Select name, description from client
         """
+        sql_order = "ORDER BY id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -81,10 +85,12 @@ def get_client_data(condition):
                     condition_individual=f""" AND {column} = %s"""
                 val.append(condition[f"{column}"])
                 sql = sql  + condition_individual
+            sql = sql + sql_order
             cursor.execute(sql,val)
             print(sql)
             print(val)
         else:
+            sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
         if(len(result) == 0):
@@ -102,12 +108,13 @@ def get_client_order_data(condition):
     cursor = con.cursor(dictionary = True, buffered = True)
 
     try:
-        sql="""SELECT client.name, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  
+        sql="""SELECT client_order.id as order_id, client.name as client, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  
         inner join client 
         on  client_order.client_id =  client.id inner 
         join  variety 
         on client_order.variety_id = variety.id 
         """
+        sql_order = "ORDER BY client_order.id DESC"
         if condition:
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -130,8 +137,10 @@ def get_client_order_data(condition):
                         condition_individual=f""" AND client_order.{column} = %s"""
                 val.append(condition[f"{column}"])
                 sql = sql  + condition_individual
+            sql = sql + sql_order
             cursor.execute(sql,val)
         else:
+            sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
         for data in result:
@@ -155,6 +164,7 @@ def get_media_data(condition):
     try:
         sql="""Select name, description from media
         """
+        sql_order = "ORDER BY id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -169,8 +179,10 @@ def get_media_data(condition):
                     condition_individual=f""" AND {column} = %s"""
                 val.append(condition[f"{column}"])
                 sql = sql  + condition_individual
+            sql = sql + sql_order
             cursor.execute(sql,val)
         else:
+            sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
         if(len(result) == 0):
@@ -198,6 +210,7 @@ def get_produce_record_data_from_condition(condition):
         INNER JOIN  stage
         ON  produce_record.stage_id = stage.id
         """
+        sql_order = "ORDER BY produce_record.manufacturing_date DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -232,15 +245,17 @@ def get_produce_record_data_from_condition(condition):
                     elif column == "in_stock":
                         if condition[f"{column}"] == "YES":
                             condition[f"{column}"] = 1
-                        else:
+                        elif condition[f"{column}"] == "NO":
                            condition[f"{column}"] = 0
                         condition_individual=f""" AND produce_record.{column} = %s"""
                     else:
                         condition_individual=f""" AND {column}.name = %s"""
                     val.append(condition[f"{column}"])
                     sql = sql  + condition_individual
+            sql = sql + sql_order
             cursor.execute(sql,val)
         else:
+            sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
         for data in result:
@@ -250,7 +265,7 @@ def get_produce_record_data_from_condition(condition):
                     print(key)
                     if data[f"{key}"] == 0:
                         data[f"{key}"] = "NO"
-                    else:
+                    elif data[f"{key}"] == 1:
                         data[f"{key}"] = "YES"
         if(len(result) == 0):
             return None
@@ -270,6 +285,7 @@ def get_staff_data(condition):
         INNER JOIN authorization 
         ON staff.authorization_id = authorization.id
         """
+        sql_order = "ORDER BY staff.id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -283,7 +299,7 @@ def get_staff_data(condition):
                         print(column)
                         if condition[f"{column}"] == "YES":
                             condition[f"{column}"] = 1
-                        else:
+                        elif condition[f"{column}"] == "NO":
                            condition[f"{column}"] = 0
                         condition_individual=f""" {column} = %s"""
                     else:
@@ -292,16 +308,17 @@ def get_staff_data(condition):
                     if column == "in_employment":
                         if condition[f"{column}"] == "YES":
                             condition[f"{column}"] = 1
-                        else:
+                        elif condition[f"{column}"] == "NO":
                            condition[f"{column}"] = 0
                         condition_individual=f""" AND {column} = %s"""
                     else:
                         condition_individual=f""" AND {column} = %s"""
                 val.append(condition[f"{column}"])
                 sql = sql  + condition_individual
-
+            sql = sql + sql_order
             cursor.execute(sql,val)
         else:
+            sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
         for data in result:
@@ -311,7 +328,7 @@ def get_staff_data(condition):
                     print(key)
                     if data[f"{key}"] == 0:
                         data[f"{key}"] = "NO"
-                    else:
+                    elif data[f"{key}"] == 1:
                         data[f"{key}"] = "YES"
         if(len(result) == 0):
             return None
@@ -326,8 +343,9 @@ def get_stage_data(condition):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""Select name, description from media
+        sql="""Select name, description from stage
         """
+        sql_order = "ORDER BY stage.id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -342,8 +360,10 @@ def get_stage_data(condition):
                     condition_individual=f""" AND {column} = %s"""
                 val.append(condition[f"{column}"])
                 sql = sql  + condition_individual
+            sql = sql + sql_order
             cursor.execute(sql,val)
         else:
+            sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
         if(len(result) == 0):
@@ -365,6 +385,7 @@ def get_variety_data(condition):
         INNER JOIN  category
         ON variety.category_id = category.id
         """
+        sql_order = "ORDER BY variety.id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -385,9 +406,10 @@ def get_variety_data(condition):
                         condition_individual=f""" AND variety.{column} = %s"""
                 val.append(condition[f"{column}"])
                 sql = sql  + condition_individual
+            sql = sql + sql_order
             cursor.execute(sql,val)
-            
         else:
+            sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
         if(len(result) == 0):
@@ -407,7 +429,9 @@ def get_current_stock(condition):
         sql="""SELECT produce_record_id FROM  current_stock
         where produce_record_id = %s
         """
+        sql_order = "ORDER BY current_stock.id DESC"
         val = (condition,)
+        sql = sql + sql_order
         cursor.execute(sql,val)
         result = cursor.fetchall()
         print(result)

@@ -7,6 +7,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import  HTTPException as StarletteHTTPException
 from app.routers import add_router, Read_router, staff_router, update_router, delete_router, search_router
+from app.MODEL.data_class.response_class import databaseException
 # from app.MODEL.data_class.validation_data_class import RequestValidationError
 
 app= FastAPI()
@@ -21,18 +22,6 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
 
-# "request validation set"
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
-		return JSONResponse(
-        status_code=exc.status_code,
-        content={
-            "error": True,
-            "message": f"type: {exc.detail}",
-        }
-		)
-
-
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
 		return JSONResponse(
@@ -43,7 +32,7 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
         }
 		)
 
-
+# "request validation set"
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -76,6 +65,10 @@ async def insertPage(request: Request):
 @app.get("/update", include_in_schema=False)
 async def insertPage(request: Request):
 	return FileResponse("app/static/HTML/update.html", media_type="text/html")
+
+@app.get("/delete", include_in_schema=False)
+async def insertPage(request: Request):
+	return FileResponse("app/static/HTML/delete.html", media_type="text/html")
 
 
 

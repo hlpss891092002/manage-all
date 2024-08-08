@@ -9,9 +9,11 @@ export async function getAccountFromAutho() {
 
 }
 
-export async function renderSideBlockList(account, addSubList, searchSubList, updateSubList, inputContainer, tableName, router, searchInputContainer){
+export async function renderSideBlockList(account, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer){
   if(!account){
     window.location.assign("/")
+  }else if (tableName === ""){
+    window.location.replace(`/${router}?category`)
   }
   console.log(updateSubList)
   console.log(router)
@@ -46,6 +48,15 @@ export async function renderSideBlockList(account, addSubList, searchSubList, up
     updateItemLink.innerText= tableName
     updateListItem.appendChild(updateItemLink)
     updateSubList.appendChild(updateListItem)
+
+    
+    const deleteListItem = document.createElement("li")
+    deleteListItem.className = "list-group-item"
+    const deleteItemLink = document.createElement("a")
+    deleteItemLink.href = `/delete?${tableName}`
+    deleteItemLink.innerText= tableName
+    deleteListItem.appendChild(deleteItemLink)
+    deleteSubList.appendChild(deleteListItem)
     
   }
   // get item according table
@@ -71,16 +82,21 @@ export async function renderSideBlockList(account, addSubList, searchSubList, up
       inputGroupText.className = "input-group-text"
       inputGroupText.innerText = `${searchIndex}`
       const categoryInput = document.createElement("input")
-      categoryInput.className = `form-control  update-index search-${searchIndex}`
+      categoryInput.className = `form-control  ${router}-index search-${searchIndex}`
       inputGroup.appendChild(inputGroupText)
       inputGroup.appendChild(categoryInput)
       searchInputContainer.appendChild(inputGroup)
     }
     // insert item block
-    for (let column of columns){
+    if (inputContainer){
+      for (let column of columns){
       if (column === "id" && router === "add"){
         continue
-      }else if(column === "manufacturing_time"){
+      }else if(column === "id" && router === "update" && tableName === "produce_record"){
+        continue
+      } else if(column === "manufacturing_time"){
+        continue
+      }else if(column === "authorization"){
         continue
       }else if(column === "authorization"){
         continue
@@ -105,11 +121,15 @@ export async function renderSideBlockList(account, addSubList, searchSubList, up
       // inputSelect.appendChild(optionSelect)
       // inputGroup.appendChild(inputSelect)
       // inputContainer.appendChild(inputGroup)
+      }
+      if (tableName === "produce_record" && router === "add"){
+        const producerInput = document.querySelector(".producer_id-input")
+        producerInput.value = await account
+      }
+    }else{
+      return
     }
-    if (tableName === "produce_record" && router === "add"){
-      const producerInput = document.querySelector(".producer_id-input")
-      producerInput.value = await account
-    }
+    
   }
 }
 

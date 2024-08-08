@@ -5,6 +5,7 @@ from time import time
 from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import  HTTPException
+from app.MODEL.data_class.response_class import databaseException
 
 load_dotenv()
 
@@ -21,381 +22,228 @@ try:
         **dbconfig
     )
     # print('database connected')
-except Exception as e:
+except mysql.connector.Error as e:
     print(f'database connection fail {e}')
 
 
-def update_category_data(condition):
+def update_non_foreign_key_data(condition, table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
+    update_index, update_items = condition.values()
+    update_index_column = list(update_index.keys())[0]
+    update_index_value = list(update_index.values())[0]
     try:
-        sql="""UPDATE category, description from category
-        """
-        if condition :
-            sql_condition=f"""  where  """
-            sql = sql + sql_condition
-            val = list()
-            print(condition)
-            print(sql)
-            columns = list(condition.keys())
-            print(columns)
-            for column in columns:
-                if columns.index(column) == 0 :
-                    condition_individual=f""" {column} = %s"""
-                else:
-                    condition_individual=f""" AND {column} = %s"""
-                val.append(condition[f"{column}"])
-                sql = sql  + condition_individual
-            
-            cursor.execute(sql,val)
-        else:
-            cursor.execute(sql)
-        result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
-        else:
-            return result
-    except Exception as e:
+        sql=f"""UPDATE {table_name}"""
+        sql_condition=f" where {update_index_column} = %s"
+        sql_SET =" SET"
+        val = list()
+        column_list = list(update_items.keys())
+        for column in column_list:
+            if column_list.index(column) == 0:
+                value = update_items[column]
+                sql_SET = sql_SET + f"""  {column} = %s """
+                val.append(value)
+            else:
+                 value = update_items[column]
+                 sql_SET = sql_SET + f""" , {column}  = %s """ 
+                 val.append(value)
+        sql = sql + sql_SET + sql_condition
+        val.append(update_index_value)
+        cursor.execute(sql,val)
+        con.commit()
+        if cursor.rowcount > 0 :
+            print(f"update  category {cursor.rowcount} ")
+            return 
+        else :
+            raise HTTPException(status_code=400, detail=f"No rows were affected by the update, please check input value")
+    except mysql.connector.Error as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_client_data(condition):
+
+def update_client_order_data(condition, table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
+    update_index, update_items = condition.values()
+    update_index_column = list(update_index.keys())[0]
+    update_index_value = list(update_index.values())[0]
     try:
-        sql="""Select name, description from client
-        """
-        if condition :
-            sql_condition=f"""  where  """
-            sql = sql + sql_condition
-            val = list()
-            print(condition)
-            columns = list(condition.keys())
-            print(columns)
-            for column in columns:
-                if columns.index(column) == 0 :
-                    condition_individual=f""" {column} = %s"""
+        sql=f"""UPDATE {table_name}"""
+        sql_condition=f" where {update_index_column} = %s"
+        sql_SET =" SET"
+        val = list()
+        column_list = list(update_items.keys())
+        for column in column_list:
+            if column_list.index(column) == 0:
+                if column == "client":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" client_id = (SELECT id FROM {column} WHERE name = %s )"""
+                elif column == "variety_code":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" variety_id = (SELECT id FROM variety WHERE {column} = %s )"""
                 else:
-                    condition_individual=f""" AND {column} = %s"""
-                val.append(condition[f"{column}"])
-                sql = sql  + condition_individual
-            cursor.execute(sql,val)
-            print(sql)
-            print(val)
-        else:
-            cursor.execute(sql)
-        result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
-        else:
-            return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
+                    value = update_items[column]
+                    sql_SET = sql_SET + f"""  {column} = %s """
+            else:
+                if column == "client":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" , client_id = (SELECT id FROM {column} WHERE name = %s )"""
+                elif column == "variety_code":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" , variety_id = (SELECT id FROM variety WHERE {column} = %s )"""
+                else:
+                    value = update_items[column]
+                    sql_SET = sql_SET + f"""  , {column} = %s """
+            val.append(value)
+        sql = sql + sql_SET + sql_condition
+        val.append(update_index_value)
+        print(sql)
+        print(val)
+        cursor.execute(sql,val)
+        con.commit() 
+        if cursor.rowcount > 0 :
+            print(f"update  category {cursor.rowcount} ")
+            return 
+        else :
+            raise HTTPException(status_code=400, detail=f"No rows were affected by the update. Please check input value")
+
+    except mysql.connector.Error as e:
+        raise HTTPException(status_code=400, detail=f"Value in client or variety is invalid. Please check input value")
     finally:
         cursor.close()
         con.close()
 
-def get_client_order_data(condition):
+def update_produce_record_data(condition, table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
-
+    update_index, update_items = condition.values()
+    update_index_column = list(update_index.keys())[0]
+    update_index_value = list(update_index.values())[0]
     try:
-        sql="""SELECT client.name, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  
-        inner join client 
-        on  client_order.client_id =  client.id inner 
-        join  variety 
-        on client_order.variety_id = variety.id 
-        """
-        if condition:
-            sql_condition=f"""  where  """
-            sql = sql + sql_condition
-            val = list()
-            columns = list(condition.keys())
-            for column in columns:
-                if columns.index(column) == 0 :
-                    if column == "variety_code":
-                        condition_individual=f""" variety.{column} = %s"""
-                    elif column == "client":
-                        condition_individual=f""" {column}.name = %s"""
+        sql=f"""UPDATE {table_name}"""
+        sql_condition=f" where {update_index_column} = %s"
+        sql_SET =" SET"
+        val = list()
+        column_list = list(update_items.keys())
+        print(len(column_list))
+        for column in column_list:
+            print(column)
+            if column_list.index(column) == 0:
+                if column == "media":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" media_id = (SELECT id FROM {column} WHERE name = %s )"""
+                elif column == "variety_code":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" variety_id = (SELECT id FROM variety WHERE {column} = %s )"""
+                elif column == "producer_id":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" producer_id = (SELECT id FROM staff WHERE account = %s )"""
+                elif column == "stage":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" stage_id = (SELECT id FROM stage WHERE name = %s )"""
+                elif column == "in_stock":
+                    print(column)
+                    value =update_items[column]
+                    if value == "YES":
+                        value = 1
+                    elif value == "NO":
+                        value = 0
                     else:
-                        condition_individual=f""" client_order.{column} = %s"""
+                        return
+                    sql_SET = sql_SET + f"""  {column} = %s """
                 else:
-                    if column == "variety_code":
-                        condition_individual=f""" AND variety.{column} = %s"""
-                    elif column == "client":
-                        condition_individual=f""" AND {column}.name = %s"""
+                    value = update_items[column]
+                    sql_SET = sql_SET + f"""  {column} = %s """
+            else:
+                if column == "media":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" , media_id = (SELECT id FROM {column} WHERE name = %s )"""
+                elif column == "variety_code":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" , variety_id = (SELECT id FROM variety WHERE {column} = %s )"""
+                elif column == "producer_id":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" , producer_id = (SELECT id FROM staff WHERE account = %s )"""
+                elif column == "stage":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" , stage_id = (SELECT id FROM stage WHERE name = %s )"""
+                elif column == "in_stock":
+                    print(column)
+                    value =update_items[column]
+                    if value == "YES":
+                        value = 1
+                    elif value == "NO":
+                        value = 0
                     else:
-                        condition_individual=f""" AND client_order.{column} = %s"""
-                val.append(condition[f"{column}"])
-                sql = sql  + condition_individual
-            cursor.execute(sql,val)
-        else:
-            cursor.execute(sql)
-        result = cursor.fetchall()
-        for data in result:
-            keys = data.keys()
-            for key in keys:
-                if "date" in key:
-                    data[f"{key}"] = datetime.strftime(data[f"{key}"], "%Y-%m-%d")
-        if(len(result) == 0):
-            return None
-        else:
-            return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
+                        return
+                    sql_SET = sql_SET + f""" ,  {column} = %s """
+                else:
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" ,  {column} = %s """
+            val.append(value)
+        sql = sql + sql_SET + sql_condition
+        val.append(update_index_value)
+        print(sql)
+        print(val)
+        cursor.execute(sql,val)
+        con.commit() 
+        if cursor.rowcount > 0 :
+            print(f"update  category {cursor.rowcount} ")
+            return 
+        else :
+            raise HTTPException(status_code=400, detail=f"No rows were affected by the update. Please check input value")
+
+    except mysql.connector.Error as e:
+        raise HTTPException(status_code=400, detail=f"Value in client or variety is invalid. Please check input value")
     finally:
         cursor.close()
         con.close()
 
-def get_media_data(condition):
+def update_variety_data(condition, table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
+    update_index, update_items = condition.values()
+    print(update_index)
+    update_index_column = list(update_index.keys())[0]
+    update_index_value = list(update_index.values())[0]
     try:
-        sql="""Select name, description from media
-        """
-        if condition :
-            sql_condition=f"""  where  """
-            sql = sql + sql_condition
-            val = list()
-            print(condition)
-            columns = list(condition.keys())
-            print(columns)
-            for column in columns:
-                if columns.index(column) == 0 :
-                    condition_individual=f""" {column} = %s"""
+        sql=f"""UPDATE {table_name}"""
+        sql_condition=f" where {update_index_column} = %s"
+        sql_SET =" SET"
+        val = list()
+        column_list = list(update_items.keys())
+        for column in column_list:
+            if column_list.index(column) == 0:
+                if column == "category":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" category_id = (SELECT id FROM {column} WHERE category = %s )"""
                 else:
-                    condition_individual=f""" AND {column} = %s"""
-                val.append(condition[f"{column}"])
-                sql = sql  + condition_individual
-            cursor.execute(sql,val)
-        else:
-            cursor.execute(sql)
-        result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
-        else:
-            return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-
-def get_produce_record_data_from_condition(condition):
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety, media.name as media, staff.name as producer, staff.account as producer_id, stage.name as stage, DATE_FORMAT(produce_record.manufacturing_date, "%Y/%m/%d")  as date, produce_record.mother_produce_id, produce_record.in_stock, produce_record.consumed_reason
-        FROM  produce_record 
-        INNER JOIN  variety
-        ON  produce_record.variety_id = variety.id
-        INNER JOIN  media
-        ON  produce_record.media_id = media.id
-        INNER JOIN  staff
-        ON  produce_record.producer_id = staff.id
-        INNER JOIN  stage
-        ON  produce_record.stage_id = stage.id
-        """
-        if condition :
-            sql_condition=f"""  where  """
-            sql = sql + sql_condition
-            val = list()
-            # print(condition)
-            columns = list(condition.keys())
-            for column in columns:
-                if columns.index(column) == 0 :
-                    if column == "id" or column == "manufacturing_date" or column == "mother_produce_id" or column == "consumed_reason" :
-                        condition_individual=f""" produce_record.{column} = %s"""
-                    elif column == "producer_id":
-                        condition_individual=f""" staff.account = %s"""
-                    elif column == "variety_code":
-                        condition_individual=f""" variety.variety_code = %s"""
-                    elif column == "in_stock":
-                        if condition[f"{column}"] == "YES":
-                            condition[f"{column}"] = 1
-                        else:
-                           condition[f"{column}"] = 0
-                        condition_individual=f""" {column} = %s"""
-                    else:
-                        condition_individual=f""" {column}.name = %s"""
-                    val.append(condition[f"{column}"])
-                    sql = sql  + condition_individual
+                    value = update_items[column]
+                    sql_SET = sql_SET + f"""  {column} = %s """
+            else:
+                if column == "client":
+                    value = update_items[column]
+                    sql_SET = sql_SET + f""" , category_id = (SELECT id FROM {column} WHERE category = %s )"""
                 else:
-                    if column == "id" or column == "manufacturing_date" or column == "mother_produce_id" or column == "consumed_reason" :
-                        condition_individual=f""" AND produce_record.{column} = %s"""
-                    elif column == "producer_id":
-                        condition_individual=f""" AND staff.account = %s"""
-                    elif column == "variety_code":
-                        condition_individual=f""" AND variety.variety_code = %s"""
-                    elif column == "in_stock":
-                        if condition[f"{column}"] == "YES":
-                            condition[f"{column}"] = 1
-                        else:
-                           condition[f"{column}"] = 0
-                        condition_individual=f""" AND produce_record.{column} = %s"""
-                    else:
-                        condition_individual=f""" AND {column}.name = %s"""
-                    val.append(condition[f"{column}"])
-                    sql = sql  + condition_individual
-            cursor.execute(sql,val)
-        else:
-            cursor.execute(sql)
-        result = cursor.fetchall()
-        for data in result:
-            keys = data.keys()
-            for key in keys:
-                if "in_" in key:
-                    print(key)
-                    if data[f"{key}"] == 0:
-                        data[f"{key}"] = "NO"
-                    else:
-                        data[f"{key}"] = "YES"
-        if(len(result) == 0):
-            return None
-        else:   
-            return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
+                    value = update_items[column]
+                    sql_SET = sql_SET + f"""  , {column} = %s """
+            val.append(value)
+        sql = sql + sql_SET + sql_condition
+        val.append(update_index_value)
+        print(sql)
+        print(val)
+        cursor.execute(sql,val)
+        con.commit() 
+        if cursor.rowcount > 0 :
+            print(f"update  category {cursor.rowcount} ")
+            return 
+        else :
+            raise HTTPException(status_code=400, detail=f"No rows were affected by the update. Please check input value")
 
-def get_staff_data(condition):
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""SELECT  staff.name, staff.email, staff.cellphone, staff.account, staff.in_employment , authorization.job_position  FROM  staff 
-        INNER JOIN authorization 
-        ON staff.authorization_id = authorization.id
-        """
-        if condition :
-            sql_condition=f"""  where  """
-            sql = sql + sql_condition
-            val = list()
-            print(condition)
-            columns = list(condition.keys())
-            print(columns)
-            for column in columns:
-                if columns.index(column) == 0 :
-                    if column == "in_employment":
-                        print(column)
-                        if condition[f"{column}"] == "YES":
-                            condition[f"{column}"] = 1
-                        else:
-                           condition[f"{column}"] = 0
-                        condition_individual=f""" {column} = %s"""
-                    else:
-                        condition_individual=f""" {column} = %s"""
-                else:
-                    if column == "in_employment":
-                        if condition[f"{column}"] == "YES":
-                            condition[f"{column}"] = 1
-                        else:
-                           condition[f"{column}"] = 0
-                        condition_individual=f""" AND {column} = %s"""
-                    else:
-                        condition_individual=f""" AND {column} = %s"""
-                val.append(condition[f"{column}"])
-                sql = sql  + condition_individual
-
-            cursor.execute(sql,val)
-        else:
-            cursor.execute(sql)
-        result = cursor.fetchall()
-        for data in result:
-            keys = data.keys()
-            for key in keys:
-                if "in_" in key:
-                    print(key)
-                    if data[f"{key}"] == 0:
-                        data[f"{key}"] = "NO"
-                    else:
-                        data[f"{key}"] = "YES"
-        if(len(result) == 0):
-            return None
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-
-def get_stage_data(condition):
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""Select name, description from media
-        """
-        if condition :
-            sql_condition=f"""  where  """
-            sql = sql + sql_condition
-            val = list()
-            print(condition)
-            columns = list(condition.keys())
-            print(columns)
-            for column in columns:
-                if columns.index(column) == 0 :
-                    condition_individual=f""" {column} = %s"""
-                else:
-                    condition_individual=f""" AND {column} = %s"""
-                val.append(condition[f"{column}"])
-                sql = sql  + condition_individual
-            cursor.execute(sql,val)
-        else:
-            cursor.execute(sql)
-        result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
-        else:
-            return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-
-def get_variety_data(condition):
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""Select variety.variety_code, variety.name, variety.description, category.category
-        FROM variety 
-        INNER JOIN  category
-        ON variety.category_id = category.id
-        """
-        if condition :
-            sql_condition=f"""  where  """
-            sql = sql + sql_condition
-            val = list()
-            print(condition)
-            columns = list(condition.keys())
-            print(columns)
-            for column in columns:
-                if columns.index(column) == 0 :
-                    if column == "category":
-                        condition_individual=f""" category.{column} = %s"""
-                    else:
-                        condition_individual=f""" variety.{column} = %s"""
-                else:
-                    if column == "category":
-                        condition_individual=f""" AND category.{column} = %s"""
-                    else:
-                        condition_individual=f""" AND variety.{column} = %s"""
-                val.append(condition[f"{column}"])
-                sql = sql  + condition_individual
-            cursor.execute(sql,val)
-            
-        else:
-            cursor.execute(sql)
-        result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
-        else:
-            return result
-    except Exception as e:
-        raise e
+    except mysql.connector.Error as e:
+        raise HTTPException(status_code=400, detail=f"Value in client or variety is invalid. Please check input value")
     finally:
         cursor.close()
         con.close()
@@ -412,7 +260,7 @@ def get_current_stock(condition):
         result = cursor.fetchall()
         print(result)
         return result
-    except Exception as e:
+    except mysql.connector.Error as e:
         raise e
     finally:
         cursor.close()

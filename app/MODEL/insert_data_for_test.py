@@ -23,7 +23,7 @@ def insert_authorization_for_test():
     insert_authorization("Administrator", False, True, True, True, True, True, True, False, True, True)
     insert_authorization("Operator Leader",  False, False, False, False, True, True, True, False, True, True)
     insert_authorization("Operator",  False, False, False, False, True, False, True, False, False, False)
-# insert_authorization_for_test()
+insert_authorization_for_test()
 def insert_staffs_for_test():
     staff_name = ["a","b","c","d","e","f","g","h","i","j","k"]
     body = {}
@@ -54,7 +54,7 @@ def insert_staffs_for_test():
         body["authorization"] = authorization
         insert_staff(body)
         count +=1
-# insert_staffs_for_test()
+insert_staffs_for_test()
 def insert_category_for_test():
     category_list = ["Phalaenopsis", "Epidendrum", "Dendrobium", "Oncidium", "Platycerium", "Alocasia","Philodendron", "Anthurium"]
     for category in category_list:
@@ -62,7 +62,7 @@ def insert_category_for_test():
         body["category"] = category
         body["description"] = f"{category} for test"
         insert_category(body)
-# insert_category_for_test()        
+insert_category_for_test()        
 def insert_client_for_test():
     client_list = ["台蘭", "Orchid for all", "花花農場", "尼花世界", "尼豪景觀公司", "Flor beauty","Born to bloom", "Flor Grande"]
     country = ["taiwan", "nicaragua", "Argentina", "USA", "UK"]
@@ -72,7 +72,7 @@ def insert_client_for_test():
         body["name"] = client
         body["description"] = f"{client} in {country[num]}"
         insert_client(body)
-# insert_client_for_test()
+insert_client_for_test()
 def insert_variety_for_test():
     category_list = ["Phalaenopsis", "Epidendrum", "Dendrobium", "Oncidium", "Platycerium", "Alocasia","Philodendron", "Anthurium"]
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
@@ -84,7 +84,7 @@ def insert_variety_for_test():
         body["description"] = f"{variety_code} in {category_list[num]}"
         body["category"] = category_list[num]
         insert_variety(body)
-# insert_variety_for_test()
+insert_variety_for_test()
 def insert_client_order_for_test():
     client_list = ["台蘭", "Orchid for all", "花花農場", "尼花世界", "尼豪景觀公司", "Flor beauty","Born to bloom", "Flor Grande"]
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
@@ -97,7 +97,7 @@ def insert_client_order_for_test():
         body["amount"] = random.randint(1000, 6000)
         body["shipping_date"] = today + timedelta(weeks = num)
         insert_client_order(body)
-# insert_client_order_for_test() 
+insert_client_order_for_test() 
 def insert_media_for_test():
     media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
     for media in media_list :
@@ -106,7 +106,7 @@ def insert_media_for_test():
         body["media"] = media
         body["description"] = f"{media} for test"
         insert_media(body)
-# insert_media_for_test()
+insert_media_for_test()
 def insert_stage_for_test():
     stage_list = ["initial","propagation", "grown", "strong", "rooting"]
     for stage in stage_list :
@@ -114,7 +114,7 @@ def insert_stage_for_test():
         body["stage"] = stage
         body["description"] = f"{stage} for test"
         insert_stage(body)
-# insert_stage_for_test()
+insert_stage_for_test()
 counting = []
 initial_list= []
 def insert_initial_produce_record_for_test():
@@ -232,7 +232,7 @@ def multi_threads_test():
     print(f"multithread time = %.2f" % (end -start))
     print(f"amount {len(counting)}")
 
-multi_threads_test()
+# multi_threads_test()
 
 
 

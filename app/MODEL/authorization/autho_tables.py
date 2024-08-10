@@ -47,7 +47,7 @@ def show_table():
         cursor.close()
         con.close()
 
-def get_table_list_from_auth( account):
+def get_table_list_from_auth( employee_id):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary=True, buffered = True)
  
@@ -55,10 +55,10 @@ def get_table_list_from_auth( account):
         sql = """SELECT  authorization, category, client, client_order, current_stock, media, produce_record, staff, stage, variety FROM staff
         INNER JOIN authorization
         ON staff.authorization_id = authorization.id
-        WHERE account = %s
+        WHERE employee_id = %s
          """
-        val = (account,)
-        print(account)
+        val = (employee_id,)
+        print(employee_id)
         cursor.execute(sql,val)
         result = cursor.fetchone()
         return result

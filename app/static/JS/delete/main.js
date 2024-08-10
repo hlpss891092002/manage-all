@@ -1,4 +1,5 @@
 import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_response.js"
+import {render_result_table, render_pagination, render_table_from_pagination, clearMessageAndTable} from "../common/render_table.js"
 import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
@@ -9,22 +10,29 @@ const searchInputContainer = document.querySelector(".search-input-container")
 const searchBtn = document.querySelector(".search-btn")
 const deleteBtn = document.querySelector(".delete-btn")
 const tableTitleContainer = document.querySelector(".table-title-container")
+const paginationContainer = document.querySelector(".pagination-container")
 const table = document.querySelector(".table")
 const message = document.querySelector(".message")
-
 const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
 let staffId = ""
+let nowPage= 0
+let PageAmount = 0
+
 
 async function initialPage(){
-  let account = await getAccountFromAutho()
-  staffId = account
+  let employee_id = await getAccountFromAutho()
+   if(!employee_id){
+    localStorage.clear()
+    window.location.assign("/")
+  }
+  staffId = employee_id
   renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
   signOutFunction()
   showSideBlockFromRouter(router)
 
-    if(!account){
+    if(!employee_id){
     window.location.assign("/")
   }
     // select
@@ -40,27 +48,20 @@ async function initialPage(){
   
 }
 
-function clearMessageAndTable(){
-  message.innerText = ""
-  table.innerText = ""
-  tableTitleContainer.innerText = ""
-}
 
-function search_and_render(){
-  const deleteIndex = document.querySelector(".delete-index");
-  let body = {};
-  let value =  deleteIndex.value;
-    console.log(value)
+function search_and_render(nowPage){
+const data = document.querySelector(".delete-index");
+ let body = {};
+  body["page"] = nowPage
+  let condition ={}
+  body["condition"] = condition
+  let value =  data.value;
     if (value === ""){
-      body = {}
+      condition = {}
     }else{
-      const classList = deleteIndex.classList;
-      console.log(classList)
+      const classList = data.classList;
       let columnName = classList[2].split("-")[1]
-      console.log(columnName)
-      body[`${columnName}`] = value ;
-      console.log(columnName)
-      console.log(body)
+      condition[`${columnName}`] = value ;
     }
  sent_input_search_and_render_table(body);
 };
@@ -68,53 +69,19 @@ function search_and_render(){
 async function sent_input_search_and_render_table(body){
   let result = await sentFetchWithBody("post", body, `/api/search/${tableName}`)
   console.log(result)
-  if(!result["data"]){
+  let data = result["data"]
+  nowPage = parseInt(result["startPage"])
+  if(data.length < 1){
     table.innerText = "no data"
   }else{
-    render_result_table(result["data"])
+     PageAmount = result["PageAmount"]
+    render_pagination(PageAmount, paginationContainer, nowPage)
+    render_table_from_pagination(nowPage, PageAmount, search_and_render)
+    render_result_table(data, tableName, tableTitleContainer, table, PageAmount)
   }
 };
 
-async function render_result_table(search_result) {
-  const resultKeys = Object.keys(search_result)
-  const resultCount = resultKeys.length
-  const tableTitle = document.createElement("div")
-  const DataCount = document.createElement("div")
-  tableTitleContainer.appendChild(tableTitle)
-  tableTitleContainer.appendChild(DataCount)
-  table.textContent = ""
-  let columnNameArray  =  Object.keys(search_result[0])
-  const columnNameContainer = document.createElement("div")
-  const rowContainer = document.createElement("div")
-  columnNameContainer.className = "column-name-container"
-  rowContainer.className= "row-container"
-  //append column title
-  columnNameArray.forEach((element)=>{
-    let columnName =  document.createElement("div")
-    columnName.className = "column-name"
-    columnName.innerText = element
-    columnNameContainer.appendChild(columnName)
-  })
-  table.appendChild(columnNameContainer)
-  //append row value
-  search_result.forEach((elementName)=>{
-    const columnValues = Object.values(elementName)
-    const row = document.createElement("div")
-    row.className = `table-row `
-    columnValues.forEach((element)=>{
-        let rowValue = document.createElement("div")
-        rowValue.className = `row-value ${elementName}`
-        rowValue.setAttribute("contenteditable", "true")
-        rowValue.innerText = element 
-        row.appendChild(rowValue)  
-      })
-    rowContainer.appendChild(row)
-    })
-  tableTitle.innerText = `Table ${tableName}`
-  DataCount.innerText = ` Amount of row ${resultCount}`
-  table.appendChild(rowContainer)
 
-};
 
 async function sent_input_delete(body){
   const result = await sentFetchWithBody("delete", body, `/api/delete/${tableName}`)
@@ -131,7 +98,7 @@ async function sent_input_delete(body){
     
   }else{
     message.innerText = "delete success"
-    search_and_render()
+    search_and_render(nowPage)
   }
 };
 
@@ -140,8 +107,9 @@ window.addEventListener("load", (e)=>{
 })
 
 searchBtn.addEventListener("click", (e)=>{
+  nowPage= 0
   clearMessageAndTable()
-  search_and_render()
+  search_and_render(nowPage)
 })
 
 deleteBtn.addEventListener("click", (e)=>{

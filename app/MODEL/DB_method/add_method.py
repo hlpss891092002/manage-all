@@ -124,13 +124,13 @@ def insert_media(input_dict):
         con.close()
 
 def insert_produce_record(input_dict , in_stock = True):
-
+    print(input_dict)
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     id, variety, media, producer_id, stage, mother_produce_id, consumed_reason = input_dict.values()
     try:
         sql="""INSERT INTO produce_record(id, variety_id, media_id, stage_id, mother_produce_id, in_stock, consumed_reason, producer_id)
-        VALUES (%s, (SELECT id FROM variety where variety_code = %s), (SELECT id FROM media where name = %s), (SELECT id FROM stage where name = %s), %s, %s, %s, (SELECT id FROM staff where account = %s));
+        VALUES (%s, (SELECT id FROM variety where variety_code = %s), (SELECT id FROM media where name = %s), (SELECT id FROM stage where name = %s), %s, %s, %s, (SELECT id FROM staff where employee_id = %s));
         """
         val=(id, variety, media, stage, mother_produce_id, in_stock, consumed_reason, producer_id)
         cursor.execute(sql,val)
@@ -146,15 +146,15 @@ def insert_produce_record(input_dict , in_stock = True):
         con.close()
 
 def insert_staff( input_dict, in_employment = True):
-    name, email, cellphone, account, password, job_position =input_dict.values()
-    print(name, email, cellphone, account, password, job_position)
+    name, email, cellphone, employee_id, password, job_position =input_dict.values()
+    print(name, email, cellphone, employee_id, password, job_position)
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
-        sql="""INSERT INTO staff(name, email, cellphone, account, password, authorization_id, in_employment )
+        sql="""INSERT INTO staff(name, email, cellphone, employee_id, password, authorization_id, in_employment )
         VALUES ( %s, %s, %s, %s, %s, (SELECT id FROM authorization WHERE  job_position = %s), %s);
         """
-        val=(name, email, cellphone, account, password, job_position,in_employment)
+        val=(name, email, cellphone, employee_id, password, job_position,in_employment)
         cursor.execute(sql,val)
         con.commit()
         print(f"insert {id} staff")

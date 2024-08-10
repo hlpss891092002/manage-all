@@ -4,17 +4,17 @@ import{sentFetchWithBody} from "./sent_fetch_get_response.js"
 export async function signInStaff() {
   // try{
     const responseMessage = document.querySelector(".response-message")
-    const account = document.querySelector("#staff-id").value
+    const employee_id = document.querySelector("#staff-id").value
     const password = document.querySelector("#staff-password").value
-    console.log(account + password)
+    console.log(employee_id + password)
     switch (true){
-      case !account ||  !password:
+      case !employee_id ||  !password:
         responseMessage.innerText = "請輸入帳號密碼"
         return
-      case account !== null &&  password !== null:
+      case employee_id !== null &&  password !== null:
         responseMessage.innerText = ""
         const body = {
-          "account": `${account}`,
+          "employee_id": `${employee_id}`,
           "password": `${password}`
         }
         console.log(body)

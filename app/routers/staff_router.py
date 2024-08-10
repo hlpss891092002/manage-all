@@ -25,16 +25,16 @@ async def staff_validation(payload  : Annotated[dict, Depends(user_validation)])
 
 @router.put("/api/staff/auth")
 async def check_staff_exist(body: sign_in_data): 
-  account = body.account
+  employee_id = body.employee_id
   password = body.password
-  print(account)
-  staff_data =  check_user(account, password )
+  print(employee_id)
+  staff_data =  check_user(employee_id, password )
   print(staff_data)
   if staff_data:
-    account, name = staff_data.values()
+    employee_id, name = staff_data.values()
     payload = {
       "iss" : "manageAll",
-      "account" : account,
+      "employee_id" : employee_id,
       "sub" : name,
       "exp" : datetime.now() + timedelta(days=7)
     }
@@ -54,9 +54,9 @@ async def check_staff_exist(body: sign_in_data):
 async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
     try:
       #  table_list = show_table()
-       account = payload["account"]
+       employee_id = payload["employee_id"]
        tableList = []
-       result = get_table_list_from_auth(account)
+       result = get_table_list_from_auth(employee_id)
        tableNameList = result.keys()
        for table in tableNameList:
           if result[f"{table}"]: 

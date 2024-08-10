@@ -4,11 +4,11 @@ import mysql.connector
 import mysql.connector.pooling
 import random
 import threading
+from datetime import datetime, timedelta
+from time import time
 import multiprocessing as mp
 from DB_method.add_method import *
 from authorization.autho_tables import *
-from time import time
-from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 
@@ -23,7 +23,7 @@ def insert_authorization_for_test():
     insert_authorization("Administrator", False, True, True, True, True, True, True, False, True, True)
     insert_authorization("Operator Leader",  False, False, False, False, True, True, True, False, True, True)
     insert_authorization("Operator",  False, False, False, False, True, False, True, False, False, False)
-insert_authorization_for_test()
+# insert_authorization_for_test()
 def insert_staffs_for_test():
     staff_name = ["a","b","c","d","e","f","g","h","i","j","k"]
     body = {}
@@ -36,7 +36,6 @@ def insert_staffs_for_test():
         staff_id = str(month) + str(count).zfill(4)
         email = staff + "@test.com"
         authorization = 0
-
         if(staff == "a"):
             authorization  =  "manager"
         elif(staff == "b"):
@@ -50,95 +49,190 @@ def insert_staffs_for_test():
         body["name"] = staff
         body["email"] = email
         body["cellphone"] = cellphone
-        body["account"] = staff_id
+        body["employee_id"] = staff_id
         body["password"] = staff_id
         body["authorization"] = authorization
         insert_staff(body)
         count +=1
-insert_staffs_for_test()
-# def insert_test_base_data():
-#     # insert media
-#     insert_media("test", "for description")
-#     # # insert stage
-#     insert_stage("begin", " for begin")
-#     insert_stage("middle", " for middle")
-#     insert_stage("final", " for final")
-#     # insert category 
-#     insert_category("a", "for a")
-#     insert_category("b", "for b")
-#     insert_category("c", "for c")
-#     # #  insert client
-#     insert_client("name", "give me money")
-#     insert_client("name2", "give me more money")
-#     insert_client("name3", "give me huge money")
-#     # #  insert variety
-#     insert_variety("AAABZ001", "read_name", "description", "photo", 1)
-#     insert_variety("AAABZ002", "read_name2", "description2", "photo", 2)
-#     insert_variety("AAABZ003", "read_name3", "description3", "photo", 3)
-#     # # #  insert order
-#     today = datetime.now()
-#     shipping_time = (today + timedelta(days=365))
-#     insert_order(1, 1, 10000, shipping_time)
-#     insert_order(2, 2, 20000, shipping_time)
-#     insert_order(3, 3, 30000, shipping_time)
-#     insert_order(1, 2, 40000, shipping_time)
-#     insert_order(1, 3, 70000, shipping_time)
-# # insert_test_base_data()
-# staff_list =["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
-# mother_stock_data=[]
-# def insert_stock_data_for_test():
-#     start = time()
-#     for staff in staff_list:
-#         count = 0
-#         while count < 10000:
-#             uuid1 = uuid.uuid4()
-#             uuid2 = uuid.uuid4()
-#             uuid_final = str(uuid1) + str(uuid2)
-#             insert_production(uuid_final, 1, 1, staff, 1)
-#             insert_current_stock(uuid_final)
-#             mother_stock_data.append(uuid_final)
-#             count += 1
-#     end = time()
-#     print(f"time1 = %.2f, mount = {len(mother_stock_data)}" % (end -start))
-#     # print(len(mother_stock_data))
-# sub_mother_stock_data=[]
-# def insert_consume_stock_data_for_test():
-#     start = time()
-#     for mother_stock in mother_stock_data:
-#         num = random.randint(0, 6)
-#         staff = staff_list[num]
-#         count = 0
-#         while count <=2 :
-#             uuid1 = uuid.uuid4()
-#             uuid2 = uuid.uuid4()
-#             uuid_final = str(uuid1) + str(uuid2)
-#             insert_production(uuid_final, 1, 1, staff, 2, mother_stock)
-#             insert_current_stock(uuid_final)
-#             consume_mother_stock(mother_stock, "consumed")
-#             sub_mother_stock_data.append(uuid_final)
-#             count +=1
-#     end = time()
-#     print(f"time2 = %.2f, mount = {len(sub_mother_stock_data)}" % (end -start))
-    
+# insert_staffs_for_test()
+def insert_category_for_test():
+    category_list = ["Phalaenopsis", "Epidendrum", "Dendrobium", "Oncidium", "Platycerium", "Alocasia","Philodendron", "Anthurium"]
+    for category in category_list:
+        body = {}
+        body["category"] = category
+        body["description"] = f"{category} for test"
+        insert_category(body)
+# insert_category_for_test()        
+def insert_client_for_test():
+    client_list = ["台蘭", "Orchid for all", "花花農場", "尼花世界", "尼豪景觀公司", "Flor beauty","Born to bloom", "Flor Grande"]
+    country = ["taiwan", "nicaragua", "Argentina", "USA", "UK"]
+    for client in client_list :
+        num = random.randint(0, 4)
+        body = {}
+        body["name"] = client
+        body["description"] = f"{client} in {country[num]}"
+        insert_client(body)
+# insert_client_for_test()
+def insert_variety_for_test():
+    category_list = ["Phalaenopsis", "Epidendrum", "Dendrobium", "Oncidium", "Platycerium", "Alocasia","Philodendron", "Anthurium"]
+    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
+    for variety_code in variety_code_list :
+        num = random.randint(0, 7)
+        body = {}
+        body["variety_code"] = variety_code
+        body["name"] = f"{variety_code}{num}"
+        body["description"] = f"{variety_code} in {category_list[num]}"
+        body["category"] = category_list[num]
+        insert_variety(body)
+# insert_variety_for_test()
+def insert_client_order_for_test():
+    client_list = ["台蘭", "Orchid for all", "花花農場", "尼花世界", "尼豪景觀公司", "Flor beauty","Born to bloom", "Flor Grande"]
+    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
+    today = datetime.now()
+    for client in client_list :
+        num = random.randint(0, 7)
+        body = {}
+        body["client"] = client
+        body["variety"] = variety_code_list[num]
+        body["amount"] = random.randint(1000, 6000)
+        body["shipping_date"] = today + timedelta(weeks = num)
+        insert_client_order(body)
+# insert_client_order_for_test() 
+def insert_media_for_test():
+    media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
+    for media in media_list :
+        num = random.randint(0, 7)
+        body = {}
+        body["media"] = media
+        body["description"] = f"{media} for test"
+        insert_media(body)
+# insert_media_for_test()
+def insert_stage_for_test():
+    stage_list = ["initial","propagation", "grown", "strong", "rooting"]
+    for stage in stage_list :
+        body = {}
+        body["stage"] = stage
+        body["description"] = f"{stage} for test"
+        insert_stage(body)
+# insert_stage_for_test()
+counting = []
+initial_list= []
+def insert_initial_produce_record_for_test():
+    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
+    media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
+    staff_name = ["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
+    stage_list = ["initial","propagation", "grown", "strong", "rooting"]
+    for variety_code in variety_code_list:
+        count = 0
+        while count <= 100:
+            uid = uuid.uuid4()
+            num1 = random.randint(0, 7)
+            num2 = random.randint(0, 6)
+            now = datetime.now()
+            second = now.second
+            min = now.minute
+            microsec = now.microsecond
+            random_num =  str(random.randint(0, 9999)).zfill(2)
+            id = str(second) + str(min) + str(microsec) + random_num + str(uid)
+            body= {}
+            body["id"] = id
+            body["variety"] = variety_code
+            body["media"] = media_list[num1]
+            body["producer_id"] = staff_name[num2]
+            body["stage"] = "initial"
+            body["mother_produce_id"] = None
+            body["consumed_reason"] = None
+            print(body)
+            insert_produce_record(body , in_stock = True)
+            insert_current_stock(id)
+            initial_list.append(id)
+            count += 1
+            counting.append("1")            
+propagation_list = []
+def insert_propagation_produce_record_for_test():
+    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
+    media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
+    staff_name = ["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
+    stage_list = ["initial","propagation", "grown", "strong", "rooting"]
+    for initial in initial_list:
+        count = 0
+        while count <= 100:
+            uid = uuid.uuid4()
+            num1 = random.randint(0, 7)
+            num2 = random.randint(0, 6)
+            now = datetime.now()
+            second = now.second
+            min = now.minute
+            microsec = now.microsecond
+            random_num =  str(random.randint(0, 9999)).zfill(2)
+            id = str(second) + str(min) + str(microsec) + random_num + str(uid)
+            body= {}
+            body["id"] = id
+            body["variety"] = variety_code_list[num1]
+            body["media"] = media_list[num1]
+            body["producer_id"] = staff_name[num2]
+            body["stage"] = " propagation"
+            body["mother_produce_id"] = initial
+            body["consumed_reason"] = "consumed"
+            print(body)
+            insert_produce_record(body , in_stock = True)
+            insert_current_stock(id)
+            consume_mother_stock(initial, "consumed", in_stock = False )
+            propagation_list.append(id)
+            count += 1
+            counting.append("1")  
+grown_list = []
+def insert_grown_produce_record_for_test():
+    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
+    media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
+    staff_name = ["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
+    stage_list = ["initial","propagation", "grown", "strong", "rooting"]
+    for propagation in propagation_list:
+        count = 0
+        while count <= 10:
+            uid = uuid.uuid4()
+            num1 = random.randint(0, 7)
+            num2 = random.randint(0, 6)
+            now = datetime.now()
+            second = now.second
+            min = now.minute
+            microsec = now.microsecond
+            random_num =  str(random.randint(0, 9999)).zfill(2)
+            id = str(second) + str(min) + str(microsec) + random_num + str(uid)
+            body= {}
+            body["id"] = id
+            body["variety"] = variety_code_list[num1]
+            body["media"] = media_list[num1]
+            body["producer_id"] = staff_name[num2]
+            body["stage"] = "grown"
+            body["mother_produce_id"] = propagation
+            body["consumed_reason"] = "consumed"
+            print(body)
+            insert_produce_record(body , in_stock = True)
+            insert_current_stock(id)
+            consume_mother_stock(propagation, "grown", in_stock = False )
+            grown_list.append(id)
+            count += 1
+            counting.append("1")  
 
-# def multi_threads_test():
-#     start = time()
-#     # thread1 = threading.Thread()
-#     insert_stock_data_for_test()
-#     # thread1.start()
-#     # thread2 = threading.Thread()
-#     insert_consume_stock_data_for_test()
-#     # thread2.start()
-#     end = time()
-#     print(f"multithread time = %.2f" % (end -start))
 
 
+def multi_threads_test():
+    start = time()
+    insert_initial_produce_record_for_test()
+    insert_propagation_produce_record_for_test()
+    insert_grown_produce_record_for_test()
+    # thread1 = threading.Thread(target=insert_initial_produce_record_for_test)
+    # thread2 = threading.Thread(target=insert_propagation_produce_record_for_test)
+    # thread3 = threading.Thread(target=insert_grown_produce_record_for_test)
+    # thread1.start()
+    # thread2.start()
+    # thread3.start()
+    end = time()
+    print(f"multithread time = %.2f" % (end -start))
+    print(f"amount {len(counting)}")
+
+multi_threads_test()
 
 
-# insert_stock_data_for_test()
-# insert_consume_stock_data_for_test()
-# with ThreadPoolExecutor(max_workers=4) as executor:
-#     executor.submit(insert_stock_data_for_test())
-#     executor.submit(insert_consume_stock_data_for_test())
-# multi_threads_test()
 

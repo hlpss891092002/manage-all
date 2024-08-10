@@ -2,6 +2,7 @@ import mysql.connector
 import mysql.connector.pooling
 import os
 from time import time
+import math
 from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import  HTTPException
@@ -25,22 +26,19 @@ except Exception as e:
     print(f'database connection fail {e}')
 
 
-def get_category_data(condition):
+def get_category_data(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
+        print(condition)
         sql="""Select category, description from category
         """
-        sql_order = "ORDER BY id DESC"
+        sql_order = "  ORDER BY id DESC"
+        val = list()
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
-            val = list()
-            
-            print(condition)
-            print(sql)
             columns = list(condition.keys())
-            print(columns)
             for column in columns:
                 if columns.index(column) == 0 :
                     condition_individual=f""" {column} = %s"""
@@ -52,32 +50,41 @@ def get_category_data(condition):
             cursor.execute(sql,val)
         else:
             sql = sql + sql_order
-            cursor.execute(sql)
+            print(sql)
+            cursor.execute(sql)   
         result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
         else:
-            return result
+            response["data"] = result
+        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_client_data(condition):
+def get_client_data(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql="""Select name, description from client
         """
-        sql_order = "ORDER BY id DESC"
+        sql_order = " ORDER BY id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
             val = list()
-            print(condition)
             columns = list(condition.keys())
-            print(columns)
             for column in columns:
                 if columns.index(column) == 0 :
                     condition_individual=f""" {column} = %s"""
@@ -87,26 +94,34 @@ def get_client_data(condition):
                 sql = sql  + condition_individual
             sql = sql + sql_order
             cursor.execute(sql,val)
-            print(sql)
-            print(val)
         else:
             sql = sql + sql_order
+            print(sql)
             cursor.execute(sql)
         result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
         else:
-            return result
+            response["data"] = result
+        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_client_order_data(condition):
+def get_client_order_data(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
-
     try:
         sql="""SELECT client_order.id as order_id, client.name as client, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  
         inner join client 
@@ -114,7 +129,7 @@ def get_client_order_data(condition):
         join  variety 
         on client_order.variety_id = variety.id 
         """
-        sql_order = "ORDER BY client_order.id DESC"
+        sql_order = " ORDER BY client_order.id DESC"
         if condition:
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -138,9 +153,12 @@ def get_client_order_data(condition):
                 val.append(condition[f"{column}"])
                 sql = sql  + condition_individual
             sql = sql + sql_order
+            print(sql)
+            print(val)
             cursor.execute(sql,val)
         else:
             sql = sql + sql_order
+            print(sql)
             cursor.execute(sql)
         result = cursor.fetchall()
         for data in result:
@@ -148,23 +166,33 @@ def get_client_order_data(condition):
             for key in keys:
                 if "date" in key:
                     data[f"{key}"] = datetime.strftime(data[f"{key}"], "%Y-%m-%d")
-        if(len(result) == 0):
-            return None
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
         else:
-            return result
+            response["data"] = result
+        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_media_data(condition):
+def get_media_data(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql="""Select name, description from media
         """
-        sql_order = "ORDER BY id DESC"
+        sql_order = " ORDER BY id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -185,21 +213,36 @@ def get_media_data(condition):
             sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
+        for data in result:
+            keys = data.keys()
+            for key in keys:
+                if "date" in key:
+                    data[f"{key}"] = datetime.strftime(data[f"{key}"], "%Y-%m-%d")
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
         else:
-            return result
+            response["data"] = result
+        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_produce_record_data_from_condition(condition):
+def get_produce_record_data_from_condition(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety, media.name as media, staff.name as producer, staff.account as producer_id, stage.name as stage, DATE_FORMAT(produce_record.manufacturing_date, "%Y/%m/%d")  as date, produce_record.mother_produce_id, produce_record.in_stock, produce_record.consumed_reason
+        sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety, media.name as media, staff.name as producer, staff.employee_id as producer_id, stage.name as stage, DATE_FORMAT(produce_record.manufacturing_date, "%Y/%m/%d")  as date, produce_record.mother_produce_id, produce_record.in_stock, produce_record.consumed_reason
         FROM  produce_record 
         INNER JOIN  variety
         ON  produce_record.variety_id = variety.id
@@ -210,7 +253,7 @@ def get_produce_record_data_from_condition(condition):
         INNER JOIN  stage
         ON  produce_record.stage_id = stage.id
         """
-        sql_order = "ORDER BY produce_record.manufacturing_date DESC"
+        sql_order = " ORDER BY produce_record.manufacturing_date DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -222,7 +265,7 @@ def get_produce_record_data_from_condition(condition):
                     if column == "id" or column == "manufacturing_date" or column == "mother_produce_id" or column == "consumed_reason" :
                         condition_individual=f""" produce_record.{column} = %s"""
                     elif column == "producer_id":
-                        condition_individual=f""" staff.account = %s"""
+                        condition_individual=f""" staff.employee_id = %s"""
                     elif column == "variety_code":
                         condition_individual=f""" variety.variety_code = %s"""
                     elif column == "in_stock":
@@ -239,7 +282,7 @@ def get_produce_record_data_from_condition(condition):
                     if column == "id" or column == "manufacturing_date" or column == "mother_produce_id" or column == "consumed_reason" :
                         condition_individual=f""" AND produce_record.{column} = %s"""
                     elif column == "producer_id":
-                        condition_individual=f""" AND staff.account = %s"""
+                        condition_individual=f""" AND staff.employee_id = %s"""
                     elif column == "variety_code":
                         condition_individual=f""" AND variety.variety_code = %s"""
                     elif column == "in_stock":
@@ -258,34 +301,35 @@ def get_produce_record_data_from_condition(condition):
             sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
-        for data in result:
-            keys = data.keys()
-            for key in keys:
-                if "in_" in key:
-                    print(key)
-                    if data[f"{key}"] == 0:
-                        data[f"{key}"] = "NO"
-                    elif data[f"{key}"] == 1:
-                        data[f"{key}"] = "YES"
-        if(len(result) == 0):
-            return None
-        else:   
-            return result
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
+        else:
+            response["data"] = result
+        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_staff_data(condition):
+def get_staff_data(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql="""SELECT staff.account, staff.name, staff.email, staff.cellphone,  staff.in_employment , authorization.job_position  FROM  staff 
+        sql="""SELECT staff.employee_id, staff.name, staff.email, staff.cellphone,  staff.in_employment , authorization.job_position  FROM  staff 
         INNER JOIN authorization 
         ON staff.authorization_id = authorization.id
         """
-        sql_order = "ORDER BY staff.id DESC"
+        sql_order = " ORDER BY staff.id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -321,31 +365,33 @@ def get_staff_data(condition):
             sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
-        for data in result:
-            keys = data.keys()
-            for key in keys:
-                if "in_" in key:
-                    print(key)
-                    if data[f"{key}"] == 0:
-                        data[f"{key}"] = "NO"
-                    elif data[f"{key}"] == 1:
-                        data[f"{key}"] = "YES"
-        if(len(result) == 0):
-            return None
-        return result
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
+        else:
+            response["data"] = result
+        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_stage_data(condition):
+def get_stage_data(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql="""Select name, description from stage
         """
-        sql_order = "ORDER BY stage.id DESC"
+        sql_order = " ORDER BY stage.id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -366,17 +412,27 @@ def get_stage_data(condition):
             sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
         else:
-            return result
+            response["data"] = result
+        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_variety_data(condition):
+def get_variety_data(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
@@ -385,7 +441,7 @@ def get_variety_data(condition):
         INNER JOIN  category
         ON variety.category_id = category.id
         """
-        sql_order = "ORDER BY variety.id DESC"
+        sql_order = " ORDER BY variety.id DESC"
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
@@ -412,32 +468,54 @@ def get_variety_data(condition):
             sql = sql + sql_order
             cursor.execute(sql)
         result = cursor.fetchall()
-        if(len(result) == 0):
-            return None
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
         else:
-            return result
+            response["data"] = result
+        return response
     except Exception as e:
-        raise e
+        raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_current_stock(condition):
+def get_current_stock(condition, page):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql="""SELECT produce_record_id FROM  current_stock
         where produce_record_id = %s
         """
-        sql_order = "ORDER BY current_stock.id DESC"
+        sql_order = " ORDER BY current_stock.id DESC"
         val = (condition,)
         sql = sql + sql_order
         cursor.execute(sql,val)
         result = cursor.fetchall()
-        print(result)
-        return result
+        response = {}
+        dataAmount = len(result)
+        pageAmount = math.ceil(dataAmount/30)
+        response["PageAmount"] = pageAmount
+        response["dataAmount"] = dataAmount
+        response["startPage"] = page
+        page = int(page)
+        if len(result)  > 30:
+            start_index =page*30
+            response["data"] = result[start_index: start_index + 30]
+            
+        else:
+            response["data"] = result
+        return response
     except Exception as e:
-        raise e
+        raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
-        con.close()
+        con.close() 

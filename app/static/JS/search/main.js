@@ -1,4 +1,5 @@
 import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_response.js"
+import {render_result_table, render_pagination, render_table_from_pagination, clearMessageAndTable} from "../common/render_table.js"
 import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
@@ -7,24 +8,25 @@ const updateSubList = document.querySelector("#update-sub-list")
 const deleteSubList = document.querySelector("#delete-sub-list")
 const submitBtn = document.querySelector(".submit-btn")
 const tableTitleContainer = document.querySelector(".table-title-container")
+const paginationContainer = document.querySelector(".pagination-container")
 const table = document.querySelector(".table")
 const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
 let staffId = ""
-let variety_dict ={}
-let media_dict = {}
-let stage_dict = { }
+let nowPage= 0
+let PageAmount = 0
+let dataAmount = 0
 
 
 async function initialPage(){
-  let account = await getAccountFromAutho()
-  staffId = account
+  let employee_id = await getAccountFromAutho()
+  staffId = employee_id
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction()
   showSideBlockFromRouter(router)
 
-    if(!account){
+    if(!employee_id){
     window.location.assign("/")
   }
     // select
@@ -40,60 +42,45 @@ async function initialPage(){
   
 }
 
-function clearMessageAndTable(){
-  table.innerText = ""
-  tableTitleContainer.innerText = ""
-}
-
 async function sent_input_search_and_render_table(body,){
   let result = await sentFetchWithBody("post", body, `/api/search/${tableName}`)
   console.log(result)
-  if(!result["data"]){
+  let data = result["data"]
+  nowPage = parseInt(result["startPage"])
+  dataAmount = parseInt(result["dataAmount"])
+  console.log(nowPage)
+  if(data.length < 1){
     table.innerText = "no data"
   }else{
-    render_result_table(result["data"])
+    PageAmount = result["PageAmount"]
+    // render_table_from_pagination(nowPage, PageAmount)
+    render_pagination(PageAmount, paginationContainer, nowPage)
+    render_table_from_pagination(nowPage, PageAmount, search_and_render)
+    render_result_table(data, tableName, tableTitleContainer, table, PageAmount, dataAmount )
   }
 };
 
-async function render_result_table(search_result) {
-  const resultKeys = Object.keys(search_result)
-  const resultCount = resultKeys.length
-  const tableTitle = document.createElement("div")
-  const DataCount = document.createElement("div")
-  tableTitleContainer.appendChild(tableTitle)
-  tableTitleContainer.appendChild(DataCount)
-  tableTitle.innerText = `Table ${tableName}`
-  DataCount.innerText = ` Amount of row ${resultCount}`
-  table.textContent = ""
-  let columnNameArray  =  Object.keys(search_result[0])
-  const columnNameContainer = document.createElement("div")
-  const rowContainer = document.createElement("div")
-  columnNameContainer.className = "column-name-container"
-  rowContainer.className= "row-container"
-  //append column title
-  columnNameArray.forEach((element)=>{
-    let columnName =  document.createElement("div")
-    columnName.className = "column-name"
-    columnName .innerText = element
-    columnNameContainer.appendChild(columnName)
-  })
-  table.appendChild(columnNameContainer)
-  //append row value
-  search_result.forEach((element)=>{
-    console.log(element)
-    const columnValues = Object.values(element)
-    const row = document.createElement("div")
-    row.className = "table-row"
-    columnValues.forEach((element)=>{
-        let rowValue = document.createElement("div")
-        rowValue.className ="row-value"
-        rowValue.innerText = element 
-        row.appendChild(rowValue)  
-      })
-    rowContainer.appendChild(row)
-    })
-  table.appendChild(rowContainer)
-
+function search_and_render(nowPage){
+  const allData = document.querySelectorAll(".form-control");
+  let body = {};
+  body["page"] = nowPage
+  let condition ={}
+  body["condition"] = condition
+  for (let data of allData){
+    let value =  data.value;
+    if( value === ""){
+      continue
+    }
+    const classList = data.classList;
+    let columnName = classList[1].split("-")[0]
+    if ( columnName === "mother_produce" ){
+      let inputTitle = columnName +"_id";
+      condition[`${inputTitle}`] = value ;
+    }else{
+      condition[`${columnName}`] = value ;
+    }
+  };
+ sent_input_search_and_render_table(body);
 }
 
 window.addEventListener("load", (e)=>{
@@ -101,34 +88,8 @@ window.addEventListener("load", (e)=>{
 })
 
 submitBtn.addEventListener("click", (e)=>{
+  nowPage= 0
   clearMessageAndTable()
-  const allData = document.querySelectorAll(".form-control");
-  let body = {};
-  for (let data of allData){
-    let value =  data.value;
-    if( value === ""){
-      continue
-    }
-    
-    if(media_dict[`${value}`]){
-      value = media_dict[`${value}`]
-    }
-    if(stage_dict[`${value}`]){
-      value = stage_dict[`${value}`]
-    }
-    if(variety_dict[`${value}`]){
-      value = variety_dict[`${value}`]
-    }
-    const classList = data.classList;
-    let columnName = classList[1].split("-")[0]
-    if ( columnName === "mother_produce" ){
-      let inputTitle = columnName +"_id";
-      body[`${inputTitle}`] = value ;
-    }else{
-      body[`${columnName}`] = value ;
-    }
-
-  };
- sent_input_search_and_render_table(body);
+  search_and_render(nowPage)
 })
 

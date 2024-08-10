@@ -19,11 +19,16 @@ let stage_dict = { }
 console.log(tableName)
 
 async function initialPage(){
-  let account = await getAccountFromAutho()
-  staffId = account
+  let employee_id = await getAccountFromAutho()
+   if(!employee_id){
+    localStorage.clear()
+    window.location.assign("/")
+  }
+  staffId = employeeId
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction(tableName )
   showSideBlockFromRouter(router)
+
 
   // // get variety list
   // const varietyResponse = await sentFetchWithoutBody("get",`/api/variety`)
@@ -89,8 +94,8 @@ function createRandomId(){
   let now = new Date();
   let seconds = String(now.getSeconds());
   let minutes = String(now.getMinutes());
-  let random = String(Math.floor(Math.random() * 100)).padStart(2,"0");
-  let productionId = seconds + minutes + random + staffId;
+  let random = String(Math.floor(Math.random() * 10000)).padStart(2,"0");
+  let productionId = seconds + minutes + random ;
   return productionId;
 };
 

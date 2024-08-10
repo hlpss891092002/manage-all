@@ -1,3 +1,6 @@
+*{
+  font-weight: 200;
+}
 #main-container {
   margin: 0;
   width: 100%;
@@ -39,4 +42,16 @@ button {
   width: 150px;
   margin: 0 20px;
   text-overflow: hidden;
+}
+
+.col-4{
+  max-width: 200px ;
+}
+
+.table-title-container{
+  display:  flex;
+  justify-content: space-between;
+  font-size: 20px;
+  font-weight: 500;
+  border-bottom: 20px #887979;
 }

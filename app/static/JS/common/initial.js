@@ -2,15 +2,15 @@ import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_r
 
 export async function getAccountFromAutho() {
     const autho = await sentFetchWithoutBody("get","/api/staff/auth")
-  const account = await autho["account"]
-  // console.log(account)
-  // staffId = await account
-  return account
+  const employee_id = await autho["employee_id"]
+  // console.log(employee_id)
+  // staffId = await employee_id
+  return employee_id
 
 }
 
-export async function renderSideBlockList(account, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer){
-  if(!account){
+export async function renderSideBlockList(employee_id, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer){
+  if(!employee_id){
     window.location.assign("/")
   }else if (tableName === ""){
     window.location.replace(`/${router}?category`)
@@ -67,7 +67,7 @@ export async function renderSideBlockList(account, addSubList, searchSubList, up
       let searchIndex = ""
       switch (tableName){
         case "staff":
-          searchIndex = "account"
+          searchIndex = "employee_id"
           break
         case "client_order":
           searchIndex = "id"
@@ -124,7 +124,7 @@ export async function renderSideBlockList(account, addSubList, searchSubList, up
       }
       if (tableName === "produce_record" && router === "add"){
         const producerInput = document.querySelector(".producer_id-input")
-        producerInput.value = await account
+        producerInput.value = await employee_id
       }
     }else{
       return

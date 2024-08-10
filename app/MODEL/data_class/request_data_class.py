@@ -10,7 +10,7 @@ class staff_class(BaseModel):
     name : str
     email : Union[EmailStr, None]
     cellphone : Union[str, None]
-    account : str
+    employee_id : str
     password : str
     job_position :str
     

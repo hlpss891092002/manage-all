@@ -59,7 +59,7 @@ sql_staff ="""CREATE TABLE staff(
             name varchar(255) NOT NULL,
             email varchar(255),
             cellphone varchar(10),       
-            account varchar(255) NOT NULL UNIQUE,
+            employee_id varchar(255) NOT NULL UNIQUE,
             password varchar(255) NOT NULL,
             authorization_id BIGINT NOT NULL,
             in_employment bool NOT NULL,
@@ -77,7 +77,7 @@ simple_sql_media = """CREATE TABLE media(
 
 simple_sql_stage = """CREATE TABLE stage(
             id BIGINT AUTO_INCREMENT,
-            name varchar(10) NOT NULL UNIQUE,
+            name varchar(255) NOT NULL UNIQUE,
             description  varchar(255),
             PRIMARY KEY (id)       
 )"""
@@ -113,8 +113,8 @@ sql_client_order = """CREATE TABLE client_order (
             client_id  BIGINT NOT NULL,
             variety_id BIGINT NOT NULL,
             amount INT ,
-            creation_date datetime NOT NULL DEFAULT(CURRENT_TIME()),
-            shipping_date datetime NOT NULL,
+            creation_date date NOT NULL DEFAULT(CURRENT_TIME()),
+            shipping_date date NOT NULL,
             PRIMARY KEY (id), 
             FOREIGN KEY (client_id) REFERENCES client(id),
             FOREIGN KEY (variety_id) REFERENCES variety(id)

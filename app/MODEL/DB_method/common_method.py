@@ -34,7 +34,7 @@ def get_table_columns(table_name):
         columns_list = []
         for column in result:
             columnName = column["Field"]
-            if columnName == "mother_produce_id" or columnName == "producer_id" :
+            if columnName == "mother_produce_id" or columnName == "employee_id" or columnName == "producer_id":
                 columns_list.append(columnName)
                 continue
             elif columnName == "variety_id":

@@ -22,13 +22,17 @@ export async function render_result_table(search_result, tableName, tableTitleCo
   table.appendChild(columnNameContainer)
   //append row value
   search_result.forEach((elementName)=>{
-    const columnValues = Object.values(elementName)
     const row = document.createElement("div")
+    const elementArray = Object.entries(elementName)
     row.className = `table-row `
-    columnValues.forEach((element)=>{
+    elementArray.forEach((element)=>{
+        let  [key, value] = element 
+        if(key.includes("in_")){
+          value = value === 1 ? "YES" : "NO";
+        }
         let rowValue = document.createElement("div")
-        rowValue.className = `row-value ${elementName}`
-        rowValue.innerText = element 
+        rowValue.className = `row-value ${key}`
+        rowValue.innerText = value 
         row.appendChild(rowValue)  
       })
     rowContainer.appendChild(row)

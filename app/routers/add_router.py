@@ -131,11 +131,13 @@ async def create_production(authorization_data: produce_record_class, payload  :
             if (insert_produce_record(input_dict)):
                 insert_current_stock(id)
                 return  JSONResponse(status_code=200, content=ok_message_200.dict())
-    except Exception  as e:
-        if(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e}")
+    except HTTPException as e:
+        raise e    
+    except TypeError as e:
+            raise HTTPException(status_code=500, detail=f"{e}")
+    except Exception as e:
+            raise HTTPException(status_code=500, detail=f"{e}")
+
 
 @router.post("/api/add/staff")
 async def create_staff(staff__data: staff_class, payload  : Annotated[dict, Depends(user_validation)]):

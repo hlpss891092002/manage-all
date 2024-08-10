@@ -55,7 +55,7 @@ async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_val
         elif table_name == "variety":
             data = get_variety_data(condition, page)
         end = time()
-        print(f"multithread time = %.2f" % (end -start))
+        print(f"multithread time = %.2f second" % (end -start))
 
         return JSONResponse(status_code=200, content=data)
     except HTTPException as e:

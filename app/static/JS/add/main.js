@@ -24,7 +24,7 @@ async function initialPage(){
     localStorage.clear()
     window.location.assign("/")
   }
-  staffId = employeeId
+  staffId = employee_id
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction(tableName )
   showSideBlockFromRouter(router)

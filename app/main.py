@@ -6,13 +6,12 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import  HTTPException as StarletteHTTPException
-from app.routers import add_router, Read_router, staff_router, update_router, delete_router, search_router
+from app.routers import add_router, staff_router, update_router, delete_router, search_router
 from app.MODEL.data_class.response_class import databaseException
 # from app.MODEL.data_class.validation_data_class import RequestValidationError
 
 app= FastAPI()
 app.include_router(add_router.router)
-app.include_router(Read_router.router)
 app.include_router(update_router.router)
 app.include_router(delete_router.router)
 app.include_router(staff_router.router)

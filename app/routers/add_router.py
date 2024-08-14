@@ -1,6 +1,6 @@
-from fastapi import *
+from fastapi import APIRouter, Depends
 from fastapi.responses import  JSONResponse
-from typing import Annotated
+from typing import Annotated, Union
 from app.MODEL.data_class.request_data_class import *
 from app.MODEL.data_class.response_class import *
 from app.MODEL.DB_method.add_method import *
@@ -54,126 +54,33 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
 #     except Exception  as e:
 #         raise HTTPException(status_code=500, detail=f"server error {e}")
 
-@router.post("/api/add/category")
-async def create_category(category__data: category_class, payload  : Annotated[dict, Depends(user_validation)]):
+@router.post("/api/{tableName}")
+async def create_category(data : Union[variety_class, stage_class, staff_class, media_class, produce_record_class, order_class , category_class, client_class], payload  : Annotated[dict, Depends(user_validation)], tableName : str):
     try:
-        input_dict = category__data.dict()
-        insert_category(input_dict)
-        return  JSONResponse(status_code=200, content=ok_message_200.dict())
-    except Exception  as e:
-        if(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e}")
-
-@router.post("/api/add/client")
-async def create_client(client_data: client_class, payload  : Annotated[dict, Depends(user_validation)]):
-    try:
-        input_dict = client_data.dict()
-        insert_client(input_dict)
-        return  JSONResponse(status_code=200, content=ok_message_200.dict())
-    except Exception  as e:
-        if(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e}")
-
-@router.post("/api/add/client_order")
-async def create_order(order__data: order_class, payload  : Annotated[dict, Depends(user_validation)]):
-    try:
-        input_dict = order__data.dict()
+        input_dict = data.dict()
         print(input_dict)
-        insert_client_order(input_dict)
-        return  JSONResponse(status_code=200, content=ok_message_200.dict())
-    except Exception  as e:
-        if(e.status_code):
-            print(type(e))
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e}")
-
-@router.post("/api/add/media")
-async def create_media(media__data: media_class, payload  : Annotated[dict, Depends(user_validation)]):
-    try :
-        input_dict = media__data.dict()
-        print(input_dict)
-        insert_media(input_dict)
-        return  JSONResponse(status_code=200, content=ok_message_200.dict())
-    except Exception  as e:
-        if(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e}")
-
-@router.post("/api/add/produce_record")
-async def create_production(authorization_data: produce_record_class, payload  : Annotated[dict, Depends(user_validation)]):
-    print(authorization_data)
-    try:
-        input_dict = authorization_data.dict()
-        id = input_dict["id"]
-        print(id)
-        mother_produce_id = input_dict["mother_produce_id"]
-        print(mother_produce_id)
-        if mother_produce_id:
-            if (len(get_current_stock(mother_produce_id))):
-                insert_produce_record(input_dict)
-                insert_current_stock(id)
-                consumed_reason = input_dict["consumed_reason"]
-                consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False )
-                return  JSONResponse(status_code=200, content=ok_message_200.dict())
+        print(tableName)
+        if tableName == "client_order":
+            insert_client_order(input_dict, tableName)
+        elif tableName == "produce_record":
+            id = input_dict["id"]
+            mother_produce_id = input_dict["mother_produce_id"]
+            if mother_produce_id:
+                    insert_produce_record(input_dict)
+                    consumed_reason = input_dict["consumed_reason"]
+                    consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False )
             else:
-                not_found =  error_message(
-	                error = True,
-                    message = f"{mother_produce_id} is not exist"
-                )
-                return JSONResponse(status_code=400, content=not_found.dict())
+                insert_produce_record(input_dict)
+        elif tableName == "staff":
+            insert_staff(input_dict)
+        elif tableName == "variety":
+            insert_variety(input_dict)
         else:
-            if (insert_produce_record(input_dict)):
-                insert_current_stock(id)
-                return  JSONResponse(status_code=200, content=ok_message_200.dict())
+            insert_tableName_data(input_dict, tableName)
+        return  JSONResponse(status_code=200, content=ok_message_200.dict())
     except HTTPException as e:
         raise e    
     except TypeError as e:
             raise HTTPException(status_code=500, detail=f"{e}")
     except Exception as e:
             raise HTTPException(status_code=500, detail=f"{e}")
-
-
-@router.post("/api/add/staff")
-async def create_staff(staff__data: staff_class, payload  : Annotated[dict, Depends(user_validation)]):
-    try :
-        input_dict = staff__data.dict()
-        # print(input_dict)
-        insert_staff(input_dict)
-        return  JSONResponse(status_code=200, content=ok_message_200.dict())
-    except Exception  as e:
-        if(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e}")
-
-@router.post("/api/add/stage")
-async def create_stage(stage__data: stage_class, payload  : Annotated[dict, Depends(user_validation)]):
-    try:
-        input_dict = stage__data.dict()
-        print(input_dict)
-        insert_stage(input_dict)
-        return JSONResponse(status_code=200, content=ok_message_200.dict())
-    except Exception  as e:
-        if(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e}")
-
-@router.post("/api/add/variety")
-async def create_variety(variety__data: variety_class, payload  : Annotated[dict, Depends(user_validation)]):
-    try:
-        input_dict = variety__data.dict()
-        print(input_dict)
-        insert_variety(input_dict)
-        return JSONResponse(status_code=200, content=ok_message_200.dict())
-    except Exception  as e:
-        if(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e}")

@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr
-from typing import Any, Dict, Optional, Sequence, Type, Union
+from typing import Any, Dict, Optional, Sequence, Type, Union, Annotated
 from datetime import datetime
+
+
 
 class authorization_class(BaseModel):
     job_position: str

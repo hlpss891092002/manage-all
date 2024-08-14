@@ -1,6 +1,7 @@
-import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_response.js"
+import{sentFetchWithoutBody,sentFetchWithBody, sentFetchWithParams} from "../common/sent_fetch_get_response.js"
 import {render_result_table, render_pagination, render_table_from_pagination, clearMessageAndTable} from "../common/render_table.js"
 import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
+import {sent_input_search_and_render_table } from "../common/search_and_render.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
 const inputContainer = document.querySelector(".input-container")
@@ -42,25 +43,9 @@ async function initialPage(){
   
 }
 
-async function sent_input_search_and_render_table(body,){
-  let result = await sentFetchWithBody("post", body, `/api/search/${tableName}`)
-  console.log(result)
-  let data = result["data"]
-  nowPage = parseInt(result["startPage"])
-  dataAmount = parseInt(result["dataAmount"])
-  console.log(nowPage)
-  if(data.length < 1){
-    table.innerText = "no data"
-  }else{
-    PageAmount = result["PageAmount"]
-    // render_table_from_pagination(nowPage, PageAmount)
-    render_pagination(PageAmount, paginationContainer, nowPage)
-    render_table_from_pagination(nowPage, PageAmount, search_and_render)
-    render_result_table(data, tableName, tableTitleContainer, table, PageAmount, dataAmount )
-  }
-};
 
-function search_and_render(nowPage){
+
+async function search_and_render(nowPage){
   const allData = document.querySelectorAll(".form-control");
   let body = {};
   body["page"] = nowPage
@@ -80,8 +65,12 @@ function search_and_render(nowPage){
       condition[`${columnName}`] = value ;
     }
   };
- sent_input_search_and_render_table(body);
+ const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, table, dataAmount);
+ PageAmount = result["PageAmount"]
+ nowPage = parseInt(result["startPage"])
+ dataAmount = parseInt(result["dataAmount"])
 }
+
 
 window.addEventListener("load", (e)=>{
   initialPage()

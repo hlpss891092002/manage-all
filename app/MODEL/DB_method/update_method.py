@@ -62,7 +62,6 @@ def update_non_foreign_key_data(condition, table_name):
         cursor.close()
         con.close()
 
-
 def update_client_order_data(condition, table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
@@ -244,24 +243,6 @@ def update_variety_data(condition, table_name):
 
     except mysql.connector.Error as e:
         raise HTTPException(status_code=400, detail=f"Value in client or variety is invalid. Please check input value")
-    finally:
-        cursor.close()
-        con.close()
-
-def get_current_stock(condition):
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql="""SELECT produce_record_id FROM  current_stock
-        where produce_record_id = %s
-        """
-        val = (condition,)
-        cursor.execute(sql,val)
-        result = cursor.fetchall()
-        print(result)
-        return result
-    except mysql.connector.Error as e:
-        raise e
     finally:
         cursor.close()
         con.close()

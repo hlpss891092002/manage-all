@@ -49,7 +49,7 @@ export async function render_pagination(pageAmount, paginationContainer, nowPage
   let startPage = 0
   let endPage = 0
   paginationContainer.appendChild(pagination)
-  pagination.className = "pagination"
+  pagination.className = "pagination justify-content-center"
   const frontArrow = document.createElement("li")
   frontArrow.className = "page-item front-arrow"
   const frontSpan = document.createElement("span")
@@ -123,18 +123,18 @@ export async function render_table_from_pagination(nowPage, PageAmount, callback
   const pagination = document.querySelector(".pagination")
   let targetPage = 0
   pagination.addEventListener("click",(e)=>{
-    let target = e.target.innerText
-    console.log(target)
-    if (nowPage === target -1){
+    const target = e.target.innerText
+    const targetElementName = e.target.nodeName
+    if(targetElementName !== "SPAN"){
+      return
+    }else if (nowPage === target -1){
       e.preventDefault()
-      console.log(nowPage)
     }else if(target === "Previous" && nowPage === 0){
       e.preventDefault()
     }else if(target === "Next" && nowPage === PageAmount -1 ){
       e.preventDefault()
     }else{
       clearMessageAndTable()
-      console.log(nowPage)
       if(target === "Previous"){
           targetPage = nowPage - 1
       }else if(target === "Next"){
@@ -142,7 +142,6 @@ export async function render_table_from_pagination(nowPage, PageAmount, callback
       }else{
         targetPage = target - 1
       }
-      console.log(targetPage)
       callback(targetPage)
     }
   })

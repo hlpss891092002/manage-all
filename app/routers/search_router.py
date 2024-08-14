@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import  JSONResponse
 from typing import Annotated
@@ -29,34 +30,22 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
     except Exception  as e:
         raise HTTPException(status_code=500, detail=f"server error {e}")
 
-@router.post("/api/search/{table_name}")
-async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], table_name:str):
+@router.get("/api/{table_name}")
+async def get_media_list(page:str, payload  : Annotated[dict, Depends(user_validation)], table_name:str, condition: str):
 
     try :
+        print(table_name)
+
+        page = int(page)
+        condition = json.loads(condition)
+        print(type(condition))
         start = time()
         data = None
-        # print(body)
-        page, condition = body.values()
-        print(page, condition)
-        if table_name == "category":
-            data = get_category_data(condition, page)
-        elif table_name == "client":
-            data = get_client_data(condition, page)
-        elif table_name == "client_order":
-            data = get_client_order_data(condition, page)
-        elif table_name == "media":
-            data = get_media_data(condition, page)
-        elif table_name == "produce_record":
-            data = get_produce_record_data_from_condition(condition, page)
-        elif table_name == "staff":
-            data = get_staff_data(condition, page)
-        elif table_name == "stage":
-            data = get_stage_data(condition, page)
-        elif table_name == "variety":
-            data = get_variety_data(condition, page)
+
+        data = get_data_by_tablename(condition, page, table_name)
+
         end = time()
         print(f"multithread time = %.2f second" % (end -start))
-
         return JSONResponse(status_code=200, content=data)
     except HTTPException as e:
         raise e    

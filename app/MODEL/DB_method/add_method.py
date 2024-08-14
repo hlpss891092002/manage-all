@@ -28,14 +28,14 @@ try:
 except Exception as e:
         raise HTTPException(status_code=500, detail=f"{e}")
 
-def insert_authorization(job_position, authorization, category, client, client_order, current_stock, media, produce_record, staff, stage, variety):
+def insert_authorization(job_position, authorization, category, client, client_order, media, produce_record, staff, stage, variety):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
-        sql="""INSERT INTO authorization(job_position, authorization, category, client, client_order, current_stock, media, produce_record, staff, stage, variety)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        sql="""INSERT INTO authorization(job_position, authorization, category, client, client_order, media, produce_record, staff, stage, variety)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
-        val=(job_position, authorization, category, client, client_order, current_stock, media, produce_record, staff, stage, variety)
+        val=(job_position, authorization, category, client, client_order,  media, produce_record, staff, stage, variety)
         cursor.execute(sql,val)
         con.commit()
         print(f"insert {job_position} authorization")
@@ -46,18 +46,30 @@ def insert_authorization(job_position, authorization, category, client, client_o
         cursor.close()
         con.close()
 
-def insert_category(input_dict):
-    category, description = input_dict.values()
+def insert_tableName_data(input_dict, tableName):
+    # category, description = input_dict.values()
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
-        sql="""INSERT INTO category(category, description)
-        VALUES (%s, %s);
-        """
-        val=(category, description)
+        sql = f"""INSERT INTO {tableName} ( """
+        sql_val = """ VALUES ( """
+        columns = list(input_dict.keys())
+        val = list()
+        for column in columns:
+            print(column)
+            if columns.index(column) == len(columns) - 1:
+                sql = sql + " , " + str(column) + " )"
+                sql_val = sql_val + ", %s )"  
+            elif columns.index(column) == 0 :
+                 sql = sql + str(column)
+                 sql_val = sql_val + " %s " 
+            else:
+                sql = sql  + " , " + str(column)
+                sql_val = sql_val + ", %s "
+            val.append(input_dict[column])
+        sql = sql + sql_val
         cursor.execute(sql,val)
         con.commit()
-        print(f"insert {category} category")
         return True
     except Exception as e:
             raise HTTPException(status_code=400, detail=f"{e}")
@@ -65,31 +77,12 @@ def insert_category(input_dict):
         cursor.close()
         con.close()
 
-def insert_client(input_dict):
-    name, description = input_dict.values()
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True)
-    try:
-        sql="""INSERT INTO client(name, description)
-        VALUES (%s, %s);
-        """
-        val=(name, description)
-        cursor.execute(sql,val)
-        con.commit()
-        print(f"insert {id} client")
-        return True
-    except Exception as e:
-            raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-
-def insert_client_order(input_dict):
+def insert_client_order(input_dict, tableName):
     client, variety, amount,  shipping_date = input_dict.values()
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
-        sql="""INSERT INTO client_order(client_id, variety_id, amount, shipping_date)
+        sql=f"""INSERT INTO {tableName} (client_id, variety_id, amount, shipping_date)
         VALUES ((SELECT id from client WHERE name =  %s), (SELECT id from variety WHERE variety_code =  %s), %s, %s);
         """
         val=(client, variety, amount, shipping_date)
@@ -99,25 +92,6 @@ def insert_client_order(input_dict):
         return True
     except Exception as e:
             print(e)
-            raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-
-def insert_media(input_dict):
-    name, description = input_dict.values()
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True)
-    try:
-        sql="""INSERT INTO media(name, description)
-        VALUES (%s, %s);
-        """
-        val=(name, description)
-        cursor.execute(sql,val)
-        con.commit()
-        print(f"insert {name} media")
-        return True
-    except Exception as e:
             raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
@@ -165,26 +139,6 @@ def insert_staff( input_dict, in_employment = True):
         cursor.close()
         con.close()
 
-def insert_stage(input_dict):
-    print(input_dict)
-    name, description = input_dict.values()
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True)
-    try:
-        sql="""INSERT INTO stage(name, description)
-        VALUES (%s, %s);
-        """
-        val=(name, description)
-        cursor.execute(sql,val)
-        con.commit()
-        print(f"insert {name} stage")
-        return True
-    except Exception as e:
-            raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-
 def insert_variety(input_dict):
     variety_code, name, description, category = input_dict.values()
     con = connection_pool.get_connection()
@@ -204,24 +158,6 @@ def insert_variety(input_dict):
         cursor.close()
         con.close()
 
-def insert_current_stock(record_id):
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True)
-    try:
-        sql="""INSERT INTO current_stock(produce_record_id)
-        VALUES (%s);
-        """
-        val=(record_id,)
-        cursor.execute(sql,val)
-        con.commit()
-        print(f"insert {record_id} stock")
-        return True
-    except Exception as e:
-            raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-
 def consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False ):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
@@ -231,11 +167,8 @@ def consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False ):
         WHERE id = %s
         """
         val1=( in_stock, consumed_reason, mother_produce_id)
-        sql2="""DELETE FROM current_stock WHERE produce_record_id = %s
-         """
-        val2=(mother_produce_id,)
+       
         cursor.execute(sql1,val1)
-        cursor.execute(sql2,val2)
         con.commit()
         print(f"delete {mother_produce_id} stock")
         return True

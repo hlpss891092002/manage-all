@@ -28,7 +28,7 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
     except Exception  as e:
         raise HTTPException(status_code=500, detail=f"server error {e}")
 
-@router.delete("/api/delete/{table_name}")
+@router.delete("/api/{table_name}")
 async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], table_name:str):
     try :
         delete_data(body, table_name)

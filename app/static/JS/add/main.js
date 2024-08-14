@@ -57,7 +57,7 @@ async function initialPage(){
 }
 
 async function sent_input_db(body){
-  const  result = await sentFetchWithBody("post", body, `/api/add/${tableName}`)
+  const  result = await sentFetchWithBody("post", body, `/api/${tableName}`)
   if (result["ok"]){
     responseMessage.innerText = "add success"
   }else{

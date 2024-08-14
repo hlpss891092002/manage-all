@@ -44,7 +44,6 @@ simple_sql_authorization_level = """CREATE TABLE authorization(
             category bool NOT NULL, 
             client bool NOT NULL, 
             client_order bool NOT NULL, 
-            current_stock bool NOT NULL, 
             media bool NOT NULL, 
             produce_record bool NOT NULL, 
             staff bool NOT NULL, 
@@ -70,7 +69,7 @@ sql_staff ="""CREATE TABLE staff(
 
 simple_sql_media = """CREATE TABLE media(
             id BIGINT AUTO_INCREMENT,
-            name varchar(10) NOT NULL UNIQUE,
+            name varchar(255) NOT NULL UNIQUE,
             description  varchar(255),
             PRIMARY KEY (id)     
 )"""
@@ -139,12 +138,6 @@ sql_produce_record = """CREATE TABLE produce_record(
             FOREIGN KEY (mother_produce_id) REFERENCES  produce_record(id)
 )"""
 
-sql_current_stock = """CREATE TABLE current_stock(
-            id BIGINT AUTO_INCREMENT,
-            produce_record_id varchar(255) UNIQUE,
-            PRIMARY KEY (id),
-            FOREIGN KEY (produce_record_id) REFERENCES  produce_record(id)
-)"""
 
 create_table(simple_sql_authorization_level)
 create_table(simple_sql_category)
@@ -155,4 +148,4 @@ create_table(sql_staff)
 create_table(sql_variety)
 create_table(sql_client_order)
 create_table(sql_produce_record)
-create_table(sql_current_stock)
+

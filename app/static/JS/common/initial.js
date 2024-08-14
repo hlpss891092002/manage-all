@@ -12,7 +12,7 @@ export async function getAccountFromAutho() {
 export async function renderSideBlockList(employee_id, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer){
   if(!employee_id){
     window.location.assign("/")
-  }else if (tableName === ""){
+  }else if (tableName === "" &&  router !== "staffIndex"){
     window.location.replace(`/${router}?category`)
   }
   console.log(updateSubList)
@@ -21,9 +21,6 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
   const tables = await sentFetchWithoutBody("get","/api/staff/tables")
   //render side block
   for (let tableName of tables){
-    if(tableName === "current_stock"){
-      continue
-    }
     const searchListItem = document.createElement("li")
     searchListItem.className = "list-group-item"
     const searchItemLink = document.createElement("a")

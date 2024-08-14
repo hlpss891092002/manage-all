@@ -1,6 +1,7 @@
-import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_response.js"
+import{sentFetchWithoutBody, sentFetchWithBody, sentFetchWithParams} from "../common/sent_fetch_get_response.js"
 import {render_result_table, render_pagination, render_table_from_pagination, clearMessageAndTable} from "../common/render_table.js"
 import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
+import {sent_input_search_and_render_table } from "../common/search_and_render.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
 const updateSubList = document.querySelector("#update-sub-list")
@@ -19,6 +20,7 @@ const router = location.pathname.replace("/", "")
 let staffId = ""
 let nowPage= 0
 let PageAmount = 0
+let dataAmount = 0
 
 async function initialPage(){
   let employee_id = await getAccountFromAutho()
@@ -48,14 +50,7 @@ async function initialPage(){
   
 }
 
-// function clearMessageAndTable(){
-//   message.innerText = ""
-//   table.innerText = ""
-//   tableTitleContainer.innerText = ""
-//   paginationContainer.innerText = ""
-// }
-
-export function search_and_render(nowPage){
+async function search_and_render(nowPage){
   const data = document.querySelector(".update-index");
   let body = {};
   body["page"] = nowPage
@@ -69,29 +64,16 @@ export function search_and_render(nowPage){
       let columnName = classList[2].split("-")[1]
       condition[`${columnName}`] = value ;
     }
- sent_input_search_and_render_table(body);
+  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, table, dataAmount);
+  PageAmount = result["PageAmount"]
+  nowPage = parseInt(result["startPage"])
+  dataAmount = parseInt(result["dataAmount"])
  
 };
 
-async function sent_input_search_and_render_table(body){
-  let result = await sentFetchWithBody("post", body, `/api/search/${tableName}`)
-  console.log(result)
-  let data = result["data"]
-  nowPage = parseInt(result["startPage"])
-  console.log(nowPage)
-  if(data.length < 1){
-    table.innerText = "no data"
-  }else{
-    PageAmount = result["PageAmount"]
-    render_pagination(PageAmount, paginationContainer, nowPage)
-    render_table_from_pagination(nowPage, PageAmount, search_and_render)
-    render_result_table(data, tableName, tableTitleContainer, table, PageAmount)
-  }
-};
 
 async function sent_input_update(body){
-  let result = await sentFetchWithBody("put", body, `/api/update/${tableName}`)
-  console.log(result)
+  let result = await sentFetchWithBody("put", body, `/api/${tableName}`)
   if(!result["ok"]){
     const errorMessage = result["message"]
     if( errorMessage.includes("variety is invalid") ){
@@ -140,7 +122,6 @@ updateBtn.addEventListener("click",((e)=>{
         continue
       }
     }
-    console.log(Object.keys(updateItems).length)
     if(Object.keys(updateItems).length === 0){
       alert("please input update value")
     }else{
@@ -152,7 +133,5 @@ updateBtn.addEventListener("click",((e)=>{
   }else{
     alert("please input update index")
   }
-
-  console.log(body)
   
 }))

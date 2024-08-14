@@ -52,7 +52,7 @@ def get_table_list_from_auth( employee_id):
     cursor = con.cursor(dictionary=True, buffered = True)
  
     try:
-        sql = """SELECT  authorization, category, client, client_order, current_stock, media, produce_record, staff, stage, variety FROM staff
+        sql = """SELECT  authorization, category, client, client_order, media, produce_record, staff, stage, variety FROM staff
         INNER JOIN authorization
         ON staff.authorization_id = authorization.id
         WHERE employee_id = %s

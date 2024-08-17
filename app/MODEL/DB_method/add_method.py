@@ -56,7 +56,6 @@ def insert_tableName_data(input_dict, tableName):
         columns = list(input_dict.keys())
         val = list()
         for column in columns:
-            print(column)
             if columns.index(column) == len(columns) - 1:
                 sql = sql + " , " + str(column) + " )"
                 sql_val = sql_val + ", %s )"  
@@ -98,7 +97,7 @@ def insert_client_order(input_dict, tableName):
         con.close()
 
 def insert_produce_record(input_dict , in_stock = True):
-    print(input_dict)
+    # print(input_dict)
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     id, variety, media, producer_id, stage, mother_produce_id, consumed_reason = input_dict.values()
@@ -170,7 +169,6 @@ def consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False ):
        
         cursor.execute(sql1,val1)
         con.commit()
-        print(f"delete {mother_produce_id} stock")
         return True
     except Exception as e:
             raise HTTPException(status_code=400, detail=f"{e}")

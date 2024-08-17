@@ -12,7 +12,7 @@
 <body>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/staffIndex">manage-all</a>
+      <a class="navbar-brand" href="/staffIndex">Manage-All</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
         aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -31,24 +31,27 @@
       <div class="page-container row align-items-start">
         <div class="sidebar-page">
           <ul class="list-group list-group-flush"  >
-            <li class="list-group-item" data-bs-toggle="collapse" data-bs-target="#add-sub-list">add
+            <li class="list-group-item list-group-item-primary" data-bs-toggle="collapse" data-bs-target="#add-sub-list">add
             </li>
             <ul class="list-group  collapse" id="add-sub-list">
             </ul>
-            <li class="list-group-item" data-bs-toggle="collapse" data-bs-target="#search-sub-list">search</li>
+            <li class="list-group-item list-group-item-primary" data-bs-toggle="collapse" data-bs-target="#search-sub-list">search</li>
             <ul class="list-group  collapse" id="search-sub-list">
             </ul>
-            <li class="list-group-item " id="side-block-update" data-bs-toggle="collapse" data-bs-target="#update-sub-list">update
+            <li class="list-group-item list-group-item-primary" id="side-block-update" data-bs-toggle="collapse" data-bs-target="#update-sub-list">update
             </li>
             <ul class="list-group  collapse" id="update-sub-list">
             </ul>
-            <li class="list-group-item " id="side-block-delete" data-bs-toggle="collapse" data-bs-target="#delete-sub-list">delete
+            <li class="list-group-item list-group-item-primary" id="side-block-delete" data-bs-toggle="collapse" data-bs-target="#delete-sub-list">delete
             </li>
             <ul class="list-group  collapse" id="delete-sub-list"></ul>
           </ul>
         </div>
         <div class="main-page">
-          main 
+          <div class="category-amount-in-stock main-block">Category amount in stock</div>
+          <div class="largest-amount-stock main-block">Top 5 number of  varieties</div>
+          <div class="category-add-yesterday main-block">Yesterday add variety amount</div>
+          <div class="category-consume-yesterday main-block">Yesterday consumed variety amount</div>
         </div>
       </div>
     </div>

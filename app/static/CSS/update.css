@@ -31,9 +31,6 @@ button {
   cursor: pointer;
 }
 
-.column-name-container {
-  display: flex;
-}
 
 .column-name {
   padding: 8px;

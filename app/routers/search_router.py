@@ -32,7 +32,6 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
 
 @router.get("/api/{table_name}")
 async def get_media_list(page:str, payload  : Annotated[dict, Depends(user_validation)], table_name:str, condition: str):
-
     try :
         print(table_name)
 

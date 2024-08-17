@@ -30,6 +30,7 @@ def get_data_by_tablename(condition, page, table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
+        int(page)
         sql = ""
         # sql_order = ""
         if table_name == "client_order":
@@ -39,8 +40,8 @@ def get_data_by_tablename(condition, page, table_name):
             join  variety 
             on client_order.variety_id = variety.id 
         """
-            # sql_order = " ORDER BY client_order.id DESC"
-            sql_count = f""" Select count(client_order.id) from client_order  
+            sql_order = " ORDER BY client_order.id DESC"
+            sql_count = f""" Select client_order.id from client_order  
             inner join client 
             on  client_order.client_id =  client.id inner 
             join  variety 
@@ -49,24 +50,24 @@ def get_data_by_tablename(condition, page, table_name):
             sql = """SELECT staff.employee_id, staff.name, staff.email, staff.cellphone,  staff.in_employment , authorization.job_position  FROM  staff 
             INNER JOIN authorization 
             ON staff.authorization_id = authorization.id"""
-            # sql_order = " ORDER BY staff.id DESC"
-            sql_count = f""" Select count(id) from {table_name}"""
+            sql_order = " ORDER BY staff.id DESC"
+            sql_count = f""" Select id from {table_name}"""
         elif table_name == "category":
             sql=f"""Select category, description from {table_name}
         """
-            # sql_order = "  ORDER BY id DESC"
-            sql_count = f""" Select count(id) from {table_name}"""
+            sql_order = "  ORDER BY id DESC"
+            sql_count = f""" Select id from {table_name}"""
         elif table_name == "variety":
             sql="""Select variety.variety_code, variety.name, variety.description, category.category
             FROM variety 
             INNER JOIN  category
             ON variety.category_id = category.id
             """
-            # sql_order = " ORDER BY variety.id DESC"
-            sql_count = f""" Select count(variety.id) from {table_name} INNER JOIN  category
-        ON variety.category_id = category.id"""
+            sql_order = " ORDER BY variety.id DESC"
+            sql_count = f""" Select variety.id from {table_name} INNER JOIN  category
+            ON variety.category_id = category.id"""
         elif table_name == "produce_record":
-            sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety, media.name as media, staff.name as producer, staff.employee_id as producer_id, stage.name as stage, produce_record.manufacturing_date , produce_record.mother_produce_id, produce_record.in_stock, produce_record.consumed_reason
+            sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety , media.name as media, staff.name as producer, staff.employee_id as producer_id, stage.name as stage, produce_record.manufacturing_date , produce_record.mother_produce_id, produce_record.in_stock, produce_record.consumed_reason
             FROM  produce_record 
             INNER JOIN  variety
             ON  produce_record.variety_id = variety.id
@@ -77,8 +78,8 @@ def get_data_by_tablename(condition, page, table_name):
             INNER JOIN  stage
             ON  produce_record.stage_id = stage.id
             """
-            # sql_order = " ORDER BY produce_record.manufacturing_date DESC"
-            sql_count = f""" Select count({table_name}.id) from {table_name} INNER JOIN  variety
+            sql_order = " ORDER BY produce_record.manufacturing_date DESC"
+            sql_count = f""" Select produce_record.variety_id from produce_record INNER JOIN  variety
             ON  produce_record.variety_id = variety.id
             INNER JOIN  media
             ON  produce_record.media_id = media.id
@@ -90,11 +91,11 @@ def get_data_by_tablename(condition, page, table_name):
         else :
             sql=f"""Select name, description from {table_name}
         """
-            # sql_order = "  ORDER BY id DESC"
-            sql_count = f""" Select count(id) from {table_name}"""
+            sql_order = "  ORDER BY id DESC"
+            sql_count = f""" Select id from {table_name}"""
         data_amount = 0
-
-        sql_limit = """ limit %s , 30"""
+        sql_count_limit = " limit 101"
+        sql_limit = """ limit %s , 10"""
         condition_individual = ""
         val = list()
         if condition :
@@ -188,35 +189,45 @@ def get_data_by_tablename(condition, page, table_name):
                             condition_individual=f""" AND {column} = %s"""
                 val.append(condition[f"{column}"])
                 sql = sql + condition_individual
-                sql_count = sql_count  + condition_individual
-            
+                sql_count = sql_count  + condition_individual  
+            sql_count = sql_count +  sql_count_limit
+            print(sql_count)
             cursor.execute(sql_count,val)
+            print(sql_count)
             print("execute sql_count")
-            count = list(cursor.fetchone().values())[0]
+            count = len(cursor.fetchall())
             data_amount = count
             sql = sql  + sql_limit
             val.append(page*30)
             cursor.execute(sql,val)
+            print(sql)
             print("execute sql")
         else: 
+            sql_count = sql_count +  sql_count_limit
             cursor.execute(sql_count)
             print("execute sql_count")
-            count = list(cursor.fetchone().values())[0]
+            count = len(cursor.fetchall())
+            print(count)
             data_amount = count
             sql = sql + sql_limit
             val.append(page*30)
             cursor.execute(sql,val) 
             print("execute sql")
         result = cursor.fetchall()
+        print(len(result))
         for data in result:
             keys = data.keys()
             for key in keys:
                 if "date" in key:
                     data[f"{key}"] = datetime.strftime(data[f"{key}"], "%Y-%m-%d")
         response = {}
-        page_amount = math.ceil(data_amount/30)
+        page_amount = math.ceil(data_amount/10)
         response["PageAmount"] = page_amount
-        response["dataAmount"] = data_amount
+        if data_amount < 100:
+            response["dataAmount"] = data_amount
+        else:
+            response["dataAmount"] = "100+"
+        
         response["startPage"] = page
         response["data"] = result
 

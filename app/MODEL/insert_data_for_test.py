@@ -21,9 +21,9 @@ def insert_authorization_for_test():
     insert_authorization("manager", False, True, True, True, True, True, True, True, True)
     insert_authorization("Systems Engineer",  True, True, True, True, True, True, True, True, True)
     insert_authorization("Administrator", False, True, True, True, True, True, True, False, True)
-    insert_authorization("Operator Leader",  False, False, False, False, True, True, True, False, True)
-    insert_authorization("Operator",  False, False, False, False, True, False,  False, False, False)
-# insert_authorization_for_test()
+    insert_authorization("Operator Leader",  False, False, False, False, True, True, False, True,  True)
+    insert_authorization("Operator",  False, False, False, False,  False, True, False, False, False)
+insert_authorization_for_test()
 def insert_staffs_for_test():
     staff_name = ["a","b","c","d","e","f","g","h","i","j","k"]
     body = {}
@@ -54,7 +54,7 @@ def insert_staffs_for_test():
         body["authorization"] = authorization
         insert_staff(body)
         count +=1
-# insert_staffs_for_test()
+insert_staffs_for_test()
 def insert_category_for_test():
     category_list = ["Phalaenopsis", "Epidendrum", "Dendrobium", "Oncidium", "Platycerium", "Alocasia","Philodendron", "Anthurium"]
     for category in category_list:
@@ -62,7 +62,7 @@ def insert_category_for_test():
         body["category"] = category
         body["description"] = f"{category} for test"
         insert_tableName_data(body, "category")
-# insert_category_for_test()        
+insert_category_for_test()        
 def insert_client_for_test():
     client_list = ["台蘭", "Orchid for all", "花花農場", "尼花世界", "尼豪景觀公司", "Flor beauty","Born to bloom", "Flor Grande"]
     country = ["taiwan", "nicaragua", "Argentina", "USA", "UK"]
@@ -72,10 +72,10 @@ def insert_client_for_test():
         body["name"] = client
         body["description"] = f"{client} in {country[num]}"
         insert_tableName_data(body, "client")
-# insert_client_for_test()
+insert_client_for_test()
 def insert_variety_for_test():
     category_list = ["Phalaenopsis", "Epidendrum", "Dendrobium", "Oncidium", "Platycerium", "Alocasia","Philodendron", "Anthurium"]
-    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
+    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028","KVV044","KWK045","KVA044","ABP032","ALB022","AWS405","WAW400","UWU040","QAQ404","OAO010","QWQ104","EQD004","NHO011","NHK010","AKB001","EVA004","BAB054","NAA101","GAA009","ADP009","GPA001","GTA009"]
     for variety_code in variety_code_list :
         num = random.randint(0, 7)
         body = {}
@@ -84,7 +84,7 @@ def insert_variety_for_test():
         body["description"] = f"{variety_code} in {category_list[num]}"
         body["category"] = category_list[num]
         insert_variety(body)
-# insert_variety_for_test()
+insert_variety_for_test()
 def insert_client_order_for_test():
     client_list = ["台蘭", "Orchid for all", "花花農場", "尼花世界", "尼豪景觀公司", "Flor beauty","Born to bloom", "Flor Grande"]
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
@@ -97,7 +97,7 @@ def insert_client_order_for_test():
         body["amount"] = random.randint(1000, 6000)
         body["shipping_date"] = today + timedelta(weeks = num)
         insert_client_order(body, "client_order")
-# insert_client_order_for_test() 
+insert_client_order_for_test() 
 def insert_media_for_test():
     media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
     for media in media_list :
@@ -106,7 +106,7 @@ def insert_media_for_test():
         body["name"] = media
         body["description"] = f"{media} for test"
         insert_tableName_data(body, "media")
-# insert_media_for_test()
+insert_media_for_test()
 def insert_stage_for_test():
     stage_list = ["initial","propagation", "grown", "strong", "rooting"]
     for stage in stage_list :
@@ -114,17 +114,17 @@ def insert_stage_for_test():
         body["name"] = stage
         body["description"] = f"{stage} for test"
         insert_tableName_data(body, "stage")
-# insert_stage_for_test()
-counting = []
-initial_list= []
-def insert_initial_produce_record_for_test():
-    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
+insert_stage_for_test()
+
+
+def insert_initial_produce_record_for_test(counting, initial_list):
+    variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028","KVV044","KWK045","KVV044","ABP032","ALB022","AWS405","WAW400","UWU040","QAQ404","OAO010","QWQ104","EQD004","NHO011","NHK010","AKB001","EVA004","BAB054","NAA101","GAA009","ADP009","GPA001","GTA009"]
     media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
     staff_name = ["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
     stage_list = ["initial","propagation", "grown", "strong", "rooting"]
     for variety_code in variety_code_list:
         count = 0
-        while count <= 10:
+        while count <= 19:
             uid = uuid.uuid4()
             num1 = random.randint(0, 7)
             num2 = random.randint(0, 6)
@@ -142,21 +142,20 @@ def insert_initial_produce_record_for_test():
             body["stage"] = "initial"
             body["mother_produce_id"] = None
             body["consumed_reason"] = None
-            print(body)
             insert_produce_record(body , in_stock = True)
  
             initial_list.append(id)
             count += 1
             counting.append("1")            
-propagation_list = []
-def insert_propagation_produce_record_for_test():
+
+def insert_propagation_produce_record_for_test(counting, initial_list, propagation_list):
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
     media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
     staff_name = ["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
     stage_list = ["initial","propagation", "grown", "strong", "rooting"]
     for initial in initial_list:
         count = 0
-        while count <= 10:
+        while count <= 14:
             uid = uuid.uuid4()
             num1 = random.randint(0, 7)
             num2 = random.randint(0, 6)
@@ -174,22 +173,21 @@ def insert_propagation_produce_record_for_test():
             body["stage"] = "propagation"
             body["mother_produce_id"] = initial
             body["consumed_reason"] = "consumed"
-            print(body)
             insert_produce_record(body , in_stock = True)
 
             consume_mother_stock(initial, "consumed for propagation", in_stock = False )
             propagation_list.append(id)
             count += 1
             counting.append("1")  
-grown_list = []
-def insert_grown_produce_record_for_test():
+
+def insert_grown_produce_record_for_test(counting, propagation_list, grown_list):
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
     media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
     staff_name = ["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
     stage_list = ["initial","propagation", "grown", "strong", "rooting"]
     for propagation in propagation_list:
         count = 0
-        while count <= 10:
+        while count <= 5:
             uid = uuid.uuid4()
             num1 = random.randint(0, 7)
             num2 = random.randint(0, 6)
@@ -207,22 +205,21 @@ def insert_grown_produce_record_for_test():
             body["stage"] = "grown"
             body["mother_produce_id"] = propagation
             body["consumed_reason"] = "consumed"
-            print(body)
             insert_produce_record(body , in_stock = True)
 
             consume_mother_stock(propagation, "consumed for grown", in_stock = False )
             grown_list.append(id)
             count += 1
             counting.append("1")
-strong_list = []        
-def insert_strong_produce_record_for_test():
+       
+def insert_strong_produce_record_for_test(counting, grown_list, strong_list):
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
     media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
     staff_name = ["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
     stage_list = ["initial","propagation", "grown", "strong", "rooting"]
     for grown in grown_list:
         count = 0
-        while count <= 10:
+        while count <= 3:
             uid = uuid.uuid4()
             num1 = random.randint(0, 7)
             num2 = random.randint(0, 6)
@@ -240,7 +237,6 @@ def insert_strong_produce_record_for_test():
             body["stage"] = "strong"
             body["mother_produce_id"] = grown
             body["consumed_reason"] = "consumed"
-            print(body)
             insert_produce_record(body , in_stock = True)
 
             consume_mother_stock(grown, "consumed  for strong", in_stock = False )
@@ -248,14 +244,14 @@ def insert_strong_produce_record_for_test():
             count += 1
             counting.append("1")  
 
-def insert_rooting_produce_record_for_test():
+def insert_rooting_produce_record_for_test(counting, strong_list):
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
     media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
     staff_name = ["2024080004","2024080005","2024080006","2024080007","2024080008","2024080009","2024080010"]
     stage_list = ["initial","propagation", "grown", "strong", "rooting"]
     for strong in strong_list:
         count = 0
-        while count <= 10:
+        while count <= 2:
             uid = uuid.uuid4()
             num1 = random.randint(0, 7)
             num2 = random.randint(0, 6)
@@ -273,33 +269,116 @@ def insert_rooting_produce_record_for_test():
             body["stage"] = "rooting"
             body["mother_produce_id"] = strong
             body["consumed_reason"] = "consumed"
-            print(body)
             insert_produce_record(body , in_stock = True)
 
-            consume_mother_stock(strong, "consumed for rooting", in_stock = False )
-            strong_list.append(id)
+            consume_mother_stock(strong, "consumed  for rooting", in_stock = False )
             count += 1
-            counting.append("1")  
+            counting.append("1") 
+    
 
+
+def data_for_test_rooting():
+    start = time()
+    counting = []
+    initial_list= []
+    propagation_list = []
+    grown_list = []
+    strong_list = [] 
+    insert_initial_produce_record_for_test(counting, initial_list)
+    insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
+    insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
+    insert_strong_produce_record_for_test(counting, grown_list, strong_list)
+    insert_rooting_produce_record_for_test(counting, strong_list)
+    end = time()
+    print(f"rooting time = %.2f" % (end -start))
+    print(f"amount rooting {len(counting)}")
+
+def data_for_test_strong():
+    start = time()
+    counting = []
+    initial_list= []
+    propagation_list = []
+    grown_list = []
+    strong_list = [] 
+    insert_initial_produce_record_for_test(counting, initial_list)
+    insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
+    insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
+    insert_strong_produce_record_for_test(counting, grown_list, strong_list)
+    # insert_rooting_produce_record_for_test(counting, strong_list)
+    end = time()
+    print(f"strong time = %.2f" % (end -start))
+    print(f"amount strong {len(counting)}")
+
+def data_for_test_grown():
+    start = time()
+    counting = []
+    initial_list= []
+    propagation_list = []
+    grown_list = []
+    strong_list = [] 
+    insert_initial_produce_record_for_test(counting, initial_list)
+    insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
+    insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
+    # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
+    # insert_rooting_produce_record_for_test(counting, strong_list)()
+    end = time()
+    print(f"grown time = %.2f" % (end -start))
+    print(f" grown amount {len(counting)}")
+
+def data_for_test_propagation():
+    start = time()
+    counting = []
+    initial_list= []
+    propagation_list = []
+    grown_list = []
+    strong_list = [] 
+    insert_initial_produce_record_for_test(counting, initial_list)
+    insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
+    # insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
+    # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
+    # insert_rooting_produce_record_for_test(counting, strong_list)
+    end = time()
+    print(f"propagation time = %.2f" % (end -start))
+    print(f"amount propagation {len(counting)}")
+
+def data_for_test_initial():
+    start = time()
+    counting = []
+    initial_list= []
+    propagation_list = []
+    grown_list = []
+    strong_list = [] 
+    insert_initial_produce_record_for_test(counting, initial_list)
+    # insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
+    # insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
+    # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
+    # insert_rooting_produce_record_for_test(counting, strong_list)
+    end = time()
+    print(f"initial time = %.2f" % (end -start))
+    print(f"amount initial {len(counting)}")
 
 def multi_threads_test():
-    start = time()
-    insert_initial_produce_record_for_test()
-    insert_propagation_produce_record_for_test()
-    insert_grown_produce_record_for_test()
-    insert_strong_produce_record_for_test()
-    insert_rooting_produce_record_for_test()
-    # thread1 = threading.Thread(target=insert_initial_produce_record_for_test)
-    # thread2 = threading.Thread(target=insert_propagation_produce_record_for_test)
-    # thread3 = threading.Thread(target=insert_grown_produce_record_for_test)
-    # thread1.start()
-    # thread2.start()
-    # thread3.start()
-    end = time()
-    print(f"multithread time = %.2f" % (end -start))
-    print(f"amount {len(counting)}")
+    a = threading.Thread(target=data_for_test_rooting)
+    b = threading.Thread(target=data_for_test_strong)
+    c = threading.Thread(target=data_for_test_grown)
+    d = threading.Thread(target=data_for_test_propagation)
+    e = threading.Thread(target=data_for_test_initial)
+    a.start()
+    b.start()
+    c.start()
+    d.start()
+    e.start()
+
+# def test_data():
+    # data_for_test_rooting()
+    # data_for_test_strong()
+    # data_for_test_grown()
+    # data_for_test_propagation()
+    # data_for_test_initial()
 
 multi_threads_test()
+
+
 
 
 

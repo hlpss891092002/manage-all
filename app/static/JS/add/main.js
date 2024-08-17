@@ -26,8 +26,10 @@ async function initialPage(){
   }
   staffId = employee_id
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
-  signOutFunction(tableName )
+  signOutFunction(tableName)
   showSideBlockFromRouter(router)
+ 
+  
 
 
   // // get variety list

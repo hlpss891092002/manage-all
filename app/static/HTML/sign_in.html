@@ -3,20 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>manageall</title>
+  <link rel="stylesheet" href="./static/CSS/sigin.css">
+  <title>Manage-All</title>
 </head>
 <body>
-  <nav class="nav"></nav>
+  
   <section class="sign-in-block">
-    <div class="decorator-bar"></div>
-    <div class="sign-in-title">system sign in </div>
-    <div class="sign-in-input-container">
-      <!-- <form action="" class="sign-in-form"> -->
-        <input type="text" name="staff-id" id="staff-id" placeholder="staff id ">
-        <input type="text" name="staff-password" id="staff-password" type="password" placeholder="staff password">
-        <input type="button" value="sign in" id = "sign-in-btn">
-      <!-- </form> -->
-      <div class="response-message"></div>
+    <div class="block-container">
+      <div class="introduce">
+        <div class="decorator-bar"></div>
+        <div class="introduce-text">
+          <div class="introduce-title">輕鬆建立自己的庫存管理系統</div>
+          <div class="div">簡單管理庫存紀錄</div>
+        </div>
+      </div>
+      <div class="sign-in-input-container">
+        <div class="decorator-bar"></div>
+        <div class="sign-in-title">Welcome to Manage-All !</div>
+        <!-- <form action="" class="sign-in-form"> -->
+          <input type="text" name="staff-id" id="staff-id" placeholder="Staff ID ">
+          <input type="password" name="staff-password" id="staff-password" type="password" placeholder="Password">
+          <input type="button" value="Sign In" id = "sign-in-btn">
+        <!-- </form> -->
+        <div class="response-message"></div>
+      </div>
     </div>
   </section>
   <section class="rooter"></section>

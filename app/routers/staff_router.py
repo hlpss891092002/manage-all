@@ -65,3 +65,19 @@ async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
        return tableList
     except Exception as e:
        raise HTTPException(status_code=500, detail=f"server error {e}")
+    
+@router.get("/api/latest")
+async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
+    try:
+       result = {}
+       employee_id = payload["employee_id"]
+       result["yesterday_produce"] = get_yesterday_produce()
+      #  result["yesterday_consume"] = get_yesterday_consume()
+      #  result["category_stock"] = get_category_stock()
+      #  result["largest_amount"] = get_largest_amount_stock()
+
+       
+       return result
+
+    except Exception as e:
+       raise HTTPException(status_code=500, detail=f"server error {e}")

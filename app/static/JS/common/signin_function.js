@@ -8,8 +8,11 @@ export async function signInStaff() {
     const password = document.querySelector("#staff-password").value
     console.log(employee_id + password)
     switch (true){
-      case !employee_id ||  !password:
-        responseMessage.innerText = "請輸入帳號密碼"
+      case !employee_id :
+        responseMessage.innerText = "Please input staff ID. "
+        return
+      case !password:
+        responseMessage.innerText = "Please input password."
         return
       case employee_id !== null &&  password !== null:
         responseMessage.innerText = ""
@@ -22,7 +25,7 @@ export async function signInStaff() {
         const responseJSON = await response
         if (responseJSON["token"]){     
           localStorage.setItem("userState", `${responseJSON["token"]}`)
-          responseMessage.innerText = "登入成功"
+          responseMessage.innerText = "Sign in success!"
           window,location.assign("/staffIndex")
         }else{
           responseMessage.classList.remove("success")

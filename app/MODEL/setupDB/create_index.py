@@ -15,7 +15,7 @@ try:
     }
     connection_pool = mysql.connector.pooling.MySQLConnectionPool(
         pool_name='mypool',
-        pool_size=5,
+        pool_size=10,
         **dbconfig
     )
     # print('database connected')
@@ -26,48 +26,56 @@ con = connection_pool.get_connection()
 cursor = con.cursor(dictionary = True, buffered = True)
 sql_index_category_category = """CREATE INDEX idx_category_category ON category (category);"""
 sql_index_client_name = """CREATE INDEX idx_client_name ON client (name);"""
-sql_index_client_order_id = """CREATE INDEX idx_client_order_id ON client_order (client_id);"""
+# sql_index_client_order_id = """CREATE INDEX idx_client_order_id ON client_order (client_id);"""
 sql_index_media_name = """CREATE INDEX idx_media_name ON media (name);"""
-sql_index_produce_record_id = """CREATE INDEX idx_produce_record_id ON produce_record  (id);"""
+
 sql_index_staff_name = """CREATE INDEX idx_staff_employee_id ON staff (employee_id);"""
 sql_index_stage_name = """CREATE INDEX idx_stage_name ON stage (name);"""
 sql_index_variety_variety_code = """CREATE INDEX idx_variety_variety_code ON variety  (variety_code);"""
-sql_index_produce_record_foreign_key ="""
-CREATE INDEX idx_produce_record_variety_id ON produce_record(variety_id);
-CREATE INDEX idx_produce_record_media_id ON produce_record(media_id);
-CREATE INDEX idx_produce_record_producer_id ON produce_record(producer_id);
-CREATE INDEX idx_produce_record_stage_id ON produce_record(stage_id);
-"""
+sql_index_variety_category_id  = """CREATE INDEX idx_variety_category_id ON variety  (category_id);"""
+
 sql_index_produce_record_for_count = """CREATE INDEX idx_produce_record_count 
-    ON produce_record(id, variety_id, media_id, producer_id, stage_id)"""
+    ON produce_record(variety_id, media_id, producer_id, stage_id, mother_produce_id)"""
+# sql_index_produce_record_foreign_key_variety = """
+# CREATE INDEX idx_produce_record_variety_code ON produce_record  (variety_id);
+# """
+# sql_index_produce_record_id_foreign_key_variety = """
+# CREATE INDEX idx_produce_record_id_and_variety_code ON produce_record  (id, variety_id);
+# """
 
-# sql_drop_index_category_category = """DROP INDEX category_category ON category (category);"""
-# sql_drop_index_client_name = """DROP INDEX client_name ON client (name);"""
-# sql_drop_index_client_order_id = """drop INDEX client_order_id ON client_order (id);"""
-# sql_drop_index_media_name = """DROP INDEX media_name ON media (name);"""
-# sql_drop_index_produce_record_id = """DROP INDEX produce_record_id ON produce_record  (id);"""
-# sql_drop_index_staff_name = """DROP INDEX staff_name ON staff (name);"""
-# sql_drop_index_stage_name = """DROP INDEX stage_name ON stage (name);"""
-# sql_drop_index_variety_variety_code = """DROP INDEX variety_variety_code ON variety  (variety_code);"""
+# sql_index_produce_record_foreign_key ="""
 
+# CREATE INDEX idx_produce_record_producer_id ON produce_record  (producer_id);
+# CREATE INDEX idx_produce_record_variety_id ON produce_record  (variety_id);"""
 
-# cursor.execute(sql_index_category_category)
-# cursor.execute(sql_index_client_name)
-# cursor.execute(sql_index_client_order_id)
-# cursor.execute(sql_index_media_name)
-# cursor.execute(sql_index_produce_record_id)
-# cursor.execute(sql_index_staff_name)
-# cursor.execute(sql_index_variety_variety_code)
-# cursor.execute(sql_index_stage_name)
+show_index = "show index from produce_record"
+drop_index = "drop index idx_produce_record_stage on produce_record"
 
-# cursor.execute(sql_drop_index_category_category)
-# cursor.execute(sql_drop_index_client_name)
-# cursor.execute(sql_drop_index_client_order_id)
-# cursor.execute(sql_drop_index_media_name)
-# cursor.execute(sql_drop_index_produce_record_id)
-# cursor.execute(sql_drop_index_staff_name)
-# cursor.execute(sql_drop_index_stage_name)
-# cursor.execute(sql_drop_index_variety_variety_code )
+sql_count = f"""explain analyze Select count(produce_record.id) from produce_record 
+             JOIN  variety
+            ON  produce_record.variety_id = variety.id
+             JOIN  media
+            ON  produce_record.media_id = media.id
+             JOIN  staff
+            ON  produce_record.producer_id = staff.id
+             JOIN  stage
+            ON  produce_record.stage_id = stage.id
+            limit 10000
+            """
 
+# cursor.execute(sql_index_produce_record_id_in_stocK_foreign_key_variety)
+cursor.execute(sql_index_category_category)
+cursor.execute(sql_index_client_name)
+cursor.execute(sql_index_media_name)
+cursor.execute(sql_index_staff_name)
+cursor.execute(sql_index_stage_name)
+cursor.execute(sql_index_variety_variety_code)
+cursor.execute(sql_index_produce_record_for_count)
+
+# cursor.execute(show_index)
+result = cursor.fetchall()
+# for index in result:
+#     print(index["Key_name"], " : ", index["Column_name"])
+print(result)
 cursor.close()
 con.close()

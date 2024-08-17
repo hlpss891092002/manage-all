@@ -11,6 +11,7 @@ const submitBtn = document.querySelector(".submit-btn")
 const tableTitleContainer = document.querySelector(".table-title-container")
 const paginationContainer = document.querySelector(".pagination-container")
 const table = document.querySelector(".table")
+const message = document.querySelector(".message")
 const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
@@ -65,7 +66,7 @@ async function search_and_render(nowPage){
       condition[`${columnName}`] = value ;
     }
   };
- const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, table, dataAmount);
+ const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount);
  PageAmount = result["PageAmount"]
  nowPage = parseInt(result["startPage"])
  dataAmount = parseInt(result["dataAmount"])

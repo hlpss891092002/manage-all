@@ -10,12 +10,12 @@ export async function render_result_table(search_result, tableName, tableTitleCo
   let columnNameArray  =  Object.keys(search_result[0])
   const columnNameContainer = document.createElement("div")
   const rowContainer = document.createElement("div")
-  columnNameContainer.className = "column-name-container"
+  columnNameContainer.className = "column-name-container "
   rowContainer.className= "row-container"
   //append column title
   columnNameArray.forEach((element)=>{
     let columnName =  document.createElement("div")
-    columnName.className = "column-name"
+    columnName.className = "column-name row-value"
     columnName .innerText = element
     columnNameContainer.appendChild(columnName)
   })
@@ -57,7 +57,7 @@ export async function render_pagination(pageAmount, paginationContainer, nowPage
   frontSpan.innerText = "Previous"
   frontArrow.appendChild(frontSpan)
   pagination.appendChild(frontArrow)
-  
+  pageAmount = pageAmount + nowPage
   if (nowPage <= 4){
     startPage = 0
   }else if( pageAmount - nowPage  <= 10){

@@ -31,7 +31,7 @@ async function initialPage(){
   staffId = employee_id
   renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
   signOutFunction()
-  showSideBlockFromRouter(router)
+ showSideBlockFromRouter(router)
 
  if(!employee_id){
     localStorage.clear()
@@ -64,7 +64,7 @@ async function search_and_render(nowPage){
       let columnName = classList[2].split("-")[1]
       condition[`${columnName}`] = value ;
     }
-  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, table, dataAmount);
+  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount);
   PageAmount = result["PageAmount"]
   nowPage = parseInt(result["startPage"])
   dataAmount = parseInt(result["dataAmount"])

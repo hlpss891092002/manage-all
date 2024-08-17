@@ -1,0 +1,67 @@
+*{
+  font-size: 24px;
+}
+
+body{
+  background-color: rgb(250, 255, 255);
+}
+
+div{
+  text-align: center;
+}
+
+.sign-in-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 400px;
+  margin: 50px 0 ;
+}
+
+.decorator-bar{
+  background-color: aqua;
+  height: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.block-container{
+  display: flex;
+  border-style: solid;
+  border-color: black;
+  border-radius: 5px;
+}
+
+.sign-in-input-container{
+  background-color: azure;
+  display: flex;
+  flex-direction: column;
+  justify-content:center ;
+
+}
+input {
+  padding-left: 20px;
+  border-radius: 5px;
+  height: 50px;
+  display: block;
+  margin: 20px 40px;
+}
+
+#sign-in-btn{
+  margin-bottom: 20px;
+}
+
+.response-message{
+  margin-bottom: 40px;
+}
+
+.introduce{
+  height: 100%;
+  width: 400px;
+  align-items: center;
+}
+
+.introduce-text{
+  margin-top: 150px ;
+}

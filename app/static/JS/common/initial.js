@@ -22,7 +22,8 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
   //render side block
   for (let tableName of tables){
     const searchListItem = document.createElement("li")
-    searchListItem.className = "list-group-item"
+    searchListItem.className = `list-group-item `
+    searchListItem.setAttribute("id", `search-${tableName}`)
     const searchItemLink = document.createElement("a")
     searchItemLink.href = `/search?${tableName}`
     searchItemLink.innerText= tableName
@@ -31,7 +32,8 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
 
 
     const addListItem = document.createElement("li")
-    addListItem.className = "list-group-item"
+    addListItem.className = `list-group-item `
+    addListItem.setAttribute("id", `add-${tableName}`)
     const addItemLink = document.createElement("a")
     addItemLink.href = `/add?${tableName}`
     addItemLink.innerText= tableName
@@ -39,7 +41,8 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     addSubList.appendChild(addListItem)
 
     const updateListItem = document.createElement("li")
-    updateListItem.className = "list-group-item"
+    updateListItem.className = `list-group-item `
+    updateListItem.setAttribute("id", `update-${tableName}`)
     const updateItemLink = document.createElement("a")
     updateItemLink.href = `/update?${tableName}`
     updateItemLink.innerText= tableName
@@ -48,14 +51,22 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
 
     
     const deleteListItem = document.createElement("li")
-    deleteListItem.className = "list-group-item"
+    deleteListItem.className = `list-group-item `
+    deleteListItem.setAttribute("id", `delete-${tableName}`)
     const deleteItemLink = document.createElement("a")
     deleteItemLink.href = `/delete?${tableName}`
     deleteItemLink.innerText= tableName
     deleteListItem.appendChild(deleteItemLink)
     deleteSubList.appendChild(deleteListItem)
-    
   }
+    const activeSubListItem = document.querySelector(`#${router}-${tableName}`)
+    console.log(activeSubListItem)
+    activeSubListItem.classList.add("active")
+  //disabled select
+  const selectRouter = document.querySelector(`#side-block-${router}`) 
+  selectRouter.classList.add("disabled")
+  selectRouter.style.backgroundColor = "#CFE2FF"
+
   // get item according table
   if(router !== "staffIndex"){
     const result = await sentFetchWithoutBody("get",`/api/${router}/tableItem/${tableName}`)
@@ -74,7 +85,7 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
           break
       }
       const inputGroup = document.createElement("div")
-      inputGroup.className = "input-group mb-3 "
+      inputGroup.className = "input-group "
       const inputGroupText = document.createElement("div")
       inputGroupText.className = "input-group-text"
       inputGroupText.innerText = `${searchIndex}`
@@ -82,7 +93,7 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
       categoryInput.className = `form-control  ${router}-index search-${searchIndex}`
       inputGroup.appendChild(inputGroupText)
       inputGroup.appendChild(categoryInput)
-      searchInputContainer.appendChild(inputGroup)
+      searchInputContainer.prepend(inputGroup)
     }
     // insert item block
     if (inputContainer){
@@ -99,7 +110,7 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
         continue
       }
       const inputGroup = document.createElement("div")
-      inputGroup.className = "input-group mb-3 "
+      inputGroup.className = "input-group "
       inputGroup.innerHTML = `<span class="input-group-text ${column}-input-disc">${column}</span>`
       let inputItem = document.createElement("input");
       inputItem.className = `form-control ${column}-input update-item`
@@ -118,6 +129,17 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
       // inputSelect.appendChild(optionSelect)
       // inputGroup.appendChild(inputSelect)
       // inputContainer.appendChild(inputGroup)
+      }
+      console.log(inputContainer.children.length)
+      console.log(window.innerWidth)
+      const windowInnerWith = window.innerWidth
+      const inputContainerChildrenNum = inputContainer.children.length
+      if(inputContainerChildrenNum == 2 && windowInnerWith > 1000){
+        console.log("true")
+        inputContainer.style.gridTemplateColumns ="1fr 1fr" 
+      }else if(inputContainerChildrenNum == 3 && windowInnerWith > 1200){
+        console.log("true 2 ")
+        inputContainer.style.gridTemplateColumns ="1fr 1fr 1fr" 
       }
       if (tableName === "produce_record" && router === "add"){
         const producerInput = document.querySelector(".producer_id-input")
@@ -139,10 +161,11 @@ export function signOutFunction(){
 }
 
 export function showSideBlockFromRouter(router){
-  const sideBlock =document.querySelector(`#side-block-${router}`)
-  const sideSubList =document.querySelector(`#${router}-sub-list`)
+  const sideBlock = document.querySelector(`#side-block-${router}`)
+  const sideSubList = document.querySelector(`#${router}-sub-list`)
   console.log(sideBlock)
   console.log(sideSubList) 
   sideBlock.classList.remove("collapsed")
   sideSubList.classList.add("show")
 }
+

@@ -36,7 +36,7 @@ async def check_staff_exist(body: sign_in_data):
       "iss" : "manageAll",
       "employee_id" : employee_id,
       "sub" : name,
-      "exp" : datetime.now() + timedelta(days=7)
+      "exp" : datetime.now() + timedelta(days=1)
     }
     token = jwt.encode(payload, os.getenv("JWTSECRET"), algorithm="HS256")
     response_token = {

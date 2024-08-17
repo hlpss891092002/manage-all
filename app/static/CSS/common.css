@@ -73,7 +73,8 @@ button {
 
 .main-page {
   padding: 20px;
-  flex: auto
+  flex: auto;
+  max-width: 80%;
 }
 
 

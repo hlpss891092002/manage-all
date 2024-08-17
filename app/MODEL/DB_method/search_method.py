@@ -102,8 +102,7 @@ def get_data_by_tablename(condition, page, table_name):
             sql_condition=f"""  where  """
             sql = sql + sql_condition
             sql_count = sql_count + sql_condition
-            columns = list(condition.keys())
-            
+            columns = list(condition.keys())           
             for column in columns:
                 print(column, columns.index(column))
                 if columns.index(column) == 0 :

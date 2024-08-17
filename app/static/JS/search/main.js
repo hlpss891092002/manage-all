@@ -29,6 +29,7 @@ async function initialPage(){
   showSideBlockFromRouter(router)
 
     if(!employee_id){
+    localStorage.clear()
     window.location.assign("/")
   }
     // select

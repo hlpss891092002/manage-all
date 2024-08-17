@@ -33,10 +33,7 @@ async function initialPage(){
   signOutFunction()
  showSideBlockFromRouter(router)
 
- if(!employee_id){
-    localStorage.clear()
-    window.location.assign("/")
-  }
+
     // select
     // inputGroup.innerHTML = `<label class="input-group-text " for="${column}">${column}</label>`
     // const inputSelect = document.createElement("select")

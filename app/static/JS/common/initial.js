@@ -11,6 +11,7 @@ export async function getAccountFromAutho() {
 
 export async function renderSideBlockList(employee_id, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer){
   if(!employee_id){
+    localStorage.clear()
     window.location.assign("/")
   }else if (tableName === "" &&  router !== "staffIndex"){
     window.location.replace(`/${router}?category`)

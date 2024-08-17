@@ -358,13 +358,13 @@ def data_for_test_initial():
     print(f"amount initial {len(counting)}")
 
 def multi_threads_test():
-    a = threading.Thread(target=data_for_test_rooting)
-    b = threading.Thread(target=data_for_test_strong)
+    # a = threading.Thread(target=data_for_test_rooting)
+    # b = threading.Thread(target=data_for_test_strong)
     c = threading.Thread(target=data_for_test_grown)
     d = threading.Thread(target=data_for_test_propagation)
     e = threading.Thread(target=data_for_test_initial)
-    a.start()
-    b.start()
+    # a.start()
+    # b.start()
     c.start()
     d.start()
     e.start()

@@ -83,7 +83,7 @@ simple_sql_stage = """CREATE TABLE stage(
 
 simple_sql_category = """CREATE TABLE category(
             id BIGINT AUTO_INCREMENT, 
-            category varchar(20) NOT NULL UNIQUE,
+            name varchar(20) NOT NULL UNIQUE,
             description varchar(255),
             PRIMARY KEY (id)
 )"""

@@ -144,7 +144,7 @@ def insert_variety(input_dict):
     cursor = con.cursor(dictionary = True)
     try:
         sql="""INSERT INTO variety(variety_code, name, description, category_id)
-        VALUES (%s, %s, %s, (SELECT id FROM category  WHERE category =  %s));
+        VALUES (%s, %s, %s, (SELECT id FROM category  WHERE name =  %s));
         """
         val=(variety_code, name, description, category)
         cursor.execute(sql,val)

@@ -32,7 +32,7 @@ def get_data_by_tablename(condition, page, table_name):
     try:
         int(page)
         sql = ""
-        sql_count = f""" Select count(id) as count from {table_name} 
+        sql_count = f""" Select count({table_name}.id) as count from {table_name} 
         """
         if table_name == "client_order":
             sql="""SELECT client_order.id as order_id, client.name as client, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  
@@ -41,18 +41,10 @@ def get_data_by_tablename(condition, page, table_name):
             join  variety 
             on client_order.variety_id = variety.id 
             """
-
-            # sql_count = f""" Select client_order.id from client_order  
-            # inner join client 
-            # on  client_order.client_id =  client.id inner 
-            # join  variety 
-            # on client_order.variety_id = variety.id """
         elif table_name == "staff":
             sql = """SELECT staff.employee_id, staff.name, staff.email, staff.cellphone,  staff.in_employment , authorization.job_position  FROM  staff 
             INNER JOIN authorization 
             ON staff.authorization_id = authorization.id"""
-
-            # sql_count = f""" Select id from {table_name}"""
         
         elif table_name == "variety":
             sql="""Select variety.variety_code, variety.name, variety.description, category.name as category
@@ -61,8 +53,6 @@ def get_data_by_tablename(condition, page, table_name):
             ON variety.category_id = category.id
             """
 
-            # sql_count = f""" Select variety.id from {table_name} INNER JOIN  category
-            # ON variety.category_id = category.id"""
         elif table_name == "produce_record":
             sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety , media.name as media, staff.name as producer, staff.employee_id as producer_id, stage.name as stage, produce_record.manufacturing_date , produce_record.mother_produce_id, produce_record.in_stock, produce_record.consumed_reason
             FROM  produce_record 
@@ -75,32 +65,58 @@ def get_data_by_tablename(condition, page, table_name):
             INNER JOIN  stage
             ON  produce_record.stage_id = stage.id
             """
-
-
         else :
             sql=f"""Select name, description from {table_name}
         """
-            # sql_count = f""" Select id from {table_name}"""
         data_amount = 0
-        # sql_count_limit = " limit 101"
         sql_limit = """ limit %s , 10"""
         condition_individual = ""
         val = list()
         if condition :
             sql_condition=f"""  where  """
             sql = sql + sql_condition
-            sql_count = sql_count + sql_condition
-            columns = list(condition.keys())           
+            
+            columns = list(condition.keys())
+            columns_set = set(columns)
+            client_order_FK_set = {"variety_code", "client"}
+            produce_record_FK_set = {"variety_code", "media", "producer_id", "stage",}
+            variety_FK_set = {"category"}
+            # print(len()
+            if table_name == "produce_record" and columns_set & produce_record_FK_set:
+                print("produce_record : list")
+                sql_join = """
+                INNER JOIN  variety
+                ON  produce_record.variety_id = variety.id
+                INNER JOIN  media
+                ON  produce_record.media_id = media.id
+                INNER JOIN  staff
+                ON  produce_record.producer_id = staff.id
+                INNER JOIN  stage
+                ON  produce_record.stage_id = stage.id"""
+                sql_count = sql_count +  sql_join
+
+            elif table_name == "client_order" and columns_set & client_order_FK_set :
+                print("client_order : list")
+                sql_count = sql_count + """
+                inner join client 
+                on  client_order.client_id =  client.id inner 
+                join  variety 
+                on client_order.variety_id = variety.id """
+            elif table_name == "variety" and columns_set & variety_FK_set :
+                print("variety : list")
+                sql_count = sql_count + """
+                INNER JOIN  category
+                ON variety.category_id = category.id"""
+            else:
+                print("set fail")
+            sql_count = sql_count + sql_condition        
             for column in columns:
-                print(column, columns.index(column))
                 if columns.index(column) == 0 :
                     print(column, condition[column])
                     if column == "client" or column == "stage" or column == "media" or column =="category":
-                        print(column)
                         sql_sub = f"""select id from {column} where name = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-
                         start = time()
                         cursor.execute(sql_sub, val_sub)
                         end = time()
@@ -110,7 +126,6 @@ def get_data_by_tablename(condition, page, table_name):
                         column = column + "_id"
                         condition_individual = f" {table_name}.{column} = %s"
                         column = column.replace("_id", "")                   
-                        print(column)
                     elif column == "producer_id":
                         sql_sub = f"""select id from staff where employee_id = %s"""
                         val_sub = list()
@@ -234,9 +249,8 @@ def get_data_by_tablename(condition, page, table_name):
             data_end = time()
             print(f"get data = %.2f second" % (data_end -data_start))
             print("execute sql")
-        print(f"sql_count  : {sql_count}")
         result = cursor.fetchall()
-        print(len(result))
+        # print(len(result))
         for data in result:
             keys = data.keys()
             for key in keys:
@@ -252,7 +266,7 @@ def get_data_by_tablename(condition, page, table_name):
         
         response["startPage"] = page
         response["data"] = result
-        print(f"sql  : {sql}")
+        # print(f"sql  : {sql}")
         print(f"sql_count  : {sql_count}")
         print(f"val {val}")
         return response

@@ -29,17 +29,28 @@ def delete_data(condition, table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     print(condition)
-    delete_index= list(condition.values())[0]
-    print(delete_index)
-    delete_index_column = list(delete_index.keys())[0]
-    delete_index_value = list(delete_index.values())[0]
+    delete_index_column= list(condition.keys())[0]
     print(delete_index_column)
-    print(delete_index_value)
+    values = condition[delete_index_column]
+    print(values)
     try:
-        val = list()
+        val = list(values)
         sql = f"""DELETE FROM  {table_name} """
-        sql_condition = f"""WHERE {delete_index_column} = %s"""
-        val.append(delete_index_value)
+        sql_condition = ""
+        if len(val) > 1 :
+            sql_condition = f"""WHERE {table_name}.{delete_index_column} in ("""
+            valNum = len(val)
+            count = 0
+            while  count < valNum:
+                if count == 0 :
+                    sql_condition = sql_condition + " %s"
+                elif count == len(val)-1:
+                    sql_condition = sql_condition + ", %s)"
+                else:
+                    sql_condition = sql_condition + ", %s "
+                count +=1
+        else:
+            sql_condition = f"""WHERE {table_name}.{delete_index_column}  = %s"""
         sql = sql + sql_condition
         cursor.execute(sql,val)
         con.commit()

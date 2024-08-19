@@ -171,6 +171,10 @@ button {
   background-color: #CFE2FF;
 }
 
+.checkbox{
+  width: 50px;
+}
+
 @media (max-width:1600px) {
   .main-page{
     width: 1000px;

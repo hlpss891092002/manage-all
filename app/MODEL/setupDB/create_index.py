@@ -24,7 +24,7 @@ except mysql.connector.Error as e:
 
 con = connection_pool.get_connection()
 cursor = con.cursor(dictionary = True, buffered = True)
-sql_index_category_category = """CREATE INDEX idx_category_category ON category (category);"""
+sql_index_category_category = """CREATE INDEX idx_category_category ON category (name);"""
 sql_index_client_name = """CREATE INDEX idx_client_name ON client (name);"""
 # sql_index_client_order_id = """CREATE INDEX idx_client_order_id ON client_order (client_id);"""
 sql_index_media_name = """CREATE INDEX idx_media_name ON media (name);"""
@@ -35,7 +35,10 @@ sql_index_variety_variety_code = """CREATE INDEX idx_variety_variety_code ON var
 sql_index_variety_category_id  = """CREATE INDEX idx_variety_category_id ON variety  (category_id);"""
 
 sql_index_produce_record_for_count = """CREATE INDEX idx_produce_record_count 
-    ON produce_record(variety_id, media_id, producer_id, stage_id, mother_produce_id)"""
+    ON produce_record(variety_id, media_id, producer_id, stage_id)"""
+
+sql_index_produce_record_for_count_2 = """-- CREATE INDEX idx_produce_record_count_2 
+--     ON produce_record(variety_id, media_id, producer_id, stage_id, manufacturing_date, in_stock, consumed_reason);"""
 # sql_index_produce_record_foreign_key_variety = """
 # CREATE INDEX idx_produce_record_variety_code ON produce_record  (variety_id);
 # """

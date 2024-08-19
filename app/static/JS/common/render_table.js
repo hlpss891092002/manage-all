@@ -1,4 +1,4 @@
-export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount ) {
+export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount, router ) {
   const resultKeys = Object.keys(search_result)
   const tableTitle = document.createElement("div")
   const DataCount = document.createElement("div")
@@ -13,6 +13,9 @@ export async function render_result_table(search_result, tableName, tableTitleCo
   columnNameContainer.className = "column-name-container "
   rowContainer.className= "row-container"
   //append column title
+  const checkboxItem = document.createElement("div")
+  checkboxItem.className = "checkbox "
+  columnNameContainer.appendChild(checkboxItem)
   columnNameArray.forEach((element)=>{
     let columnName =  document.createElement("div")
     columnName.className = "column-name row-value"
@@ -24,24 +27,38 @@ export async function render_result_table(search_result, tableName, tableTitleCo
   search_result.forEach((elementName)=>{
     const row = document.createElement("div")
     const elementArray = Object.entries(elementName)
-    row.className = `table-row `
+    const valueKey = Object.values(elementName)[0]
+    row.className = `table-row name-`
     elementArray.forEach((element)=>{
-        let  [key, value] = element 
+      let  [key, value] = element 
         if(key.includes("in_")){
           value = value === 1 ? "YES" : "NO";
         }
         let rowValue = document.createElement("div")
         rowValue.className = `row-value ${key}`
         rowValue.innerText = value 
-        row.appendChild(rowValue)  
+        if(elementArray.indexOf(element)===0){
+          const formCheck = document.createElement("div")
+          formCheck.className = `form-check checkbox row-value ${key}`
+          formCheck.innerHTML= `<div class="form-check">
+          <input class="form-check-input column-name-${key}" type="checkbox" id="${value}">
+          <label class="form-check-label" for="${value}">
+            ${value}
+          </label>
+          `
+          row.appendChild(formCheck)
+        }else{
+          row.appendChild(rowValue)
+        }
+  
       })
     rowContainer.appendChild(row)
     })
   table.appendChild(rowContainer)
-
+  
 };
 
-export async function render_pagination(pageAmount, paginationContainer, nowPage){
+export async function render_pagination(pageAmount, paginationContainer, nowPage, router){
   const paginationNav= document.createElement("nav")
   paginationNav.className = "pagination-nav"
   paginationNav.setAttribute("aria-label", "Page navigation")
@@ -49,6 +66,15 @@ export async function render_pagination(pageAmount, paginationContainer, nowPage
   let startPage = 0
   let endPage = 0
   paginationContainer.appendChild(pagination)
+  if (router === "delete"){
+    const deleteBTN = document.createElement("button")
+    deleteBTN.className = `${router}-btn`
+    const img = document.createElement("img")
+    img.src = "./static/icon/trash-can.png"
+    deleteBTN.appendChild(img)
+    paginationContainer.appendChild(deleteBTN)
+    
+  }
   pagination.className = "pagination justify-content-center"
   const frontArrow = document.createElement("li")
   frontArrow.className = "page-item front-arrow"
@@ -57,7 +83,8 @@ export async function render_pagination(pageAmount, paginationContainer, nowPage
   frontSpan.innerText = "Previous"
   frontArrow.appendChild(frontSpan)
   pagination.appendChild(frontArrow)
-  pageAmount = pageAmount + nowPage
+
+
   if (nowPage <= 4){
     startPage = 0
   }else if( pageAmount - nowPage  <= 10){

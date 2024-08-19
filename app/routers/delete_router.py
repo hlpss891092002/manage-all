@@ -31,16 +31,15 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
 @router.delete("/api/{table_name}")
 async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], table_name:str):
     try :
+        print(body, table_name)
         delete_data(body, table_name)
         response = {
             "ok" : True
         }
         return JSONResponse(status_code=200, content=response)
-    except Exception  as e:
-        print(e)
-        if(isinstance(e, AttributeError)):
-            raise HTTPException(status_code=500, detail=f"server error {e} ")
-        elif(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e} ")
+    except HTTPException as e:
+        raise e    
+    except TypeError as e:
+            raise HTTPException(status_code=500, detail=f"{e}")
+    except Exception as e:
+            raise HTTPException(status_code=500, detail=f"{e}")

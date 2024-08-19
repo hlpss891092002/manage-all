@@ -1,7 +1,7 @@
 import {render_result_table, render_pagination, render_table_from_pagination, clearMessageAndTable} from "../common/render_table.js"
 import{sentFetchWithParams} from "../common/sent_fetch_get_response.js"
 
-export async function sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount){
+export async function sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router){
   let result = await sentFetchWithParams("get", body, `/api/${tableName}`)
   console.log(result)
   let data = result["data"]
@@ -13,9 +13,10 @@ export async function sent_input_search_and_render_table(body, tableName, PageAm
   }else{
     PageAmount = result["PageAmount"]
     // render_table_from_pagination(nowPage, PageAmount)
-    render_pagination(PageAmount, paginationContainer, nowPage)
+    render_pagination(PageAmount, paginationContainer, nowPage, router)
     render_table_from_pagination(nowPage, PageAmount, search_and_render)
-    render_result_table(data, tableName, tableTitleContainer, table, PageAmount, dataAmount )
+    render_result_table(data, tableName, tableTitleContainer, table, PageAmount, dataAmount, router )
+    
   }
   return result
 };

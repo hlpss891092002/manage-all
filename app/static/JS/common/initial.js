@@ -22,15 +22,6 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
   const tables = await sentFetchWithoutBody("get","/api/staff/tables")
   //render side block
   for (let tableName of tables){
-    const searchListItem = document.createElement("li")
-    searchListItem.className = `list-group-item `
-    searchListItem.setAttribute("id", `search-${tableName}`)
-    const searchItemLink = document.createElement("a")
-    searchItemLink.href = `/search?${tableName}`
-    searchItemLink.innerText= tableName
-    searchListItem.appendChild(searchItemLink)
-    searchSubList.appendChild(searchListItem)
-
 
     const addListItem = document.createElement("li")
     addListItem.className = `list-group-item `
@@ -40,6 +31,19 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     addItemLink.innerText= tableName
     addListItem.appendChild(addItemLink)
     addSubList.appendChild(addListItem)
+
+    if(tableName === "authorization"){
+      continue
+    }
+
+    const searchListItem = document.createElement("li")
+    searchListItem.className = `list-group-item `
+    searchListItem.setAttribute("id", `search-${tableName}`)
+    const searchItemLink = document.createElement("a")
+    searchItemLink.href = `/search?${tableName}`
+    searchItemLink.innerText= tableName
+    searchListItem.appendChild(searchItemLink)
+    searchSubList.appendChild(searchListItem)
 
     const updateListItem = document.createElement("li")
     updateListItem.className = `list-group-item `

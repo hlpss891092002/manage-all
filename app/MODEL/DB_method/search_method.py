@@ -100,8 +100,11 @@ def get_data_by_tablename(condition, page, table_name):
                         sql_sub = f"""select id from {column} where name = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-                        print(sql_sub)
+
+                        start = time()
                         cursor.execute(sql_sub, val_sub)
+                        end = time()
+                        print(f"get id from foreign = %.2f second" % (end -start))
                         column_id = cursor.fetchone()["id"]
                         val.append(column_id)
                         column = column + "_id"
@@ -112,8 +115,11 @@ def get_data_by_tablename(condition, page, table_name):
                         sql_sub = f"""select id from staff where employee_id = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-                        print(sql_sub)
+
+                        start = time()
                         cursor.execute(sql_sub, val_sub)
+                        end = time()
+                        print(f"get id from foreign = %.2f second" % (end -start))
                         column_id = cursor.fetchone()["id"]
                         val.append(column_id)
                         condition_individual = f" {table_name}.{column} = %s"
@@ -122,12 +128,25 @@ def get_data_by_tablename(condition, page, table_name):
                         sql_sub = f"""select id from variety where {column} = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-                        print(sql_sub)
+
+                        start = time()
                         cursor.execute(sql_sub, val_sub)
+                        end = time()
+                        print(f"get id from foreign = %.2f second" % (end -start))
                         column_id = cursor.fetchone()["id"]
                         val.append(column_id)
                         column = "variety_id"
                         condition_individual = f" {table_name}.{column} = %s"
+                    elif "in_" in column:
+                        print(column)
+                        print(condition[f"{column}"])
+                        if condition[f"{column}"] == "YES":
+                            condition[f"{column}"] = 1
+                        elif condition[f"{column}"] == "NO":
+                            condition[f"{column}"] = 0
+                        print(condition[f"{column}"])
+                        condition_individual = f" {table_name}.{column} = %s"
+                        val.append(condition[f"{column}"])
                     else:
                         condition_individual = f" {table_name}.{column} = %s"
                         val.append(condition[f"{column}"])
@@ -138,8 +157,11 @@ def get_data_by_tablename(condition, page, table_name):
                         sql_sub = f"""select id from {column} where name = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-                        print(sql_sub)
+
+                        start = time()
                         cursor.execute(sql_sub, val_sub)
+                        end = time()
+                        print(f"get id from foreign = %.2f second" % (end -start))
                         column_id = cursor.fetchone()["id"]
                         val.append(column_id)
                         column = column + "_id"
@@ -150,8 +172,11 @@ def get_data_by_tablename(condition, page, table_name):
                         sql_sub = f"""select id from staff where employee_id = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-                        print(sql_sub)
+
+                        start = time()
                         cursor.execute(sql_sub, val_sub)
+                        end = time()
+                        print(f"get id from foreign = %.2f second" % (end -start))
                         column_id = cursor.fetchone()["id"]
                         val.append(column_id)
                         condition_individual = f"  AND  {table_name}.{column} = %s"
@@ -160,8 +185,11 @@ def get_data_by_tablename(condition, page, table_name):
                         sql_sub = f"""select id from variety where {column} = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-                        print(sql_sub)
+
+                        start = time()
                         cursor.execute(sql_sub, val_sub)
+                        end = time()
+                        print(f"get id from foreign = %.2f second" % (end -start))
                         column_id = cursor.fetchone()["id"]
                         val.append(column_id)
                         column = "variety_id"
@@ -172,35 +200,41 @@ def get_data_by_tablename(condition, page, table_name):
                 sql = sql + condition_individual
                 sql_count = sql_count  + condition_individual  
             # print(sql)
-            print(sql_count)
-            print(val)
             
-
-        
+            # print(val)
+            count_start = time()
             cursor.execute(sql_count,val)
+            count_end = time()
+            print(f"get count = %.2f second" % (count_end -count_start))
             count = cursor.fetchall()[0]["count"]
             print("execute count")
             data_amount = count
             sql = sql  + sql_limit
             val.append(page*30)
+            data_start = time()
             cursor.execute(sql,val)
+            data_end = time()
+            print(f"get data = %.2f second" % (data_end -data_start))
             # print(sql)
             print("execute sql")
         else:
             # print(sql)
             print(sql_count) 
+            count_start = time()
             cursor.execute(sql_count)
+            count_end = time()
+            print(f"get count = %.2f second" % (count_end -count_start))
             print("execute count")
             count = cursor.fetchall()[0]["count"]
             data_amount = count
             sql = sql  + sql_limit
             val.append(page*30)
-            print(sql )
-            print(val)
+            data_start = time()
             cursor.execute(sql,val) 
-            
+            data_end = time()
+            print(f"get data = %.2f second" % (data_end -data_start))
             print("execute sql")
-        # print(sql)
+        print(f"sql_count  : {sql_count}")
         result = cursor.fetchall()
         print(len(result))
         for data in result:
@@ -212,13 +246,15 @@ def get_data_by_tablename(condition, page, table_name):
         page_amount = math.ceil(data_amount/10)
         response["PageAmount"] = page_amount
         # if data_amount < 100:
-        #     response["dataAmount"] = data_amount
+        response["dataAmount"] = data_amount
         # else:
         #     response["dataAmount"] = "100+"
         
         response["startPage"] = page
         response["data"] = result
-
+        print(f"sql  : {sql}")
+        print(f"sql_count  : {sql_count}")
+        print(f"val {val}")
         return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")

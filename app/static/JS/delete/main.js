@@ -9,7 +9,7 @@ const deleteSubList = document.querySelector("#delete-sub-list")
 const inputContainer = document.querySelector(".input-container")
 const searchInputContainer = document.querySelector(".search-input-container")
 const searchBtn = document.querySelector(".search-btn")
-const deleteBtn = document.querySelector(".delete-btn")
+
 const tableTitleContainer = document.querySelector(".table-title-container")
 const paginationContainer = document.querySelector(".pagination-container")
 const table = document.querySelector(".table")
@@ -52,23 +52,53 @@ async function initialPage(){
 
 
 async function search_and_render(nowPage){
-const data = document.querySelector(".delete-index");
- let body = {};
+  const allData = document.querySelectorAll(".form-control");
+  let body = {};
   body["page"] = nowPage
   let condition ={}
   body["condition"] = condition
-  let value =  data.value;
-    if (value === ""){
-      condition = {}
+  for (let data of allData){
+    let value =  data.value;
+    if( value === ""){
+      continue
+    }
+    const classList = data.classList;
+    let columnName = classList[1].split("-")[0]
+    if ( columnName === "mother_produce" ){
+      let inputTitle = columnName +"_id";
+      condition[`${inputTitle}`] = value ;
     }else{
-      const classList = data.classList;
-      let columnName = classList[2].split("-")[1]
       condition[`${columnName}`] = value ;
     }
-  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount);
+  };
+  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router);
     PageAmount = result["PageAmount"]
     nowPage = parseInt(result["startPage"])
     dataAmount = parseInt(result["dataAmount"])
+    const deleteBtn = document.querySelector(".delete-btn")
+    
+    deleteBtn.addEventListener("click", (e)=>{
+      let body = {}
+      const checkedArray = document.querySelectorAll(".form-check-input") 
+
+      let deleteColumnName = checkedArray[0].classList[1].split("-")[2] 
+      body[`${deleteColumnName}`]=[]    
+      for (let check of checkedArray){
+        console.log(check.checked)
+        if(check.checked){
+          let value = check.id
+          body[`${deleteColumnName}`].push(value)
+        }else{
+          continue
+        }
+      }
+      if (body[`${deleteColumnName}`].length === 0){
+        alert("please click row, you want to delete")
+        e.preventDefault()
+      }else{
+        sent_input_delete(body)
+      }
+})
 };
 
 
@@ -80,19 +110,21 @@ async function sent_input_delete(body){
     if( errorMessage.includes("variety is invalid") ){
       message.innerText = " Please check input value"
     }else if (errorMessage.includes("Cannot delete")){
-      message.innerText = " This data were linked by order data. Please check the input value."
+      message.innerText = " This data were linked by order data. Please choose other row."
     }else{
       message.innerText = errorMessage
     }
     
   }else{
     message.innerText = "delete success"
+    clearMessageAndTable()
     search_and_render(nowPage)
   }
 };
 
 window.addEventListener("load", (e)=>{
   initialPage()
+  
 })
 
 searchBtn.addEventListener("click", (e)=>{
@@ -101,20 +133,4 @@ searchBtn.addEventListener("click", (e)=>{
   search_and_render(nowPage)
 })
 
-deleteBtn.addEventListener("click", (e)=>{
-  clearMessageAndTable()
-  const deleteIndex = document.querySelector(".delete-index")
-  const deleteIndexValue = deleteIndex.value
-  const deleteIndexColumnName = (deleteIndex.classList[2].split("-")[1])
-  
-  let body = {}
-  let deleteIndexDict ={}
-  if (deleteIndexValue !== ""){
-    deleteIndexDict[`${deleteIndexColumnName}`] = deleteIndexValue
-    body["deleteIndex"] = deleteIndexDict
-    sent_input_delete(body)
-    deleteIndex.value = ""
-  }else{
-    alert("please input update index")
-  }
-})
+

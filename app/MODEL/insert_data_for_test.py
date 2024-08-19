@@ -275,8 +275,6 @@ def insert_rooting_produce_record_for_test(counting, strong_list):
             count += 1
             counting.append("1") 
     
-
-
 def data_for_test_rooting():
     start = time()
     counting = []

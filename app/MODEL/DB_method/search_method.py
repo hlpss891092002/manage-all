@@ -35,7 +35,7 @@ def get_data_by_tablename(condition, page, table_name):
         sql_count = f""" Select count({table_name}.id) as count from {table_name} 
         """
         if table_name == "client_order":
-            sql="""SELECT client_order.id as order_id, client.name as client, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  
+            sql="""SELECT client_order.id as id, client.name as client, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  
             inner join client 
             on  client_order.client_id =  client.id inner 
             join  variety 

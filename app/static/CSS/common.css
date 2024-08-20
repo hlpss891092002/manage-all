@@ -65,13 +65,21 @@ button {
 
 .row-value {
   min-width: 190px;
+  width: 100%;
   min-height: 40px;
   text-wrap: nowrap;
   overflow-x: auto;
-  
   background-color: transparent;
   margin: 0 10px;
   padding: 8px;
+}
+.updatable  {
+  text-align: center;
+  margin-bottom: 5px;
+  border-style: solid;
+  border-radius: 5px;
+  border-radius: 5px;
+  box-shadow: #887979;
 }
 
 

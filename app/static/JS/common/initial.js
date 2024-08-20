@@ -103,9 +103,8 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     // insert item block
     if (inputContainer){
       for (let column of columns){
+         console.log(column)
       if (column === "id" && router === "add"){
-        continue
-      }else if(column === "id" && router === "update" && tableName === "produce_record"){
         continue
       } else if(column === "manufacturing_time"){
         continue

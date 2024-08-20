@@ -76,22 +76,32 @@ async function search_and_render(nowPage){
     const updatableArray = document.querySelectorAll(".updatable")
     let body ={}
     for (let updatable of updatableArray){
-      let itemDict = {}
-      let updateValue = updatable.textContent
-      let index = updatable.classList[2]
-      let columnName = updatable.classList[3]
-      if(!body[index]){
-        body[index] = {}
-        body[index][columnName] = []
-        body[index][columnName].push(updateValue)
-      }else if(!body[index][columnName]){
-        body[index][columnName] = []
-        body[index][columnName].push(updateValue)
+      const updateIndexColumn = updatable.classList[2].split("-")[1]
+      const updateIndexArray = updatable.classList[3].split("-").splice(2,updatable.classList[3].length)
+      const updateIndexValue = updateIndexArray.join("-")  
+      const updateColumn = updatable.classList[4].split("-")[1]
+      const updateValueOrigin  = updatable.placeholder
+      const updateValue = updatable.value
+      if (updateValue !== updateValueOrigin){
+        console.log(updateValue)
+        console.log(updateValueOrigin)
+        if(!body[updateIndexColumn]){
+          body[updateIndexColumn] = {}
+          body[updateIndexColumn]["IndexValue"] = updateIndexValue 
+          body[updateIndexColumn][updateColumn] = updateValue 
+        }else{
+          body[updateIndexColumn][updateColumn] = updateValue 
+        }
       }
-      // console.log(updateValue, index, columnName)
     }
-    console.log(body)
-    sent_input_update(body)
+    // console.log(body)
+    if(Object.keys(body).length === 0){
+      e.preventDefault()
+    }else{
+      console.log(body)
+      sent_input_update(body)
+    }
+    
   })
  
 };
@@ -109,7 +119,8 @@ async function sent_input_update(body){
     
   }else{
     message.innerText = "update success"
-    // search_and_render(nowPage)
+    clearMessageAndTable()
+    search_and_render(nowPage)
   }
 };
 

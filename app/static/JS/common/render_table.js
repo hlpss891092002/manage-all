@@ -58,8 +58,14 @@ export async function render_result_table(search_result, tableName, tableTitleCo
             updateIndexColumn = key
             updateIndexValue = value
           }
-          rowValue.className = `row-value updatable index-${updateIndexColumn}-${updateIndexValue} column-${key}`
-          rowValue.setAttribute("contenteditable", "true")
+          rowValue = document.createElement("input")
+          rowValue.className = `row-value updatable index-${updateIndexColumn} index-value-${updateIndexValue} column-${key}`
+          rowValue.placeholder = `${value}`
+          rowValue.value = value
+          if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
+            rowValue.disabled = true
+          }
+          // rowValue.setAttribute("contenteditable", "true")
           row.appendChild(rowValue)
         }else{
           row.appendChild(rowValue)

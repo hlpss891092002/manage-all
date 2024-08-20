@@ -14,7 +14,9 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
         columns_list =  get_table_columns(table_name)
         item_List = []
         for column in columns_list:
-            if table_name != "produce_record":
+            if table_name == "produce_record" or table_name == "client_order" :
+                pass
+            else :
                 if column == "id":
                     continue
             if column == "password":
@@ -32,28 +34,19 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
 async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], table_name:str):
     try :
         print(table_name)
-        update_index = list(body.keys())
-        update_value = list(body.values())
+        print(body)
+        for index_column in body : 
+                condition = body[index_column]
+                if table_name == "produce_record":
+                    update_produce_record_data(condition, table_name, index_column)
 
-        indexList = []
-        for index in update_index:
-            # print(index, body[index])
-            condition= {}
-            column = index.split("-")[1]
-            value = index.split("-")[2]
-            condition[column] = value
-            indexList.append(condition)
-            
-            # if table_name == "produce_record":
-            #     update_produce_record_data(body, table_name)
+                elif table_name == "client_order":
+                    update_client_order_data(condition, table_name, index_column)
 
-            # elif table_name == "client_order":
-            #     update_client_order_data(body, table_name)
-
-            # elif table_name == "variety":
-            #     update_variety_data(body, table_name)
-            # else:
-            #     update_non_foreign_key_data(condition, table_name)
+                elif table_name == "variety":
+                    update_variety_data(condition, table_name, index_column)
+                else:
+                    update_non_foreign_key_data(condition, table_name, index_column)
 
         response = {
             "ok" : True

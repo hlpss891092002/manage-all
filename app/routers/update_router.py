@@ -35,18 +35,18 @@ async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_val
     try :
         print(table_name)
         print(body)
-        for index_column in body : 
-                condition = body[index_column]
+        for index_value in body : 
+                condition = body[index_value]
                 if table_name == "produce_record":
-                    update_produce_record_data(condition, table_name, index_column)
+                    update_produce_record_data(condition, table_name, index_value)
 
                 elif table_name == "client_order":
-                    update_client_order_data(condition, table_name, index_column)
+                    update_client_order_data(condition, table_name, index_value)
 
                 elif table_name == "variety":
-                    update_variety_data(condition, table_name, index_column)
+                    update_variety_data(condition, table_name, index_value)
                 else:
-                    update_non_foreign_key_data(condition, table_name, index_column)
+                    update_non_foreign_key_data(condition, table_name, index_value)
 
         response = {
             "ok" : True

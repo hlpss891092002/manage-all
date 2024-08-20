@@ -62,7 +62,7 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           rowValue.className = `row-value updatable index-${updateIndexColumn} index-value-${updateIndexValue} column-${key}`
           rowValue.placeholder = `${value}`
           rowValue.value = value
-          if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
+          if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ||  (tableName === "variety" && key ==="category") ||  (tableName === "client_order" && key ==="client") ||  (tableName === "client_order" && key ==="variety_code")){
             rowValue.disabled = true
           }
           // rowValue.setAttribute("contenteditable", "true")

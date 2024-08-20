@@ -85,20 +85,19 @@ async function search_and_render(nowPage){
       if (updateValue !== updateValueOrigin){
         console.log(updateValue)
         console.log(updateValueOrigin)
-        if(!body[updateIndexColumn]){
-          body[updateIndexColumn] = {}
-          body[updateIndexColumn]["IndexValue"] = updateIndexValue 
-          body[updateIndexColumn][updateColumn] = updateValue 
+        if(!body[updateIndexValue]){
+          body[updateIndexValue] = {}
+          body[updateIndexValue]["indexColumn"] = updateIndexColumn
+          body[updateIndexValue][updateColumn] = updateValue 
         }else{
-          body[updateIndexColumn][updateColumn] = updateValue 
+          body[updateIndexValue][updateColumn] = updateValue 
         }
       }
     }
-    // console.log(body)
+    console.log(body)
     if(Object.keys(body).length === 0){
       e.preventDefault()
     }else{
-      console.log(body)
       sent_input_update(body)
     }
     

@@ -26,16 +26,16 @@ except mysql.connector.Error as e:
     print(f'database connection fail {e}')
 
 
-def update_non_foreign_key_data(condition, table_name, index_column):
+def update_non_foreign_key_data(condition, table_name, index_value):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     print(condition)
     print(table_name)
-    print(index_column)
-    update_index_column = index_column
-    update_index_value = condition["IndexValue"]
+    print(index_value)
+    update_index_value = index_value
+    update_index_column = condition["indexColumn"]
     print(update_index_value)
-    del condition["IndexValue"]
+    del condition["indexColumn"]
     try:
         sql=f"""UPDATE {table_name}"""
         sql_condition=f" where {update_index_column} = %s"
@@ -67,13 +67,13 @@ def update_non_foreign_key_data(condition, table_name, index_column):
         cursor.close()
         con.close()
 
-def update_client_order_data(condition, table_name, index_column):
+def update_client_order_data(condition, table_name, index_value):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
-    update_index_column = index_column
-    update_index_value = condition["IndexValue"]
+    update_index_value = index_value
+    update_index_column = condition["indexColumn"]
     print(update_index_value)
-    del condition["IndexValue"]
+    del condition["indexColumn"]
     try:
         sql=f"""UPDATE {table_name}"""
         sql_condition=f" where id = %s"
@@ -118,13 +118,13 @@ def update_client_order_data(condition, table_name, index_column):
         cursor.close()
         con.close()
 
-def update_produce_record_data(condition, table_name, index_column):
+def update_produce_record_data(condition, table_name, index_value):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
-    update_index_column = index_column
-    update_index_value = condition["IndexValue"]
+    update_index_value = index_value
+    update_index_column = condition["indexColumn"]
     print(update_index_value)
-    del condition["IndexValue"]
+    del condition["indexColumn"]
     try:
         sql=f"""UPDATE {table_name}"""
         sql_condition=f" where {update_index_column} = %s"
@@ -204,13 +204,13 @@ def update_produce_record_data(condition, table_name, index_column):
         cursor.close()
         con.close()
 
-def update_variety_data(condition, table_name, index_column):
+def update_variety_data(condition, table_name, index_value):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
-    update_index_column = index_column
-    update_index_value = condition["IndexValue"]
+    update_index_value = index_value
+    update_index_column = condition["indexColumn"]
     print(update_index_value)
-    del condition["IndexValue"]
+    del condition["indexColumn"]
     try:
         sql=f"""UPDATE {table_name}"""
         sql_condition=f" where {update_index_column} = %s"

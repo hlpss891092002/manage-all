@@ -1,6 +1,8 @@
 
 import os
 import jwt
+import threading
+from time import time
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import  JSONResponse
 from dotenv import load_dotenv
@@ -68,16 +70,74 @@ async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
     
 @router.get("/api/latest")
 async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
-    try:
-       result = {}
-       employee_id = payload["employee_id"]
-       result["yesterday_produce"] = get_yesterday_produce()
-      #  result["yesterday_consume"] = get_yesterday_consume()
+   try:
+      result = {}
+      employee_id = payload["employee_id"]
+      def get_count(element):
+         return element["count"]
+      
+      def get_stage(element):
+         return element["category"]
+      
+      def get_yesterday_produce_most_threads_limit_10():
+         start = time()
+         data_from_yesterday = get_yesterday_produce_most()
+         data_from_yesterday.sort(key=get_count, reverse=True)
+         result["yesterday_produce_most"] = data_from_yesterday[0:10]
+         end = time()
+         print(f"get yesterday count , time = %.2f second" % (end -start))
+
+      def get_yesterday_consumed_category_sort():
+         start = time()
+         data_consume = get_yesterday_consume_by_category()
+         data_consume.sort(key=get_count, reverse=True)
+         result["yesterday_consume_category"] = data_consume
+         end = time()
+         print(f"get yesterday consumed time = %.2f second" % (end -start))
+
+      def get_stock_category_sort():
+         start = time()
+         data_stock = get_category_stock()
+         data_stock.sort(key=get_stage, reverse=True)
+         result["stock_category"] = data_stock
+         end = time()
+         print(f"get stock time = %.2f second" % (end -start))
+
+      def get_ready_stock_sort():
+         start = time()
+         data_stock = get_ready_stock()
+         data_stock.sort(key=get_count, reverse=True)
+         result["ready_stock"] = data_stock
+         end = time()
+         print(f"get stock time = %.2f second" % (end -start))
       #  result["category_stock"] = get_category_stock()
       #  result["largest_amount"] = get_largest_amount_stock()
 
-       
-       return result
-
-    except Exception as e:
-       raise HTTPException(status_code=500, detail=f"server error {e}")
+      def run_threads():
+         start = time()
+         a = threading.Thread(target=get_yesterday_produce_most_threads_limit_10)
+         b = threading.Thread(target=get_yesterday_consumed_category_sort)
+         c = threading.Thread(target=get_stock_category_sort)
+         d = threading.Thread(target=get_ready_stock_sort)
+         a.start()
+         b.start()
+         c.start()
+         d.start()
+         a.join()
+         b.join()
+         c.join()
+         d.join()
+         end = time()
+         print(f"get run threads = %.2f second" % (end -start))
+         return result
+         
+         
+      response = run_threads()
+      return response
+      
+   except HTTPException as e:
+      raise e    
+   except TypeError as e:
+         raise HTTPException(status_code=500, detail=f"{e}")
+   except Exception as e:
+         raise HTTPException(status_code=500, detail=f"{e}")

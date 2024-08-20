@@ -34,15 +34,12 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
 async def get_media_list(page:str, payload  : Annotated[dict, Depends(user_validation)], table_name:str, condition: str):
     try :
         print(table_name)
-
         page = int(page)
         condition = json.loads(condition)
         print(type(condition))
         start = time()
         data = None
-
         data = get_data_by_tablename(condition, page, table_name)
-
         end = time()
         print(f"multithread time = %.2f second" % (end -start))
         return JSONResponse(status_code=200, content=data)

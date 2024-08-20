@@ -4,6 +4,7 @@ import os
 from time import time
 from datetime import datetime, date, timedelta
 from dotenv import load_dotenv
+from fastapi import  HTTPException
 
 load_dotenv()
 
@@ -53,12 +54,12 @@ def get_table_columns(table_name):
         cursor.close()
         con.close()
 
-def get_yesterday_produce():
+def get_yesterday_produce_most():
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        yesterday = now - timedelta(days=1)
+        yesterday = now - timedelta(days=2)
         print(yesterday)
         sql="""SELECT variety_code, stage.name as stage, count(produce_record.id) as count
         FROM produce_record        
@@ -67,13 +68,14 @@ def get_yesterday_produce():
         INNER JOIN stage
         ON produce_record.stage_id = stage.id 
         where manufacturing_date = %s  and in_stock = 1
-        limit 5;
+        group by variety_code, stage.name
+        
         """
         val = list()
-        val.append(now)
+        val.append(yesterday)
         cursor.execute(sql, val)
         result = cursor.fetchall()
-        print(result)
+        # print(result)
         return result
     except Exception as e:
         raise e
@@ -81,27 +83,28 @@ def get_yesterday_produce():
         cursor.close()
         con.close()
 
-def get_yesterday_consume():
+def get_yesterday_consume_by_category():
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        yesterday = now - timedelta(days=1)
+        yesterday = now - timedelta(days=2)
         print(yesterday)
-        sql="""SELECT variety_code, stage.name as stage, count(produce_record.id) as count
+        sql="""SELECT category.name as category, count(produce_record.id) as count
         FROM produce_record        
         inner JOIN variety
         ON produce_record.variety_id = variety.id 
-        INNER JOIN stage
-        ON produce_record.stage_id = stage.id 
+        INNER JOIN category
+        ON variety.category_id = category.id 
         where manufacturing_date = %s  and in_stock = 0
-        limit 5;
+        group by category
+        ;
         """
         val = list()
-        val.append(now)
+        val.append(yesterday)
         cursor.execute(sql, val)
         result = cursor.fetchall()
-        print(result)
+        
         return result
     except Exception as e:
         raise e
@@ -114,43 +117,47 @@ def get_category_stock():
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        yesterday = now - timedelta(days=1)
+        yesterday = now - timedelta(days=2)
         print(yesterday)
-        sql="""SELECT category.category, count(produce_record.id) as count 
+        sql="""SELECT category.name as category, stage.name as stage, count(produce_record.id) as count 
         FROM produce_record
+        inner JOIN stage
+        ON produce_record.stage_id = stage.id 
         inner JOIN variety
         ON produce_record.variety_id = variety.id  
         INNER JOIN category
         ON variety.category_id = category.id
-        where in_stock = 1
-        limit 5;
+        where in_stock = 1 
+        group by category.name, stage.name
+        ;
         """
         val = list()
-        val.append(now)
+        val.append(yesterday)
         cursor.execute(sql)
         result = cursor.fetchall()
-        print(result)
         return result
     except Exception as e:
-        raise e
+        raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
-def get_largest_amount_stock():
+def get_ready_stock():
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
         yesterday = now - timedelta(days=1)
         print(yesterday)
-        sql="""SELECT variety.variety_code, stage.name as stage, count(produce_record.id) as count 
+        sql="""SELECT variety.variety_code, stage.name as stage, manufacturing_time, count(produce_record.id) as count 
         FROM produce_record
         inner JOIN variety
         ON produce_record.variety_id = variety.id
         INNER JOIN stage
-        ON produce_record.stage_id = stage.id 
-        where in_stock = 1  limit 5;
+        ON produce_record.stage_id = stage.id
+        INNER JOIN category
+        ON variety.category_id = category.id 
+        where in_stock = 1  and  (%s - manufacturing_date) > 3 ;
         """
         val = list()
         val.append(now)

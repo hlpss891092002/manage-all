@@ -227,7 +227,7 @@ def get_data_by_tablename(condition, page, table_name):
             print("execute count")
             data_amount = count
             sql = sql  + sql_limit
-            val.append(page*30)
+            val.append(page*10)
             data_start = time()
             cursor.execute(sql,val)
             data_end = time()
@@ -245,7 +245,7 @@ def get_data_by_tablename(condition, page, table_name):
             count = cursor.fetchall()[0]["count"]
             data_amount = count
             sql = sql  + sql_limit
-            val.append(page*30)
+            val.append(page*10)
             data_start = time()
             cursor.execute(sql,val) 
             data_end = time()

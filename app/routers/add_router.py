@@ -23,8 +23,6 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
         for column in columns:
             if column == "id":
                 continue
-            elif column == "authorization":
-                column = "job_position"
             elif  column == "in_employment":
                 continue
             elif column == "manufacturing_date":
@@ -60,7 +58,9 @@ async def create_category(data : Union[variety_class, stage_class, staff_class, 
         input_dict = data.dict()
         print(input_dict)
         print(tableName)
-        if tableName == "client_order":
+        if tableName == "authorization":
+             insert_authorization(input_dict, tableName)
+        elif tableName == "client_order":
             insert_client_order(input_dict, tableName)
         elif tableName == "produce_record":
             id = input_dict["id"]

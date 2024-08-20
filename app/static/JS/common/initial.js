@@ -32,10 +32,6 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     addListItem.appendChild(addItemLink)
     addSubList.appendChild(addListItem)
 
-    if(tableName === "authorization"){
-      continue
-    }
-
     const searchListItem = document.createElement("li")
     searchListItem.className = `list-group-item `
     searchListItem.setAttribute("id", `search-${tableName}`)
@@ -45,6 +41,10 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     searchListItem.appendChild(searchItemLink)
     searchSubList.appendChild(searchListItem)
 
+    
+    if(tableName === "authorization"){
+      continue
+    }
     const updateListItem = document.createElement("li")
     updateListItem.className = `list-group-item `
     updateListItem.setAttribute("id", `update-${tableName}`)
@@ -109,11 +109,10 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
         continue
       } else if(column === "manufacturing_time"){
         continue
-      }else if(column === "authorization"){
-        continue
-      }else if(column === "authorization"){
+      }else if(tableName !== "authorization" && column === "authorization"){
         continue
       }
+      console.log(column)
       const inputGroup = document.createElement("div")
       inputGroup.className = "input-group "
       inputGroup.innerHTML = `<span class="input-group-text ${column}-input-disc">${column}</span>`

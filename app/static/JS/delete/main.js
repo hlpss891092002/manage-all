@@ -70,13 +70,13 @@ async function search_and_render(nowPage){
     }else{
       condition[`${columnName}`] = value ;
     }
-  };
+  }
   const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router);
     PageAmount = result["PageAmount"]
     nowPage = parseInt(result["startPage"])
     dataAmount = parseInt(result["dataAmount"])
     const deleteBtn = document.querySelector(".delete-btn")
-    
+
     deleteBtn.addEventListener("click", (e)=>{
       let body = {}
       const checkedArray = document.querySelectorAll(".form-check-input") 

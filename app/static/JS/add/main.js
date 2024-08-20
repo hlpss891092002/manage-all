@@ -28,10 +28,6 @@ async function initialPage(){
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction(tableName)
   showSideBlockFromRouter(router)
- 
-  
-
-
   // // get variety list
   // const varietyResponse = await sentFetchWithoutBody("get",`/api/variety`)
   // const varietyResult = varietyResponse["data"]
@@ -109,17 +105,20 @@ submitBtn.addEventListener("click", (e)=>{
   const allData = document.querySelectorAll(".form-control");
   responseMessage.innerText =""
   let body = {};
+  console.log(allData.length)
   if (tableName === "produce_record"){
     body["id"] = createRandomId();
   };
   for (let data of allData){
-
-    let value =  String(data.value);
-    if( value === ""){
-      value = null
-    }
     const classList = data.classList;
     let inputTitle = classList[1].split("-")[0];
+    let value =  String(data.value);
+    if( (inputTitle === "mother_produce_id" | inputTitle === "consumed_reason" ) && value === ""){
+      value = null
+    }else if( value === ""){
+      alert(`${inputTitle} can't be null`)
+      return
+    }
     body[`${inputTitle}`] = value ;
   };
   sent_input_db(body);

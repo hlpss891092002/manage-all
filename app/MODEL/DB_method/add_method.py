@@ -28,17 +28,20 @@ try:
 except Exception as e:
         raise HTTPException(status_code=500, detail=f"{e}")
 
-def insert_authorization(job_position, authorization, category, client, client_order, media, produce_record, staff, stage, variety):
+def insert_authorization(input_dict, tableName):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
-        sql="""INSERT INTO authorization(job_position, authorization, category, client, client_order, media, produce_record, staff, stage, variety)
+        columns = list(input_dict.keys())
+        val=list(input_dict.values())
+        print(columns)
+        sql=f"""INSERT INTO {tableName} (authorization, category, client, client_order, job_position, media, produce_record, staff, stage, variety)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
-        val=(job_position, authorization, category, client, client_order,  media, produce_record, staff, stage, variety)
+
         cursor.execute(sql,val)
         con.commit()
-        print(f"insert {job_position} authorization")
+        print(f"insert {val[4]} authorization")
         return True
     except Exception as e:
             raise HTTPException(status_code=400, detail=f"{e}")

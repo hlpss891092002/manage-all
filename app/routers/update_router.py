@@ -31,27 +31,38 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
 @router.put("/api/{table_name}")
 async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], table_name:str):
     try :
-        data = None
-        if table_name == "produce_record":
-            update_produce_record_data(body, table_name)
+        print(table_name)
+        update_index = list(body.keys())
+        update_value = list(body.values())
 
-        elif table_name == "client_order":
-            update_client_order_data(body, table_name)
+        indexList = []
+        for index in update_index:
+            # print(index, body[index])
+            condition= {}
+            column = index.split("-")[1]
+            value = index.split("-")[2]
+            condition[column] = value
+            indexList.append(condition)
+            
+            # if table_name == "produce_record":
+            #     update_produce_record_data(body, table_name)
 
-        elif table_name == "variety":
-            update_variety_data(body, table_name)
-        else:
-            update_non_foreign_key_data(body, table_name)
+            # elif table_name == "client_order":
+            #     update_client_order_data(body, table_name)
+
+            # elif table_name == "variety":
+            #     update_variety_data(body, table_name)
+            # else:
+            #     update_non_foreign_key_data(condition, table_name)
 
         response = {
             "ok" : True
         }
         return JSONResponse(status_code=200, content=response)
-    except Exception  as e:
-        print(e)
-        if(isinstance(e, AttributeError)):
-            raise HTTPException(status_code=500, detail=f"server error {e} ")
-        elif(e.status_code):
-            raise e
-        else:
-            raise HTTPException(status_code=500, detail=f"server error {e} ")
+    except HTTPException as e:
+        raise e    
+    except TypeError as e:
+            raise HTTPException(status_code=500, detail=f"{e}")
+    except Exception as e:
+            raise HTTPException(status_code=500, detail=f"{e}")
+

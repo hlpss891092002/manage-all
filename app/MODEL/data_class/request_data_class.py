@@ -53,5 +53,18 @@ class produce_record_class(BaseModel):
   mother_produce_id : Union[str, None]
   consumed_reason : Union[str, None]
 
+class staff_class(BaseModel):
+    authorization : str
+    category:  str
+    client : str
+    client_order : str
+    job_position : str
+    media : str
+    produce_record : str
+    staff : str
+    stage : str
+    variety : str
+
+
 
 

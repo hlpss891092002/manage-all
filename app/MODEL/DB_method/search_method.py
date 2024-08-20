@@ -65,6 +65,8 @@ def get_data_by_tablename(condition, page, table_name):
             INNER JOIN  stage
             ON  produce_record.stage_id = stage.id
             """
+        elif table_name == "authorization":
+            sql = """SELECT * FROM  authorization"""
         else :
             sql=f"""Select name, description from {table_name}
         """
@@ -266,7 +268,7 @@ def get_data_by_tablename(condition, page, table_name):
         
         response["startPage"] = page
         response["data"] = result
-        # print(f"sql  : {sql}")
+        print(f"sql  : {sql}")
         print(f"sql_count  : {sql_count}")
         print(f"val {val}")
         return response

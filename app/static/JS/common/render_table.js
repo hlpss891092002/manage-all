@@ -13,10 +13,10 @@ export async function render_result_table(search_result, tableName, tableTitleCo
   columnNameContainer.className = "column-name-container "
   rowContainer.className= "row-container"
   //append column title
-  const checkboxItem = document.createElement("div")
-  checkboxItem.className = "checkbox "
-  columnNameContainer.appendChild(checkboxItem)
   columnNameArray.forEach((element)=>{
+    if(element === "id" && tableName === "authorization"){
+          return
+        }
     let columnName =  document.createElement("div")
     columnName.className = "column-name row-value"
     columnName .innerText = element
@@ -28,16 +28,22 @@ export async function render_result_table(search_result, tableName, tableTitleCo
     const row = document.createElement("div")
     const elementArray = Object.entries(elementName)
     const valueKey = Object.values(elementName)[0]
+    let updateIndexColumn = ""
+    let updateIndexValue = ""
     row.className = `table-row name-`
     elementArray.forEach((element)=>{
-      let  [key, value] = element 
+      let  [key, value] = element
         if(key.includes("in_")){
           value = value === 1 ? "YES" : "NO";
+        }else if(key === "id" && tableName === "authorization"){
+          return
+        }else if (tableName === "authorization"){
+          value =  value === 1 ? "Authorized" : "Unauthorized"
         }
         let rowValue = document.createElement("div")
         rowValue.className = `row-value ${key}`
-        rowValue.innerText = value 
-        if(elementArray.indexOf(element)===0){
+        rowValue.innerText = value
+        if(elementArray.indexOf(element)===0 && router === "delete"){
           const formCheck = document.createElement("div")
           formCheck.className = `form-check checkbox row-value ${key}`
           formCheck.innerHTML= `<div class="form-check">
@@ -47,6 +53,14 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           </label>
           `
           row.appendChild(formCheck)
+        }else if(router === "update"){
+          if (elementArray.indexOf(element)===0){
+            updateIndexColumn = key
+            updateIndexValue = value
+          }
+          rowValue.className = `row-value updatable index-${updateIndexColumn}-${updateIndexValue} column-${key}`
+          rowValue.setAttribute("contenteditable", "true")
+          row.appendChild(rowValue)
         }else{
           row.appendChild(rowValue)
         }
@@ -68,12 +82,18 @@ export async function render_pagination(pageAmount, paginationContainer, nowPage
   paginationContainer.appendChild(pagination)
   if (router === "delete"){
     const deleteBTN = document.createElement("button")
-    deleteBTN.className = `${router}-btn`
+    deleteBTN.className = `${router}-btn `
     const img = document.createElement("img")
     img.src = "./static/icon/trash-can.png"
     deleteBTN.appendChild(img)
     paginationContainer.appendChild(deleteBTN)
-    
+  }else if(router === "update"){
+    const updateBTN = document.createElement("button")
+    updateBTN.className = `${router}-btn`
+    const img = document.createElement("img")
+    img.src = "./static/icon/upload.png"
+    updateBTN.appendChild(img)
+    paginationContainer.appendChild(updateBTN)
   }
   pagination.className = "pagination justify-content-center"
   const frontArrow = document.createElement("li")

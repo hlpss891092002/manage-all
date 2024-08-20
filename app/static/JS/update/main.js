@@ -9,9 +9,9 @@ const deleteSubList = document.querySelector("#delete-sub-list")
 const inputContainer = document.querySelector(".input-container")
 const searchInputContainer = document.querySelector(".search-input-container")
 const searchBtn = document.querySelector(".search-btn")
-const updateBtn = document.querySelector(".update-btn")
 const tableTitleContainer = document.querySelector(".table-title-container")
 const paginationContainer = document.querySelector(".pagination-container")
+const showDataSection = document.querySelector(".show-data-section")
 const table = document.querySelector(".table")
 const message = document.querySelector(".message")
 const query = window.location.search
@@ -48,23 +48,51 @@ async function initialPage(){
 }
 
 async function search_and_render(nowPage){
-  const data = document.querySelector(".update-index");
+  const allData = document.querySelectorAll(".form-control");
   let body = {};
   body["page"] = nowPage
   let condition ={}
   body["condition"] = condition
-  let value =  data.value;
-    if (value === ""){
-      condition = {}
+  for (let data of allData){
+    let value =  data.value;
+    if( value === ""){
+      continue
+    }
+    const classList = data.classList;
+    let columnName = classList[1].split("-")[0]
+    if ( columnName === "mother_produce" ){
+      let inputTitle = columnName +"_id";
+      condition[`${inputTitle}`] = value ;
     }else{
-      const classList = data.classList;
-      let columnName = classList[2].split("-")[1]
       condition[`${columnName}`] = value ;
     }
-  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount);
+  }
+  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router);
   PageAmount = result["PageAmount"]
   nowPage = parseInt(result["startPage"])
   dataAmount = parseInt(result["dataAmount"])
+  const updateBtn = document.querySelector(".update-btn")
+  updateBtn.addEventListener("click",(e)=>{
+    const updatableArray = document.querySelectorAll(".updatable")
+    let body ={}
+    for (let updatable of updatableArray){
+      let itemDict = {}
+      let updateValue = updatable.textContent
+      let index = updatable.classList[2]
+      let columnName = updatable.classList[3]
+      if(!body[index]){
+        body[index] = {}
+        body[index][columnName] = []
+        body[index][columnName].push(updateValue)
+      }else if(!body[index][columnName]){
+        body[index][columnName] = []
+        body[index][columnName].push(updateValue)
+      }
+      // console.log(updateValue, index, columnName)
+    }
+    console.log(body)
+    sent_input_update(body)
+  })
  
 };
 
@@ -81,7 +109,7 @@ async function sent_input_update(body){
     
   }else{
     message.innerText = "update success"
-    search_and_render(nowPage)
+    // search_and_render(nowPage)
   }
 };
 
@@ -96,39 +124,6 @@ searchBtn.addEventListener("click", (e)=>{
   search_and_render(nowPage)
 })
 
-updateBtn.addEventListener("click",((e)=>{
-  clearMessageAndTable()
-  const updateItemArray = document.querySelectorAll(".update-item")
-  const updateIndex = document.querySelector(".update-index")
-  const updateIndexColumnName = (updateIndex.classList[2].split("-")[1])
-  const updateIndexValue = updateIndex.value
-  let body = {}
-  let updateItems = {}
-  let updateIndexDict ={}
-  updateIndexDict[`${updateIndexColumnName}`] = updateIndexValue
-  if (updateIndexValue !== ""){
-    for (let updateItem of updateItemArray){
-    const updateItemValue = updateItem.value
-      if(updateItemValue !== ""){
-      const columnName = updateItem.classList[1].split("-")[0]
-      updateItems[`${columnName}`] = updateItemValue
-      if(updateIndexColumnName === columnName){
-        updateIndex.value = updateItemValue
-      }
-      }else{
-        continue
-      }
-    }
-    if(Object.keys(updateItems).length === 0){
-      alert("please input update value")
-    }else{
-      body["updateIndex"] = updateIndexDict
-      body["updateItems"] = updateItems
-      const result = sent_input_update(body)
-    }
-    
-  }else{
-    alert("please input update index")
-  }
-  
-}))
+
+
+

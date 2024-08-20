@@ -34,11 +34,19 @@ sql_index_stage_name = """CREATE INDEX idx_stage_name ON stage (name);"""
 sql_index_variety_variety_code = """CREATE INDEX idx_variety_variety_code ON variety  (variety_code);"""
 sql_index_variety_category_id  = """CREATE INDEX idx_variety_category_id ON variety  (category_id);"""
 
-sql_index_produce_record_for_count = """CREATE INDEX idx_produce_record_count 
-    ON produce_record(variety_id, media_id, producer_id, stage_id)"""
-
-sql_index_produce_record_for_count_2 = """-- CREATE INDEX idx_produce_record_count_2 
+sql_index_produce_record_for_count = """-- CREATE INDEX idx_produce_record_count_2 
 --     ON produce_record(variety_id, media_id, producer_id, stage_id, manufacturing_date, in_stock, consumed_reason);"""
+
+cursor.execute(sql_index_category_category)
+cursor.execute(sql_index_client_name)
+cursor.execute(sql_index_media_name)
+cursor.execute(sql_index_staff_name)
+cursor.execute(sql_index_stage_name)
+cursor.execute(sql_index_variety_variety_code)
+cursor.execute(sql_index_variety_category_id)
+cursor.execute(sql_index_produce_record_for_count)
+
+
 # sql_index_produce_record_foreign_key_variety = """
 # CREATE INDEX idx_produce_record_variety_code ON produce_record  (variety_id);
 # """
@@ -67,13 +75,7 @@ sql_count = f"""explain analyze Select count(produce_record.id) from produce_rec
             """
 
 # cursor.execute(sql_index_produce_record_id_in_stocK_foreign_key_variety)
-cursor.execute(sql_index_category_category)
-cursor.execute(sql_index_client_name)
-cursor.execute(sql_index_media_name)
-cursor.execute(sql_index_staff_name)
-cursor.execute(sql_index_stage_name)
-cursor.execute(sql_index_variety_variety_code)
-cursor.execute(sql_index_produce_record_for_count)
+
 
 # cursor.execute(show_index)
 result = cursor.fetchall()

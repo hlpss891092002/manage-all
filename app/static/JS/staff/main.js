@@ -42,24 +42,28 @@ async function initialPage(){
   staffId = employee_id
   renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
   signOutFunction()
-  let latestData = await sentFetchWithoutBody("get", "/api/latest")
-  let {yesterday_produce, yesterday_consume, category_stock, largest_amount} = await latestData
-  renderMainBlock(categoryAmountInStock, await category_stock)
-  renderMainBlock(largestAmountStock, largest_amount)
-  renderMainBlock(categoryAddYesterday, yesterday_produce)
-  renderMainBlock(categoryConsumeYesterday, yesterday_consume)
-  console.log(latestData)
+  
   if(!employee_id){
     localStorage.clear()
     window.location.assign("/")
   }
 
 }
+async function getNewestData() {
+  let latestData = await sentFetchWithoutBody("get", "/api/latest")
+  let {yesterdayProduceMost, categoryYesterdayConsume, categoryStock, readyShippingStock} = await latestData
+  // renderMainBlock(categoryAmountInStock, category_stock)
+  // renderMainBlock(largestAmountStock, largest_amount)
+  // renderMainBlock(categoryAddYesterday, yesterday_produce)
+  // renderMainBlock(categoryConsumeYesterday, yesterday_consume)
+  console.log(latestData)
+}
 
 
 
 window.addEventListener("load", (e)=>{
   initialPage()
+  getNewestData()
 })
 
 

@@ -83,7 +83,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          start = time()
          data_from_yesterday = get_yesterday_produce_most()
          data_from_yesterday.sort(key=get_count, reverse=True)
-         result["yesterday_produce_most"] = data_from_yesterday[0:10]
+         result["yesterdayProduceMost"] = data_from_yesterday[0:10]
          end = time()
          print(f"get yesterday count , time = %.2f second" % (end -start))
 
@@ -91,7 +91,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          start = time()
          data_consume = get_yesterday_consume_by_category()
          data_consume.sort(key=get_count, reverse=True)
-         result["yesterday_consume_category"] = data_consume
+         result["categoryYesterdayConsume"] = data_consume
          end = time()
          print(f"get yesterday consumed time = %.2f second" % (end -start))
 
@@ -99,7 +99,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          start = time()
          data_stock = get_category_stock()
          data_stock.sort(key=get_stage, reverse=True)
-         result["stock_category"] = data_stock
+         result["categoryStock"] = data_stock
          end = time()
          print(f"get category stock time = %.2f second" % (end -start))
 
@@ -107,7 +107,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          start = time()
          data_stock = get_ready_stock()
          data_stock.sort(key=get_count, reverse=True)
-         result["ready_stock"] = data_stock
+         result["readyShippingStock"] = data_stock
          end = time()
          print(f"get ready stock time = %.2f second" % (end -start))
       #  result["category_stock"] = get_category_stock()

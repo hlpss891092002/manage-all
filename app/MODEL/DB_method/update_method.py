@@ -41,7 +41,6 @@ def update_non_foreign_key_data(condition, table_name, index_value):
         sql_condition=f" where {update_index_column} = %s"
         sql_SET =" SET"
         val = list()
- 
         column_list = list(condition.keys())
         for column in column_list:
             if column_list.index(column) == 0:
@@ -54,6 +53,7 @@ def update_non_foreign_key_data(condition, table_name, index_value):
                  val.append(value)
         sql = sql + sql_SET + sql_condition
         val.append(update_index_value)
+        print(sql)
         cursor.execute(sql,val)
         con.commit()
         if cursor.rowcount > 0 :

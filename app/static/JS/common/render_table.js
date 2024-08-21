@@ -59,10 +59,10 @@ export async function render_result_table(search_result, tableName, tableTitleCo
             updateIndexValue = value
           }
           rowValue = document.createElement("input")
-          rowValue.className = `row-value updatable index-${updateIndexColumn} index-value-${updateIndexValue} column-${key}`
+          rowValue.className = `row-value updatable index-${updateIndexColumn} column-${key} index-value-${updateIndexValue} `
           rowValue.placeholder = `${value}`
           rowValue.value = value
-          if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ||  (tableName === "variety" && key ==="category") ||  (tableName === "client_order" && key ==="client") ||  (tableName === "client_order" && key ==="variety_code")){
+          if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
             rowValue.disabled = true
           }
           // rowValue.setAttribute("contenteditable", "true")

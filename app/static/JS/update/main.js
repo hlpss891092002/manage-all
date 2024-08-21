@@ -76,12 +76,21 @@ async function search_and_render(nowPage){
     const updatableArray = document.querySelectorAll(".updatable")
     let body ={}
     for (let updatable of updatableArray){
-      const updateIndexColumn = updatable.classList[2].split("-")[1]
-      const updateIndexArray = updatable.classList[3].split("-").splice(2,updatable.classList[3].length)
-      const updateIndexValue = updateIndexArray.join("-")  
-      const updateColumn = updatable.classList[4].split("-")[1]
+      const updatableClassList = updatable.classList
+      const updateIndexColumn = updatableClassList[2].split("-")[1] 
+      const updateColumn = updatableClassList[3].split("-")[1]
       const updateValueOrigin  = updatable.placeholder
       const updateValue = updatable.value
+      let updateIndexValue = []
+      if(updatableClassList.length > 5){
+        let updateIndexArray = Array.apply(null, updatableClassList).slice(4, updatableArray.length)
+        updateIndexArray[0] = updateIndexArray[0].split("-")[2]
+        updateIndexValue = updateIndexArray.join(" ")
+        console.log(updateIndexValue)
+      }else{
+        const updateIndexArray = updatableClassList[4].split("-").splice(2,updatableClassList[3].length)
+        updateIndexValue = updateIndexArray.join("-") 
+      }
       if (updateValue !== updateValueOrigin){
         console.log(updateValue)
         console.log(updateValueOrigin)

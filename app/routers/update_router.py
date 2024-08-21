@@ -33,7 +33,6 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
 @router.put("/api/{table_name}")
 async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], table_name:str):
     try :
-        print(table_name)
         print(body)
         for index_value in body : 
                 condition = body[index_value]

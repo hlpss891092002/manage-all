@@ -26,7 +26,7 @@ except Exception as e:
     print(f'database connection fail {e}')
 
 
-def get_data_by_tablename(condition, page, table_name):
+def get_data_by_tablename(condition, page, table_name, full_get = None):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
@@ -71,7 +71,11 @@ def get_data_by_tablename(condition, page, table_name):
             sql=f"""Select name, description from {table_name}
         """
         data_amount = 0
-        sql_limit = """ limit %s , 10"""
+        sql_limit = str()
+        if full_get is None:
+            sql_limit = """ limit %s , 10"""
+        else:
+            sql_limit = ""
         condition_individual = ""
         val = list()
         if condition :
@@ -83,9 +87,9 @@ def get_data_by_tablename(condition, page, table_name):
             client_order_FK_set = {"variety_code", "client"}
             produce_record_FK_set = {"variety_code", "media", "employee_id", "stage",}
             variety_FK_set = {"category"}
-            # print(len()
+
             if table_name == "produce_record" and columns_set & produce_record_FK_set:
-                print("produce_record : list")
+
                 sql_join = """
                 INNER JOIN  variety
                 ON  produce_record.variety_id = variety.id
@@ -98,14 +102,14 @@ def get_data_by_tablename(condition, page, table_name):
                 sql_count = sql_count +  sql_join
 
             elif table_name == "client_order" and columns_set & client_order_FK_set :
-                print("client_order : list")
+
                 sql_count = sql_count + """
                 inner join client 
                 on  client_order.client_id =  client.id inner 
                 join  variety 
                 on client_order.variety_id = variety.id """
             elif table_name == "variety" and columns_set & variety_FK_set :
-                print("variety : list")
+
                 sql_count = sql_count + """
                 INNER JOIN  category
                 ON variety.category_id = category.id"""
@@ -139,7 +143,7 @@ def get_data_by_tablename(condition, page, table_name):
                         val.append(column_id)
                         condition_individual = f" {table_name}.{column} = %s"
                     elif table_name != "variety" and column == "variety_code":
-                        print(column)
+
                         sql_sub = f"""select id from variety where {column} = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
@@ -152,13 +156,12 @@ def get_data_by_tablename(condition, page, table_name):
                         column = "variety_id"
                         condition_individual = f" {table_name}.{column} = %s"
                     elif "in_" in column:
-                        print(column)
-                        print(condition[f"{column}"])
+
                         if condition[f"{column}"] == "YES":
                             condition[f"{column}"] = 1
                         elif condition[f"{column}"] == "NO":
                             condition[f"{column}"] = 0
-                        print(condition[f"{column}"])
+
                         condition_individual = f" {table_name}.{column} = %s"
                         val.append(condition[f"{column}"])
                     else:
@@ -167,7 +170,6 @@ def get_data_by_tablename(condition, page, table_name):
                     
                 else:
                     if column == "client" or column == "stage" or column == "media" or column =="category":
-                        print(column)
                         sql_sub = f"""select id from {column} where name = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
@@ -181,7 +183,6 @@ def get_data_by_tablename(condition, page, table_name):
                         column = column + "_id"
                         condition_individual = f" AND {table_name}.{column} = %s"
                         column = column.replace("_id", "")                   
-                        print(column)
                     elif column == "employee_id":
                         sql_sub = f"""select id from staff where employee_id = %s"""
                         val_sub = list()
@@ -195,7 +196,7 @@ def get_data_by_tablename(condition, page, table_name):
                         val.append(column_id)
                         condition_individual = f"  AND  {table_name}.{column} = %s"
                     elif table_name != "variety" and column == "variety_code":
-                        print(column)
+
                         sql_sub = f"""select id from variety where {column} = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
@@ -213,9 +214,7 @@ def get_data_by_tablename(condition, page, table_name):
                         val.append(condition[f"{column}"])
                 sql = sql + condition_individual
                 sql_count = sql_count  + condition_individual  
-            # print(sql)
-            
-            # print(val)
+
             count_start = time()
             cursor.execute(sql_count,val)
             count_end = time()
@@ -224,16 +223,17 @@ def get_data_by_tablename(condition, page, table_name):
             print("execute count")
             data_amount = count
             sql = sql  + sql_limit
-            val.append(page*10)
+            if full_get is None:
+                val.append(page*10)
             data_start = time()
             cursor.execute(sql,val)
             data_end = time()
             print(f"get data = %.2f second" % (data_end -data_start))
-            # print(sql)
+
             print("execute sql")
         else:
-            # print(sql)
-            print(sql_count) 
+
+
             count_start = time()
             cursor.execute(sql_count)
             count_end = time()
@@ -242,16 +242,14 @@ def get_data_by_tablename(condition, page, table_name):
             count = cursor.fetchall()[0]["count"]
             data_amount = count
             sql = sql  + sql_limit
-            val.append(page*10)
+            if full_get is None:
+                val.append(page*10)
             data_start = time()
-            print(sql)
-            print(val)
             cursor.execute(sql,val) 
             data_end = time()
             print(f"get data = %.2f second" % (data_end -data_start))
             print("execute sql")
         result = cursor.fetchall()
-        # print(len(result))
         for data in result:
             keys = data.keys()
             for key in keys:
@@ -266,9 +264,9 @@ def get_data_by_tablename(condition, page, table_name):
         response["dataAmount"] = data_amount
         response["startPage"] = page
         response["data"] = result
-        print(f"sql  : {sql}")
-        print(f"sql_count  : {sql_count}")
-        print(f"val {val}")
+        # print(f"sql  : {sql}")
+        # print(f"sql_count  : {sql_count}")
+        # print(f"val {val}")
         return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")

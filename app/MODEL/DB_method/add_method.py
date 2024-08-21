@@ -3,7 +3,7 @@ import mysql.connector.pooling
 import os
 from fastapi import HTTPException
 from time import time
-from datetime import datetime
+from datetime import datetime, date
 from dotenv import load_dotenv
 
 
@@ -34,7 +34,6 @@ def insert_authorization(input_dict, tableName):
     try:
         columns = list(input_dict.keys())
         val=list(input_dict.values())
-        print(columns)
         sql=f"""INSERT INTO {tableName} (authorization, category, client, client_order, job_position, media, produce_record, staff, stage, variety)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
@@ -99,16 +98,16 @@ def insert_client_order(input_dict, tableName):
         cursor.close()
         con.close()
 
-def insert_produce_record(input_dict , in_stock = True):
+def insert_produce_record(input_dict , in_stock = True, consumed_date = None):
     # print(input_dict)
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     id, variety, media, producer_id, stage, mother_produce_id, consumed_reason = input_dict.values()
     try:
-        sql="""INSERT INTO produce_record(id, variety_id, media_id, stage_id, mother_produce_id, in_stock, consumed_reason, producer_id)
-        VALUES (%s, (SELECT id FROM variety where variety_code = %s), (SELECT id FROM media where name = %s), (SELECT id FROM stage where name = %s), %s, %s, %s, (SELECT id FROM staff where employee_id = %s));
+        sql="""INSERT INTO produce_record(id, variety_id, media_id, stage_id, mother_produce_id, in_stock, consumed_reason, producer_id, consumed_date)
+        VALUES (%s, (SELECT id FROM variety where variety_code = %s), (SELECT id FROM media where name = %s), (SELECT id FROM stage where name = %s), %s, %s, %s, (SELECT id FROM staff where employee_id = %s), %s);
         """
-        val=(id, variety, media, stage, mother_produce_id, in_stock, consumed_reason, producer_id)
+        val=(id, variety, media, stage, mother_produce_id, in_stock, consumed_reason, producer_id, consumed_date)
         cursor.execute(sql,val)
         con.commit()
         # print(f"insert {id} production")
@@ -164,11 +163,12 @@ def consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False ):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
+        today = date.today()
         sql1="""UPDATE produce_record   
-        SET in_stock = %s, consumed_reason = %s 
+        SET in_stock = %s, consumed_reason = %s, consumed_date = %s 
         WHERE id = %s
         """
-        val1=( in_stock, consumed_reason, mother_produce_id)
+        val1=( in_stock, consumed_reason, today, mother_produce_id)
        
         cursor.execute(sql1,val1)
         con.commit()

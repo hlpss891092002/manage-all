@@ -25,9 +25,9 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
                 continue
             elif  column == "in_employment":
                 continue
-            elif column == "manufacturing_date":
+            elif column == "produce_date":
                 continue
-            elif column == "manufacturing_time":
+            elif column == "produce_time":
                 continue
             elif column == "in_stock":
                 continue

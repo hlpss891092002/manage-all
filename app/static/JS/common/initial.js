@@ -106,7 +106,7 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
          console.log(column)
       if (column === "id" && router === "add"){
         continue
-      } else if(column === "manufacturing_time"){
+      } else if(column === "produce_time"){
         continue
       }else if(tableName !== "authorization" && column === "authorization"){
         continue

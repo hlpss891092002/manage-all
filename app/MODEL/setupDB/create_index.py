@@ -35,7 +35,7 @@ sql_index_variety_variety_code = """CREATE INDEX idx_variety_variety_code ON var
 sql_index_variety_category_id  = """CREATE INDEX idx_variety_category_id ON variety  (category_id);"""
 
 sql_index_produce_record_for_count = """-- CREATE INDEX idx_produce_record_count_2 
---     ON produce_record(variety_id, media_id, producer_id, stage_id, manufacturing_date, in_stock, consumed_reason);"""
+--     ON produce_record(variety_id, media_id, producer_id, stage_id, produce_date, in_stock, consumed_reason);"""
 
 cursor.execute(sql_index_category_category)
 cursor.execute(sql_index_client_name)

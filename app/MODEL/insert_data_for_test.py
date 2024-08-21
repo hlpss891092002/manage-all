@@ -18,12 +18,32 @@ load_dotenv()
 
 table_list = ["authorization", 'category', 'client', 'client_order', 'media', 'produce_record', 'staff', 'stage', 'variety']
 def insert_authorization_for_test():
-    insert_authorization("manager", False, True, True, True, True, True, True, True, True)
-    insert_authorization("Systems Engineer",  True, True, True, True, True, True, True, True, True)
-    insert_authorization("Administrator", False, True, True, True, True, True, True, False, True)
-    insert_authorization("Operator Leader",  False, False, False, False, True, True, False, True,  True)
-    insert_authorization("Operator",  False, False, False, False,  False, True, False, False, False)
-# insert_authorization_for_test()
+    manager_input_dict = {
+        "authorization" : False, "category": True, "client": True, "client_order": True, "job_position": "manager", "media": True, "produce_record": True, 'staff': True, "stage": True, 'variety': True
+    }
+    Engineer_input_dict = {
+        "authorization" : True, "category": True, "client": True, "client_order": True, "job_position": "Engineer", "media": True, "produce_record": True, 'staff': True, "stage": True, 'variety': True
+    }
+    Administrator_input_dict = {
+        "authorization" : False, "category": True, "client": True, "client_order": True, "job_position": "Administrator", "media": True, "produce_record": True, 'staff': False, "stage": True, 'variety': True
+    }
+    Operator_Leader_input_dict = {
+        "authorization" : False, "category": True, "client": False, "client_order": False, "job_position": "Operator Leader", "media": True, "produce_record": True, 'staff': False, "stage": True, 'variety': True
+    }
+    Operator_input_dict = {
+        "authorization" : False, "category": False, "client": False, "client_order": False, "job_position": "Operator", "media": False, "produce_record": True, 'staff': False, "stage": False, 'variety': False
+    }
+    insert_authorization(manager_input_dict, "authorization")
+    insert_authorization(Engineer_input_dict, "authorization")
+    insert_authorization(Administrator_input_dict, "authorization")
+    insert_authorization(Operator_Leader_input_dict, "authorization")
+    insert_authorization(Operator_input_dict, "authorization")
+    # insert_authorization("manager", False, True, True, True, True, True, True, True, True)
+    # insert_authorization("Systems Engineer",  True, True, True, True, True, True, True, True, True)
+    # insert_authorization("Administrator", False, True, True, True, True, True, True, False, True)
+    # insert_authorization("Operator Leader",  False, False, False, False, True, True, False, True,  True)
+    # insert_authorization("Operator",  False, False, False, False,  False, True, False, False, False)
+insert_authorization_for_test()
 def insert_staffs_for_test():
     staff_name = ["a","b","c","d","e","f","g","h","i","j","k"]
     body = {}
@@ -37,9 +57,9 @@ def insert_staffs_for_test():
         email = staff + "@test.com"
         authorization = 0
         if(staff == "a"):
-            authorization  =  "manager"
+            authorization  =  "Manager"
         elif(staff == "b"):
-            authorization  =  "Systems Engineer"
+            authorization  =  "Engineer"
         elif(staff == "c"):
             authorization  =  "Administrator"
         elif(staff == "d"):
@@ -54,7 +74,7 @@ def insert_staffs_for_test():
         body["authorization"] = authorization
         insert_staff(body)
         count +=1
-# insert_staffs_for_test()
+insert_staffs_for_test()
 def insert_category_for_test():
     category_list = ["Phalaenopsis", "Epidendrum", "Dendrobium", "Oncidium", "Platycerium", "Alocasia","Philodendron", "Anthurium"]
     for category in category_list:
@@ -62,7 +82,7 @@ def insert_category_for_test():
         body["name"] = category
         body["description"] = f"{category} for test"
         insert_tableName_data(body, "category")
-# insert_category_for_test()        
+insert_category_for_test()        
 def insert_client_for_test():
     client_list = ["台蘭", "Orchid for all", "花花農場", "尼花世界", "尼豪景觀公司", "Flor beauty","Born to bloom", "Flor Grande"]
     country = ["taiwan", "nicaragua", "Argentina", "USA", "UK"]
@@ -72,7 +92,7 @@ def insert_client_for_test():
         body["name"] = client
         body["description"] = f"{client} in {country[num]}"
         insert_tableName_data(body, "client")
-# insert_client_for_test()
+insert_client_for_test()
 def insert_variety_for_test():
     category_list = ["Phalaenopsis", "Epidendrum", "Dendrobium", "Oncidium", "Platycerium", "Alocasia","Philodendron", "Anthurium"]
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028","KVV044","KWK045","KVA044","ABP032","ALB022","AWS405","WAW400","UWU040","QAQ404","OAO010","QWQ104","EQD004","NHO011","NHK010","AKB001","EVA004","BAB054","NAA101","GAA009","ADP009","GPA001","GTA009"]
@@ -84,7 +104,7 @@ def insert_variety_for_test():
         body["description"] = f"{variety_code} in {category_list[num]}"
         body["category"] = category_list[num]
         insert_variety(body)
-# insert_variety_for_test()
+insert_variety_for_test()
 def insert_client_order_for_test():
     client_list = ["台蘭", "Orchid for all", "花花農場", "尼花世界", "尼豪景觀公司", "Flor beauty","Born to bloom", "Flor Grande"]
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028"]
@@ -97,7 +117,7 @@ def insert_client_order_for_test():
         body["amount"] = random.randint(1000, 6000)
         body["shipping_date"] = today + timedelta(weeks = num)
         insert_client_order(body, "client_order")
-# insert_client_order_for_test() 
+insert_client_order_for_test() 
 def insert_media_for_test():
     media_list = ["IAA", "IBA", "BAA", "BBA", "MAA", "MBA", "FAA", "FBA"  ]
     for media in media_list :
@@ -106,7 +126,7 @@ def insert_media_for_test():
         body["name"] = media
         body["description"] = f"{media} for test"
         insert_tableName_data(body, "media")
-# insert_media_for_test()
+insert_media_for_test()
 def insert_stage_for_test():
     stage_list = ["initial","propagation", "grown", "strong", "rooting"]
     for stage in stage_list :
@@ -114,7 +134,7 @@ def insert_stage_for_test():
         body["name"] = stage
         body["description"] = f"{stage} for test"
         insert_tableName_data(body, "stage")
-# insert_stage_for_test()
+insert_stage_for_test()
 
 
 def insert_initial_produce_record_for_test(counting, initial_list):
@@ -356,14 +376,14 @@ def data_for_test_initial():
     print(f"amount initial {len(counting)}")
 
 def multi_threads_test():
-    a = threading.Thread(target=data_for_test_rooting)
-    b = threading.Thread(target=data_for_test_strong)
-    c = threading.Thread(target=data_for_test_grown)
+    # a = threading.Thread(target=data_for_test_rooting)
+    # b = threading.Thread(target=data_for_test_strong)
+    # c = threading.Thread(target=data_for_test_grown)
     d = threading.Thread(target=data_for_test_propagation)
     e = threading.Thread(target=data_for_test_initial)
-    a.start()
-    b.start()
-    c.start()
+    # a.start()
+    # b.start()
+    # c.start()
     d.start()
     e.start()
 

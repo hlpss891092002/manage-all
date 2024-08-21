@@ -67,7 +67,7 @@ def get_yesterday_produce_most():
         ON produce_record.variety_id = variety.id 
         INNER JOIN stage
         ON produce_record.stage_id = stage.id 
-        where manufacturing_date = %s  and in_stock = 1
+        where produce_date = %s  and in_stock = 1
         group by variety_code, stage.name
         
         """
@@ -96,7 +96,7 @@ def get_yesterday_consume_by_category():
         ON produce_record.stage_id = stage.id        
         inner JOIN variety
         ON produce_record.variety_id = variety.id 
-        where manufacturing_date = %s  and in_stock = 0
+        where produce_date = %s  and in_stock = 0
         group by variety_code, stage.name
         ;
         """
@@ -154,7 +154,7 @@ def get_ready_stock():
         ON produce_record.variety_id = variety.id
         INNER JOIN category
         ON variety.category_id = category.id 
-        where in_stock = 1   and stage_id = 5  and DATEDIFF(%s, manufacturing_date) >= 1
+        where in_stock = 1   and stage_id = 5  and DATEDIFF(%s, produce_date) >= 1
         group by variety_code;
         """
         val = list()

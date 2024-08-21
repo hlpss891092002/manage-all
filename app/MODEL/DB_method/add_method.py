@@ -178,3 +178,44 @@ def consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False ):
     finally:
         cursor.close()
         con.close()
+
+def insert_produce_record_with_produce_date(input_dict, produce_date , in_stock = True, consumed_date = None ):
+    # print(input_dict)
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True)
+    id, variety, media, producer_id, stage, mother_produce_id, consumed_reason = input_dict.values()
+    try:
+        sql="""INSERT INTO produce_record(id, variety_id, media_id, stage_id, mother_produce_id, in_stock, consumed_reason, producer_id, consumed_date, produce_time)
+        VALUES (%s, (SELECT id FROM variety where variety_code = %s), (SELECT id FROM media where name = %s), (SELECT id FROM stage where name = %s), %s, %s, %s, (SELECT id FROM staff where employee_id = %s), %s, %s);
+        """
+        val=(id, variety, media, stage, mother_produce_id, in_stock, consumed_reason, producer_id, consumed_date, produce_date)
+        cursor.execute(sql,val)
+        con.commit()
+        # print(f"insert {id} production")
+        return True
+    except Exception as e:
+            print(f"{e}")
+            raise HTTPException(status_code=400, detail=f"{e}")
+        # return False
+    finally:
+        cursor.close()
+        con.close()
+
+def consume_mother_stock_with_consumed_date(mother_produce_id, consumed_reason, consumed_date, in_stock = False ):
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True)
+    try:
+        sql1="""UPDATE produce_record   
+        SET in_stock = %s, consumed_reason = %s, consumed_date = %s 
+        WHERE id = %s
+        """
+        val1=( in_stock, consumed_reason, consumed_date, mother_produce_id)
+       
+        cursor.execute(sql1,val1)
+        con.commit()
+        return True
+    except Exception as e:
+            raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()

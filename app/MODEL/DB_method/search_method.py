@@ -54,7 +54,7 @@ def get_data_by_tablename(condition, page, table_name):
             """
 
         elif table_name == "produce_record":
-            sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety , media.name as media, staff.name as producer, staff.employee_id as producer_id, stage.name as stage, produce_record.produce_date , produce_record.mother_produce_id, produce_record.in_stock, produce_record.consumed_reason
+            sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety , media.name as media, staff.name as producer, staff.employee_id as producer_id, stage.name as stage, produce_record.produce_date , produce_record.mother_produce_id, produce_record.in_stock,produce_record.consumed_date, produce_record.consumed_reason
             FROM  produce_record 
             INNER JOIN  variety
             ON  produce_record.variety_id = variety.id
@@ -257,7 +257,10 @@ def get_data_by_tablename(condition, page, table_name):
             keys = data.keys()
             for key in keys:
                 if "date" in key:
-                    data[f"{key}"] = datetime.strftime(data[f"{key}"], "%Y-%m-%d")
+                    if data[f"{key}"] is None:
+                        continue
+                    else:
+                        data[f"{key}"] = datetime.strftime(data[f"{key}"], "%Y-%m-%d")
         response = {}
         page_amount = math.ceil(data_amount/10)
         response["PageAmount"] = page_amount

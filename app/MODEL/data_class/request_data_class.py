@@ -48,7 +48,7 @@ class produce_record_class(BaseModel):
   id:str
   variety_code : str
   media : str
-  producer_id : str
+  employee_id : str
   stage : str
   mother_produce_id : Union[str, None]
   consumed_reason : Union[str, None]

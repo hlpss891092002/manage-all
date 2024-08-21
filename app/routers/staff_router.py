@@ -63,7 +63,6 @@ async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
        for table in tableNameList:
           if result[f"{table}"]: 
              tableList.append(table)
-       print(tableList)
        return tableList
     except Exception as e:
        raise HTTPException(status_code=500, detail=f"server error {e}")

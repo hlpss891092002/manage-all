@@ -74,8 +74,10 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
 
   // get item according table
   if(router !== "staffIndex"){
-    const result = await sentFetchWithoutBody("get",`/api/${router}/tableItem/${tableName}`)
-    const columns = result["data"]
+    const columnInputResult = await sentFetchWithoutBody("get",`/api/${router}/tableItem/${tableName}`)
+    const foreignColumnResult = await sentFetchWithoutBody("get",`/api/foreignList/${tableName}`)
+    console.log(foreignColumnResult)
+    const columns = columnInputResult["data"]
     if(searchInputContainer){
       let searchIndex = ""
       switch (tableName){

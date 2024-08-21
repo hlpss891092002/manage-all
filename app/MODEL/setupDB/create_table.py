@@ -123,7 +123,7 @@ sql_produce_record = """CREATE TABLE produce_record(
             id varchar(255),
             variety_id BIGINT not null,
             media_id BIGINT not null,
-            producer_id BIGINT not null,
+            employee_id BIGINT not null,
             stage_id BIGINT not null,
             produce_date date NOT NULL DEFAULT(CURRENT_TIME()),
             produce_time datetime NOT NULL DEFAULT(CURRENT_TIME()),
@@ -134,7 +134,7 @@ sql_produce_record = """CREATE TABLE produce_record(
             PRIMARY KEY (id),
             FOREIGN KEY(variety_id) REFERENCES variety(id),
             FOREIGN KEY(media_id) REFERENCES  media(id),
-            FOREIGN KEY(producer_id) REFERENCES  staff(id),
+            FOREIGN KEY(employee_id) REFERENCES  staff(id),
             FOREIGN KEY(stage_id) REFERENCES  stage(id),
             FOREIGN KEY (mother_produce_id) REFERENCES  produce_record(id)
 )"""

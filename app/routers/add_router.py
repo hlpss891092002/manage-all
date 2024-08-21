@@ -43,14 +43,14 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
         raise e
 
 
-# @router.post("/api/add/authorization")
-# async def create_authorization(authorization_data: authorization_class, payload  : Annotated[dict, Depends(user_validation)]):
-#     try :
-#         job_position, authorization = authorization_data
-#         return insert_authorization(job_position, authorization)
+@router.post("/api/add/authorization")
+async def create_authorization(authorization_data: authorization_class, payload  : Annotated[dict, Depends(user_validation)]):
+    try :
+        job_position, authorization = authorization_data
+        return insert_authorization(job_position, authorization)
         
-#     except Exception  as e:
-#         raise HTTPException(status_code=500, detail=f"server error {e}")
+    except Exception  as e:
+        raise HTTPException(status_code=500, detail=f"server error {e}")
 
 @router.post("/api/{tableName}")
 async def create_category(data : Union[variety_class, stage_class, staff_class, media_class, produce_record_class, order_class , category_class, client_class], payload  : Annotated[dict, Depends(user_validation)], tableName : str):

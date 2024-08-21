@@ -140,9 +140,9 @@ def update_produce_record_data(condition, table_name, index_value):
                 elif column == "variety_code":
                     value = condition[column]
                     sql_SET = sql_SET + f""" variety_id = (SELECT id FROM variety WHERE {column} = %s )"""
-                elif column == "producer_id":
+                elif column == "employee_id":
                     value = condition[column]
-                    sql_SET = sql_SET + f""" producer_id = (SELECT id FROM staff WHERE employee_id = %s )"""
+                    sql_SET = sql_SET + f""" employee_id = (SELECT id FROM staff WHERE employee_id = %s )"""
                 elif column == "stage":
                     value = condition[column]
                     sql_SET = sql_SET + f""" stage_id = (SELECT id FROM stage WHERE name = %s )"""
@@ -166,9 +166,9 @@ def update_produce_record_data(condition, table_name, index_value):
                 elif column == "variety_code":
                     value = condition[column]
                     sql_SET = sql_SET + f""" , variety_id = (SELECT id FROM variety WHERE {column} = %s )"""
-                elif column == "producer_id":
+                elif column == "employee_id":
                     value = condition[column]
-                    sql_SET = sql_SET + f""" , producer_id = (SELECT id FROM staff WHERE employee_id = %s )"""
+                    sql_SET = sql_SET + f""" , employee_id = (SELECT id FROM staff WHERE employee_id = %s )"""
                 elif column == "stage":
                     value = condition[column]
                     sql_SET = sql_SET + f""" , stage_id = (SELECT id FROM stage WHERE name = %s )"""

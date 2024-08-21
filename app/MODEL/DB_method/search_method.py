@@ -54,14 +54,14 @@ def get_data_by_tablename(condition, page, table_name):
             """
 
         elif table_name == "produce_record":
-            sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety , media.name as media, staff.name as producer, staff.employee_id as producer_id, stage.name as stage, produce_record.produce_date , produce_record.mother_produce_id, produce_record.in_stock,produce_record.consumed_date, produce_record.consumed_reason
+            sql="""SELECT produce_record.id,  variety.variety_code, variety.name as variety , media.name as media, staff.name as producer, staff.employee_id as employee_id, stage.name as stage, produce_record.produce_date , produce_record.mother_produce_id, produce_record.in_stock,produce_record.consumed_date, produce_record.consumed_reason
             FROM  produce_record 
             INNER JOIN  variety
             ON  produce_record.variety_id = variety.id
             INNER JOIN  media
             ON  produce_record.media_id = media.id
             INNER JOIN  staff
-            ON  produce_record.producer_id = staff.id
+            ON  produce_record.employee_id = staff.id
             INNER JOIN  stage
             ON  produce_record.stage_id = stage.id
             """
@@ -81,7 +81,7 @@ def get_data_by_tablename(condition, page, table_name):
             columns = list(condition.keys())
             columns_set = set(columns)
             client_order_FK_set = {"variety_code", "client"}
-            produce_record_FK_set = {"variety_code", "media", "producer_id", "stage",}
+            produce_record_FK_set = {"variety_code", "media", "employee_id", "stage",}
             variety_FK_set = {"category"}
             # print(len()
             if table_name == "produce_record" and columns_set & produce_record_FK_set:
@@ -92,7 +92,7 @@ def get_data_by_tablename(condition, page, table_name):
                 INNER JOIN  media
                 ON  produce_record.media_id = media.id
                 INNER JOIN  staff
-                ON  produce_record.producer_id = staff.id
+                ON  produce_record.employee_id = staff.id
                 INNER JOIN  stage
                 ON  produce_record.stage_id = stage.id"""
                 sql_count = sql_count +  sql_join
@@ -128,7 +128,7 @@ def get_data_by_tablename(condition, page, table_name):
                         column = column + "_id"
                         condition_individual = f" {table_name}.{column} = %s"
                         column = column.replace("_id", "")                   
-                    elif column == "producer_id":
+                    elif column == "employee_id":
                         sql_sub = f"""select id from staff where employee_id = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
@@ -185,7 +185,7 @@ def get_data_by_tablename(condition, page, table_name):
                         condition_individual = f" AND {table_name}.{column} = %s"
                         column = column.replace("_id", "")                   
                         print(column)
-                    elif column == "producer_id":
+                    elif column == "employee_id":
                         sql_sub = f"""select id from staff where employee_id = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
@@ -281,22 +281,3 @@ def get_data_by_tablename(condition, page, table_name):
         cursor.close()
         con.close()
 
-def get_foreign_column(table_name):
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        sql = """
-                SELECT     COLUMN_NAME 
-                FROM  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-                WHERE
-                TABLE_NAME = %s"""
-        val = list()
-        val.append(table_name)
-        cursor.execute(sql, val)
-        result = cursor.fetchall()
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()

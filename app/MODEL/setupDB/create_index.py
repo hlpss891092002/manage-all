@@ -35,7 +35,7 @@ sql_index_variety_variety_code = """CREATE INDEX idx_variety_variety_code ON var
 sql_index_variety_category_id  = """CREATE INDEX idx_variety_category_id ON variety  (category_id);"""
 
 sql_index_produce_record_for_count = """-- CREATE INDEX idx_produce_record_count_2 
---     ON produce_record(variety_id, media_id, producer_id, stage_id, produce_date, in_stock, consumed_reason);"""
+--     ON produce_record(variety_id, media_id, employee_id, stage_id, produce_date, in_stock, consumed_reason);"""
 
 cursor.execute(sql_index_category_category)
 cursor.execute(sql_index_client_name)
@@ -56,7 +56,7 @@ cursor.execute(sql_index_produce_record_for_count)
 
 # sql_index_produce_record_foreign_key ="""
 
-# CREATE INDEX idx_produce_record_producer_id ON produce_record  (producer_id);
+# CREATE INDEX idx_produce_record_employee_id ON produce_record  (employee_id);
 # CREATE INDEX idx_produce_record_variety_id ON produce_record  (variety_id);"""
 
 show_index = "show index from produce_record"
@@ -68,7 +68,7 @@ sql_count = f"""explain analyze Select count(produce_record.id) from produce_rec
              JOIN  media
             ON  produce_record.media_id = media.id
              JOIN  staff
-            ON  produce_record.producer_id = staff.id
+            ON  produce_record.employee_id = staff.id
              JOIN  stage
             ON  produce_record.stage_id = stage.id
             limit 10000

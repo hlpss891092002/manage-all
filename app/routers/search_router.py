@@ -57,10 +57,19 @@ async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], 
         start = time()
         column_list = get_foreign_column(table_name)
         print(column_list)
-        # data = get_foreign_column(table_name)
+        response = {}
+        response["data"] = {}
+        data = response["data"]
+        for column in column_list:
+            if column =="mother_produce_id":
+                continue
+            column_value_list = get_column_value_distinct(column, table_name)
+            data[column] = column_value_list
         end = time()
+        print(response)
+
         print(f"multithread time = %.2f second" % (end -start))
-        return JSONResponse(status_code=200, content=data)
+        return JSONResponse(status_code=200, content=response)
     except HTTPException as e:
         raise e    
     except TypeError as e:

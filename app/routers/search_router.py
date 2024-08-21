@@ -49,3 +49,21 @@ async def get_media_list(page:str, payload  : Annotated[dict, Depends(user_valid
             raise HTTPException(status_code=500, detail=f"{e}")
     except Exception as e:
             raise HTTPException(status_code=500, detail=f"{e}")
+
+@router.get("/api/foreignList/{table_name}")
+async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], table_name:str):
+    try :
+        print(table_name)
+        start = time()
+        column_list = get_foreign_column(table_name)
+        print(column_list)
+        # data = get_foreign_column(table_name)
+        end = time()
+        print(f"multithread time = %.2f second" % (end -start))
+        return JSONResponse(status_code=200, content=data)
+    except HTTPException as e:
+        raise e    
+    except TypeError as e:
+            raise HTTPException(status_code=500, detail=f"{e}")
+    except Exception as e:
+            raise HTTPException(status_code=500, detail=f"{e}")

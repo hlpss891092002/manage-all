@@ -5,8 +5,25 @@
 }
 
 .main-block{
-  height: 300px;
-  overflow-y: auto;
+  height: 200px;
   margin: 30px 0;
   width: 100%;
 }
+.item-container{
+  overflow-y: auto;
+  height: 100%;
+}
+.block-title{
+  margin-bottom: 10px ;
+}
+.title-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+
+.item-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+

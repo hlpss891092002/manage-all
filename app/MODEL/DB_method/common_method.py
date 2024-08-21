@@ -90,14 +90,14 @@ def get_yesterday_consume_by_category():
         now = date.today()
         yesterday = now - timedelta(days=1)
         print(yesterday)
-        sql="""SELECT category.name as category, count(produce_record.id) as count
-        FROM produce_record        
+        sql="""SELECT variety_code, stage.name as stage, count(produce_record.id) as count
+        FROM produce_record
+        INNER JOIN stage
+        ON produce_record.stage_id = stage.id        
         inner JOIN variety
         ON produce_record.variety_id = variety.id 
-        INNER JOIN category
-        ON variety.category_id = category.id 
         where manufacturing_date = %s  and in_stock = 0
-        group by category
+        group by variety_code, stage.name
         ;
         """
         val = list()

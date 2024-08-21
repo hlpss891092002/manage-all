@@ -277,3 +277,23 @@ def get_data_by_tablename(condition, page, table_name):
     finally:
         cursor.close()
         con.close()
+
+def get_foreign_column(table_name):
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql = """
+                SELECT     COLUMN_NAME 
+                FROM  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE
+                TABLE_NAME = %s"""
+        val = list()
+        val.append(table_name)
+        cursor.execute(sql, val)
+        result = cursor.fetchall()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()

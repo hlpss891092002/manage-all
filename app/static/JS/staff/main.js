@@ -6,10 +6,10 @@ const updateSubList = document.querySelector("#update-sub-list")
 const deleteSubList = document.querySelector("#delete-sub-list")
 const inputContainer = document.querySelector(".input-container")
 const searchInputContainer = document.querySelector(".search-input-container")
-const categoryAmountInStock= document.querySelector(".category-amount-in-stock")
-const largestAmountStock = document.querySelector(".largest-amount-stock")
-const categoryAddYesterday = document.querySelector(".category-add-yesterday")
-const categoryConsumeYesterday = document.querySelector(".category-consume-yesterday")
+const categoryStockContainer= document.querySelector(".category-stock")
+const readyShippingStockContainer = document.querySelector(".ready-shipping-stock")
+const yesterdayProduceMostContainer = document.querySelector(".yesterday-produce-most")
+const categoryYesterdayConsumeContainer = document.querySelector(".category-yesterday-consume")
 const table = document.querySelector(".table")
 const query = window.location.search
 const tableName = query.slice(1, query.length)
@@ -17,24 +17,43 @@ const router = location.pathname.replace("/", "")
 let staffId = ""
 
 function renderMainBlock(block, dataList){
-
+  const itemContainer = document.createElement("div") 
+  itemContainer.className = "item-container"
+  const titleRow = document.createElement("div")
+  titleRow.className = "title-row"
+  block.appendChild(titleRow)
   for (let data of dataList){
-    let entire = Object.entries(data)
-    const blockItem = document.createElement("div")
-    if (entire.length ===  3){
-      const name = entire[0][1]
-      const stage = entire[1][1]
-      const count = entire[2][1]
-      blockItem.className = "block-item"
-      blockItem.innerText = `${name}-${stage} : ${count}`
-    }else{
-      const name = entire[0][1]
-      const count = entire[1][1]
-      blockItem.className = "block-item"
-      blockItem.innerText = `${name} : ${count}`
+    if (dataList.indexOf(data) === 0){
+      let keys = Object.keys(data)
+      for (let key of keys){
+        key === "count" ? key = "amount" : key = key
+        const titleItem = document.createElement("div")
+        titleItem.className = "title-item"
+        titleItem.innerText= `${key}`
+        titleRow.appendChild(titleItem)
+      }
     }
-    block.appendChild(blockItem)
+    let entire = Object.entries(data)
+    const itemRow = document.createElement("div")
+    itemRow.className = "item-row"
+    // if (entire.length ===  3){
+      console.log(entire)
+      for (let item of entire){
+        let value = item[1]
+        let rowItem = document.createElement("div")
+        rowItem.className = "row-item"
+        rowItem.innerText = value
+        itemRow.append(rowItem)
+      }
+    // }else{
+    //   const name = entire[0][1]
+    //   const count = entire[1][1]
+    //   itemRow.className = "item-row"
+    //   itemRow.innerText = `${name} : ${count}`
+    // }
+    itemContainer.appendChild(itemRow)
   }
+  block.appendChild(itemContainer)
 }
 
 async function initialPage(){
@@ -52,10 +71,10 @@ async function initialPage(){
 async function getNewestData() {
   let latestData = await sentFetchWithoutBody("get", "/api/latest")
   let {yesterdayProduceMost, categoryYesterdayConsume, categoryStock, readyShippingStock} = await latestData
-  // renderMainBlock(categoryAmountInStock, category_stock)
-  // renderMainBlock(largestAmountStock, largest_amount)
-  // renderMainBlock(categoryAddYesterday, yesterday_produce)
-  // renderMainBlock(categoryConsumeYesterday, yesterday_consume)
+  renderMainBlock(categoryStockContainer, categoryStock)
+  renderMainBlock(readyShippingStockContainer, readyShippingStock)
+  renderMainBlock(yesterdayProduceMostContainer, yesterdayProduceMost)
+  renderMainBlock(categoryYesterdayConsumeContainer, categoryYesterdayConsume)
   console.log(latestData)
 }
 

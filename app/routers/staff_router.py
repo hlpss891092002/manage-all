@@ -101,7 +101,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          data_stock.sort(key=get_stage, reverse=True)
          result["stock_category"] = data_stock
          end = time()
-         print(f"get stock time = %.2f second" % (end -start))
+         print(f"get category stock time = %.2f second" % (end -start))
 
       def get_ready_stock_sort():
          start = time()
@@ -109,7 +109,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          data_stock.sort(key=get_count, reverse=True)
          result["ready_stock"] = data_stock
          end = time()
-         print(f"get stock time = %.2f second" % (end -start))
+         print(f"get ready stock time = %.2f second" % (end -start))
       #  result["category_stock"] = get_category_stock()
       #  result["largest_amount"] = get_largest_amount_stock()
 

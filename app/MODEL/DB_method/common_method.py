@@ -59,7 +59,7 @@ def get_yesterday_produce_most():
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        yesterday = now - timedelta(days=2)
+        yesterday = now - timedelta(days=1)
         print(yesterday)
         sql="""SELECT variety_code, stage.name as stage, count(produce_record.id) as count
         FROM produce_record        
@@ -88,7 +88,7 @@ def get_yesterday_consume_by_category():
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        yesterday = now - timedelta(days=2)
+        yesterday = now - timedelta(days=1)
         print(yesterday)
         sql="""SELECT category.name as category, count(produce_record.id) as count
         FROM produce_record        
@@ -117,7 +117,7 @@ def get_category_stock():
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        yesterday = now - timedelta(days=2)
+        yesterday = now - timedelta(days=1)
         print(yesterday)
         sql="""SELECT category.name as category, stage.name as stage, count(produce_record.id) as count 
         FROM produce_record
@@ -147,26 +147,23 @@ def get_ready_stock():
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        yesterday = now - timedelta(days=1)
-        print(yesterday)
-        sql="""SELECT variety.variety_code, stage.name as stage, manufacturing_time, count(produce_record.id) as count 
+        # shipping_date_diff = now - timedelta(weeks=4)
+        sql="""SELECT category.name as category, variety.variety_code as variety_code ,  count(produce_record.id) as count 
         FROM produce_record
         inner JOIN variety
         ON produce_record.variety_id = variety.id
-        INNER JOIN stage
-        ON produce_record.stage_id = stage.id
         INNER JOIN category
         ON variety.category_id = category.id 
-        where in_stock = 1  and  (%s - manufacturing_date) > 3 ;
+        where in_stock = 1   and stage_id = 5  and DATEDIFF(%s, manufacturing_date) >= 1
+        group by variety_code;
         """
         val = list()
         val.append(now)
-        cursor.execute(sql)
+        cursor.execute(sql, val)
         result = cursor.fetchall()
-        print(result)
         return result
     except Exception as e:
-        raise e
+        raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()

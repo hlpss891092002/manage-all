@@ -76,7 +76,8 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
   if(router !== "staffIndex"){
     const columnInputResult = await sentFetchWithoutBody("get",`/api/${router}/tableItem/${tableName}`)
     const foreignColumnResult = await sentFetchWithoutBody("get",`/api/foreignList/${tableName}`)
-    console.log(foreignColumnResult)
+    const foreignColumnArray = foreignColumnResult["data"]
+    console.log(foreignColumnArray)
     const columns = columnInputResult["data"]
     if(searchInputContainer){
       let searchIndex = ""
@@ -105,7 +106,6 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     // insert item block
     if (inputContainer){
       for (let column of columns){
-         console.log(column)
       if (column === "id" && router === "add"){
         continue
       } else if(column === "produce_time"){
@@ -113,7 +113,6 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
       }else if(tableName !== "authorization" && column === "authorization"){
         continue
       }
-      console.log(column)
       const inputGroup = document.createElement("div")
       inputGroup.className = "input-group "
       inputGroup.innerHTML = `<span class="input-group-text ${column}-input-disc">${column}</span>`
@@ -122,18 +121,51 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
       if (column.includes("date")){
         inputItem.type = "date"
       }
-      inputGroup.appendChild(inputItem)
+      if(foreignColumnArray[column]){
+        let foreignColumnValueArray = foreignColumnArray[column]
+        const dropdown = document.createElement("div")
+        dropdown.className = "dropdown"
+        const dropdownBtn = document.createElement("button")
+        dropdownBtn.className = "btn btn-secondary dropdown-toggle"
+        dropdownBtn.setAttribute("data-bs-toggle", "dropdown" )
+        dropdownBtn.setAttribute("aria-expanded","false")
+        const dropdownMenu = document.createElement("ul")
+        dropdownMenu.className = `dropdown-menu dropdown-menu-${column} dropdown-menu-end scrollable-list`
+        dropdownMenu.id = ""
+        for(let value of foreignColumnValueArray){
+          if(foreignColumnValueArray.indexOf(value) === 0){
+            const dropdownItem = document.createElement("li")
+            dropdownItem.className = "dropdown-item clear-item"
+            dropdownItem.innerText = "CLEAR"
+            dropdownMenu.appendChild(dropdownItem)
+          }
+          const dropdownItem = document.createElement("li")
+          dropdownItem.className = "dropdown-item"
+          dropdownItem.innerText = value
+          dropdownMenu.appendChild(dropdownItem)
+        }
+        dropdown.appendChild(dropdownBtn)
+        dropdown.appendChild(dropdownMenu)
+        inputGroup.appendChild(inputItem)
+        // inputGroup.appendChild(clearBtn)
+        inputGroup.append(dropdown)
+        dropdownMenu.addEventListener("click", (e)=>{
+          const targetText = e.target.innerText
+          const targetElementName = e.target.nodeName
+          if(targetText === "CLEAR"){
+            inputItem.value = ""
+          }else if(targetElementName === "LI"){
+            inputItem.value = targetText
+          }else{
+            return
+          }
+        })
+      }else{
+        inputGroup.appendChild(inputItem)
+        // inputGroup.appendChild(clearBtn)
+      }
       inputContainer.appendChild(inputGroup)
-      // select
-      // inputGroup.innerHTML = `<label class="input-group-text " for="${column}">${column}</label>`
-      // const inputSelect = document.createElement("select")
-      // inputSelect.className ="form-select"
-      // inputSelect.id = `${column}`
-      // const optionSelect = document.createElement("option")
-      // optionSelect.innerHTML = `<option selected>Choose...</option>`
-      // inputSelect.appendChild(optionSelect)
-      // inputGroup.appendChild(inputSelect)
-      // inputContainer.appendChild(inputGroup)
+      
       }
       console.log(inputContainer.children.length)
       console.log(window.innerWidth)

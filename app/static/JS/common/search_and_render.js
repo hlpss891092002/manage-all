@@ -18,5 +18,5 @@ export async function sent_input_search_and_render_table(body, tableName, PageAm
     render_result_table(data, tableName, tableTitleContainer, table, PageAmount, dataAmount, router )
     
   }
-  return result
+  return searchResult
 };

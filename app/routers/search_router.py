@@ -64,7 +64,14 @@ async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], 
             if column =="mother_produce_id":
                 continue
             column_value_list = get_column_value_distinct(column, table_name)
+            if column == "employee_id":
+                pass
+            elif column == "variety_id":
+                column = "variety_code"
+            else:
+                column = column.replace("_id", "")
             data[column] = column_value_list
+            
         end = time()
         print(response)
 

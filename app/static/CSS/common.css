@@ -199,6 +199,15 @@ button {
   width: 50px;
 }
 
+.scrollable-list{
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.dropdown-item{
+  height: 40px;
+}
+
 @media (max-width:1600px) {
   .main-page{
     width: 1000px;

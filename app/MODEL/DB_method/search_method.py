@@ -114,7 +114,6 @@ def get_data_by_tablename(condition, page, table_name):
             sql_count = sql_count + sql_condition        
             for column in columns:
                 if columns.index(column) == 0 :
-                    print(column, condition[column])
                     if column == "client" or column == "stage" or column == "media" or column =="category":
                         sql_sub = f"""select id from {column} where name = %s"""
                         val_sub = list()
@@ -132,7 +131,6 @@ def get_data_by_tablename(condition, page, table_name):
                         sql_sub = f"""select id from staff where employee_id = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-
                         start = time()
                         cursor.execute(sql_sub, val_sub)
                         end = time()
@@ -145,7 +143,6 @@ def get_data_by_tablename(condition, page, table_name):
                         sql_sub = f"""select id from variety where {column} = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
-
                         start = time()
                         cursor.execute(sql_sub, val_sub)
                         end = time()
@@ -247,6 +244,8 @@ def get_data_by_tablename(condition, page, table_name):
             sql = sql  + sql_limit
             val.append(page*10)
             data_start = time()
+            print(sql)
+            print(val)
             cursor.execute(sql,val) 
             data_end = time()
             print(f"get data = %.2f second" % (data_end -data_start))
@@ -264,11 +263,7 @@ def get_data_by_tablename(condition, page, table_name):
         response = {}
         page_amount = math.ceil(data_amount/10)
         response["PageAmount"] = page_amount
-        # if data_amount < 100:
         response["dataAmount"] = data_amount
-        # else:
-        #     response["dataAmount"] = "100+"
-        
         response["startPage"] = page
         response["data"] = result
         print(f"sql  : {sql}")

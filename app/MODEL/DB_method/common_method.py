@@ -201,7 +201,7 @@ def get_column_value_distinct(column, table_name):
         elif column =="employee_id":
             FK_table = "staff"
         else:
-            FK_table = column.replace("_id", " ")
+            FK_table = column.replace("_id", "")
     
         if FK_table == "variety":
             FK_column = "variety_code"

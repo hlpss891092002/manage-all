@@ -5,10 +5,19 @@ export async function sent_input_search_and_render_table(body, tableName, PageAm
   let searchResult = await sentFetchWithParams("get", body, `/api/${tableName}`)
   console.log(searchResult)
   let data = searchResult["data"]
+  let error = searchResult["error"]
   nowPage = parseInt(searchResult["startPage"])
   dataAmount = searchResult["dataAmount"]
   console.log(nowPage)
-  if(data.length < 1){
+  if (error){
+    const errorMessage = searchResult["message"]
+    if(errorMessage.includes("NoneType")){
+      message.innerText = "The input value isn't exist.  Please check input value"
+    }else{
+      message.innerText = errorMessage
+    }
+    
+  }else if(data.length < 1){
     message.innerText = "no data"
   }else{
     PageAmount = searchResult["PageAmount"]

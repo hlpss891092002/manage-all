@@ -2,12 +2,14 @@
 import os
 import jwt
 import threading
+
 from time import time
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import  JSONResponse
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import Annotated
+from app.MODEL.matplotlib_function.make_chart import  make_donut_chart
 from app.CONTROL.jwt_function import user_validation
 from app.MODEL.data_class.user_data import sign_in_data
 from app.MODEL.data_class.response_class import error_message
@@ -70,6 +72,7 @@ async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
 @router.get("/api/latest")
 async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
    try:
+
       result = {}
       employee_id = payload["employee_id"]
       def get_count(element):
@@ -98,7 +101,17 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          start = time()
          data_stock = get_category_stock()
          data_stock.sort(key=get_stage, reverse=True)
-         result["categoryStock"] = data_stock
+         label_list = []
+         data_list = []
+         for data in data_stock:
+            label = data["category"] 
+            count = data["count"]
+            label_list.append(label)
+            data_list.append(count)
+         chart = make_donut_chart(data_list, label_list)
+         result["categoryStock"] = {}
+         result["categoryStock"]["data"] = data_stock
+         result["categoryStock"]["image"] = f"data:image/png;base64,{chart}"
          end = time()
          print(f"get category stock time = %.2f second" % (end -start))
 
@@ -106,7 +119,18 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          start = time()
          data_stock = get_ready_stock()
          data_stock.sort(key=get_count, reverse=True)
-         result["readyShippingStock"] = data_stock
+         print(data_stock)
+         label_list = []
+         data_list = []
+         for data in data_stock:
+            label = data["category"] + "-" + data["variety_code"]
+            count = data["count"]
+            label_list.append(label)
+            data_list.append(count)
+         chart = make_donut_chart(data_list, label_list)
+         result["readyShippingStock"] = {}
+         result["readyShippingStock"]["data"] = data_stock
+         result["readyShippingStock"]["image"] = f"data:image/png;base64,{chart}"
          end = time()
          print(f"get ready stock time = %.2f second" % (end -start))
       #  result["category_stock"] = get_category_stock()
@@ -114,16 +138,16 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
 
       def run_threads():
          start = time()
-         a = threading.Thread(target=get_yesterday_produce_most_threads_limit_10)
-         b = threading.Thread(target=get_yesterday_consumed_category_sort)
+         # a = threading.Thread(target=get_yesterday_produce_most_threads_limit_10)
+         # b = threading.Thread(target=get_yesterday_consumed_category_sort)
          c = threading.Thread(target=get_stock_category_sort)
          d = threading.Thread(target=get_ready_stock_sort)
-         a.start()
-         b.start()
+         # a.start()
+         # b.start()
          c.start()
          d.start()
-         a.join()
-         b.join()
+         # a.join()
+         # b.join()
          c.join()
          d.join()
          end = time()

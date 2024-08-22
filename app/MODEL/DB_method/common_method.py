@@ -117,16 +117,14 @@ def get_category_stock():
         now = date.today()
         yesterday = now - timedelta(days=1)
         print(yesterday)
-        sql="""SELECT category.name as category, stage.name as stage, count(produce_record.id) as count 
+        sql="""SELECT category.name as category,  count(produce_record.id) as count 
         FROM produce_record
-        inner JOIN stage
-        ON produce_record.stage_id = stage.id 
         inner JOIN variety
         ON produce_record.variety_id = variety.id  
         INNER JOIN category
         ON variety.category_id = category.id
         where in_stock = 1 
-        group by category.name, stage.name
+        group by category.name 
         ;
         """
         val = list()

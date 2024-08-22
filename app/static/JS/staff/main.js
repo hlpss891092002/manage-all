@@ -56,6 +56,18 @@ function renderMainBlock(block, dataList){
   block.appendChild(itemContainer)
 }
 
+function renderMainImg(block, dataList){
+  const itemContainer = document.createElement("div") 
+  itemContainer.className = "item-container"
+  const itemImg = document.createElement("img")
+  itemImg.className = "item-img"
+  let image = dataList["image"]
+  console.log(image)
+  itemImg.src = image
+  itemContainer.appendChild(itemImg)
+  block.appendChild(itemContainer)
+}
+
 async function initialPage(){
   let employee_id = await getAccountFromAutho()
   staffId = employee_id
@@ -71,10 +83,11 @@ async function initialPage(){
 async function getNewestData() {
   let latestData = await sentFetchWithoutBody("get", "/api/latest")
   let {yesterdayProduceMost, categoryYesterdayConsume, categoryStock, readyShippingStock} = await latestData
-  renderMainBlock(categoryStockContainer, categoryStock)
-  renderMainBlock(readyShippingStockContainer, readyShippingStock)
-  renderMainBlock(yesterdayProduceMostContainer, yesterdayProduceMost)
-  renderMainBlock(categoryYesterdayConsumeContainer, categoryYesterdayConsume)
+  // renderMainBlock(categoryStockContainer, categoryStock)
+  renderMainImg(readyShippingStockContainer, readyShippingStock)
+  // renderMainBlock(readyShippingStockContainer, readyShippingStock)
+  // renderMainBlock(yesterdayProduceMostContainer, yesterdayProduceMost)
+  // renderMainBlock(categoryYesterdayConsumeContainer, categoryYesterdayConsume)
   console.log(latestData)
 }
 

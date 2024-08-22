@@ -30,7 +30,7 @@ export async function render_result_table(search_result, tableName, tableTitleCo
     const valueKey = Object.values(elementName)[0]
     let updateIndexColumn = ""
     let updateIndexValue = ""
-    row.className = `table-row name-`
+    row.className = `table-row `
     elementArray.forEach((element)=>{
       let  [key, value] = element
         if(key.includes("in_")){
@@ -52,6 +52,17 @@ export async function render_result_table(search_result, tableName, tableTitleCo
             ${value}
           </label>
           `
+          row.addEventListener("click", (e)=>{
+            console.log(e.target.nodeName === "INPUT")
+            // if(e.target.checked){
+            //   console.log(row)
+            //   console.log(row.classList)
+              row.classList.toggle("border-primary") 
+              row.classList.toggle("border") 
+            // }else{
+              // row.classList.remove(" border-primary")
+            // } 
+          })
           row.appendChild(formCheck)
         }else if(router === "update"){
           if (elementArray.indexOf(element)===0){

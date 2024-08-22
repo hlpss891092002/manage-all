@@ -93,8 +93,8 @@ async function search_and_render(nowPage){
         }
       }
       if (body[`${deleteColumnName}`].length === 0){
-        alert("please click row, you want to delete")
         e.preventDefault()
+        return
       }else{
         sent_input_delete(body)
       }

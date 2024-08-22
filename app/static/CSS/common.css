@@ -208,6 +208,10 @@ button {
   height: 40px;
 }
 
+.border{
+  border-radius:  8px;
+}
+
 @media (max-width:1600px) {
   .main-page{
     width: 1000px;

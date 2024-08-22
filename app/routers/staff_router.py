@@ -74,6 +74,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
    try:
 
       result = {}
+      donut_chart_data_dict = {}
       employee_id = payload["employee_id"]
       def get_count(element):
          return element["count"]
@@ -81,37 +82,48 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
       def get_stage(element):
          return element["category"]
       
-      def get_yesterday_produce_most_threads_limit_10():
-         start = time()
-         data_from_yesterday = get_yesterday_produce_most()
-         data_from_yesterday.sort(key=get_count, reverse=True)
-         result["yesterdayProduceMost"] = data_from_yesterday[0:10]
-         end = time()
-         print(f"get yesterday count , time = %.2f second" % (end -start))
+      
 
-      def get_yesterday_consumed_category_sort():
+      def get_yesterday_produce_category_sort():
          start = time()
-         data_consume = get_yesterday_consume_by_category()
-         data_consume.sort(key=get_count, reverse=True)
-         result["categoryYesterdayConsume"] = data_consume
-         end = time()
-         print(f"get yesterday consumed time = %.2f second" % (end -start))
-
-      def get_stock_category_sort():
-         start = time()
-         data_stock = get_category_stock()
+         data_stock = get_yesterday_produce_category()
          data_stock.sort(key=get_stage, reverse=True)
+         chart_data = {}
          label_list = []
          data_list = []
+         chart_data["label_list"] = label_list
+         chart_data["data_list"] = data_list 
          for data in data_stock:
             label = data["category"] 
             count = data["count"]
             label_list.append(label)
             data_list.append(count)
-         chart = make_donut_chart(data_list, label_list)
+         result["categoryYesterdayProduce"] = {}
+         result["categoryYesterdayProduce"]["data"] = data_stock
+         donut_chart_data_dict["categoryYesterdayProduce"] = chart_data
+         # result["categoryStock"]["image"] = f"data:image/png;base64,{chart}"
+         end = time()
+         print(f"get category stock time = %.2f second" % (end -start))
+
+      def get_stock_category_sort():
+         start = time()
+         data_stock = get_category_stock()
+         data_stock.sort(key=get_stage, reverse=True)
+         chart_data = {}
+         label_list = []
+         data_list = []
+         chart_data["label_list"] = label_list
+         chart_data["data_list"] = data_list 
+         for data in data_stock:
+            label = data["category"] 
+            count = data["count"]
+            label_list.append(label)
+            data_list.append(count)
+         # chart = make_donut_chart(data_list, label_list)
          result["categoryStock"] = {}
          result["categoryStock"]["data"] = data_stock
-         result["categoryStock"]["image"] = f"data:image/png;base64,{chart}"
+         donut_chart_data_dict["categoryStock"] = chart_data
+         # result["categoryStock"]["image"] = f"data:image/png;base64,{chart}"
          end = time()
          print(f"get category stock time = %.2f second" % (end -start))
 
@@ -120,38 +132,54 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          data_stock = get_ready_stock()
          data_stock.sort(key=get_count, reverse=True)
          print(data_stock)
+         chart_data = {}
          label_list = []
          data_list = []
+         chart_data["label_list"] = label_list
+         chart_data["data_list"] = data_list 
          for data in data_stock:
             label = data["category"] + "-" + data["variety_code"]
             count = data["count"]
             label_list.append(label)
             data_list.append(count)
-         chart = make_donut_chart(data_list, label_list)
+         # chart = make_donut_chart(data_list, label_list)
          result["readyShippingStock"] = {}
          result["readyShippingStock"]["data"] = data_stock
-         result["readyShippingStock"]["image"] = f"data:image/png;base64,{chart}"
+         donut_chart_data_dict["readyShippingStock"] = chart_data
+         # result["readyShippingStock"]["image"] = f"data:image/png;base64,{chart}"
          end = time()
          print(f"get ready stock time = %.2f second" % (end -start))
-      #  result["category_stock"] = get_category_stock()
-      #  result["largest_amount"] = get_largest_amount_stock()
+
+      def make_chart(data):
+         label_list, data_list = data
+         print(label_list)
+         print(data_list)
 
       def run_threads():
          start = time()
-         # a = threading.Thread(target=get_yesterday_produce_most_threads_limit_10)
+         a = threading.Thread(target=get_yesterday_produce_category_sort)
          # b = threading.Thread(target=get_yesterday_consumed_category_sort)
          c = threading.Thread(target=get_stock_category_sort)
          d = threading.Thread(target=get_ready_stock_sort)
-         # a.start()
+         a.start()
          # b.start()
          c.start()
          d.start()
-         # a.join()
+         a.join()
          # b.join()
          c.join()
          d.join()
          end = time()
+         donut_keys = list(donut_chart_data_dict.keys())
+         print(donut_keys)
+         for key in donut_keys:
+            data = donut_chart_data_dict[key]
+            label_list, data_list = data.values()
+            print(label_list , data_list)
+            chart = make_donut_chart(data_list, label_list)
+            result[key]["image"] = f"data:image/png;base64,{chart}"
          print(f"get run threads = %.2f second" % (end -start))
+        
          return result
          
          

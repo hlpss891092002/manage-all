@@ -4,6 +4,9 @@ from datetime import datetime, date
 import io 
 import base64
 
+def autopct_format(pct):
+    return ('%1.1f%%' % pct) if pct >= 1 else ''
+
 def make_donut_chart(data_list, label_list, ):
   x = data_list
   today = date.today()
@@ -16,9 +19,9 @@ def make_donut_chart(data_list, label_list, ):
           colors=colors,
           radius=1.5, 
           labels =label_list,
-          labeldistance = 1,
+          labeldistance = 0.8,
           startangle= 0,
-          autopct= "%.1f%%",
+          autopct= autopct_format,
           pctdistance= -0.5,
           wedgeprops={'linewidth':3,'edgecolor':'w', 'width':0.5},
           )
@@ -28,5 +31,6 @@ def make_donut_chart(data_list, label_list, ):
   plt.close()
   img_buffer.seek(0)
   img_base64 = base64.b64encode(img_buffer.getvalue()).decode('utf-8')
+  img_buffer.closed
   return img_base64
 

@@ -82,9 +82,10 @@ async function initialPage(){
 }
 async function getNewestData() {
   let latestData = await sentFetchWithoutBody("get", "/api/latest")
-  let {yesterdayProduceMost, categoryYesterdayConsume, categoryStock, readyShippingStock} = await latestData
-  // renderMainBlock(categoryStockContainer, categoryStock)
+  let {yesterdayProduceMost, categoryYesterdayProduce, categoryStock, readyShippingStock} = await latestData
+  renderMainImg(categoryStockContainer, categoryStock)
   renderMainImg(readyShippingStockContainer, readyShippingStock)
+  renderMainImg(yesterdayProduceMostContainer, categoryYesterdayProduce)
   // renderMainBlock(readyShippingStockContainer, readyShippingStock)
   // renderMainBlock(yesterdayProduceMostContainer, yesterdayProduceMost)
   // renderMainBlock(categoryYesterdayConsumeContainer, categoryYesterdayConsume)

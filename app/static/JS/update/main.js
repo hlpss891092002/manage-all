@@ -91,8 +91,11 @@ async function search_and_render(nowPage){
         const updateIndexArray = updatableClassList[4].split("-").splice(2,updatableClassList[3].length)
         updateIndexValue = updateIndexArray.join("-") 
       }
-      if (updateValue !== updateValueOrigin){
-        console.log(updateValue)
+      if(updateValue === "" && updateValueOrigin === "null"){
+        console.log("empty")
+        continue
+      }else  if (updateValue !== updateValueOrigin){
+        console.log(updateValue === null)
         console.log(updateValueOrigin)
         if(!body[updateIndexValue]){
           body[updateIndexValue] = {}

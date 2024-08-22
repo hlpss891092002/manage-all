@@ -65,7 +65,6 @@ button {
 
 .row-value {
   min-width: 190px;
-  width: 100%;
   min-height: 40px;
   text-wrap: nowrap;
   overflow-x: auto;
@@ -74,6 +73,7 @@ button {
   padding: 8px;
 }
 .updatable  {
+  width: 100%;
   text-align: center;
   margin-bottom: 5px;
   border-style: solid;

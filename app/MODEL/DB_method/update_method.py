@@ -72,7 +72,6 @@ def update_client_order_data(condition, table_name, index_value):
     cursor = con.cursor(dictionary = True, buffered = True)
     update_index_value = index_value
     update_index_column = condition["indexColumn"]
-    print(update_index_value)
     del condition["indexColumn"]
     try:
         sql=f"""UPDATE {table_name}"""
@@ -105,6 +104,8 @@ def update_client_order_data(condition, table_name, index_value):
         sql = sql + sql_SET + sql_condition
         val.append(update_index_value)
         cursor.execute(sql,val)
+        print(sql)
+        print(val)
         con.commit() 
         if cursor.rowcount > 0 :
             print(f"update  category {cursor.rowcount} ")
@@ -119,6 +120,7 @@ def update_client_order_data(condition, table_name, index_value):
         con.close()
 
 def update_produce_record_data(condition, table_name, index_value):
+    print(condition)
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     update_index_value = index_value

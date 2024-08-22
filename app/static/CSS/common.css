@@ -151,6 +151,7 @@ button {
   display: flex;
   text-align: center;
   justify-content: space-around;
+  padding: 3px ;
 }
 
 .list-group-item{
@@ -211,6 +212,11 @@ button {
 .border{
   border-radius:  8px;
 }
+
+.form-check-input{
+  border: #497196 solid 1.5px;
+}
+
 
 @media (max-width:1600px) {
   .main-page{

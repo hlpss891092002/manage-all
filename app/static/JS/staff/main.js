@@ -8,7 +8,7 @@ const inputContainer = document.querySelector(".input-container")
 const searchInputContainer = document.querySelector(".search-input-container")
 const categoryStockContainer= document.querySelector(".category-stock")
 const readyShippingStockContainer = document.querySelector(".ready-shipping-stock")
-const yesterdayProduceMostContainer = document.querySelector(".yesterday-produce-most")
+const CategoryYesterdayOutput = document.querySelector(".Category-yesterday-output")
 const categoryYesterdayConsumeContainer = document.querySelector(".category-yesterday-consume")
 const table = document.querySelector(".table")
 const query = window.location.search
@@ -59,13 +59,21 @@ function renderMainBlock(block, dataList){
 function renderMainImg(block, dataList){
   const itemContainer = document.createElement("div") 
   itemContainer.className = "item-container"
-  const itemImg = document.createElement("img")
-  itemImg.className = "item-img"
-  let image = dataList["image"]
-  console.log(image)
-  itemImg.src = image
-  itemContainer.appendChild(itemImg)
-  block.appendChild(itemContainer)
+  if (dataList["image"]){
+    const itemImg = document.createElement("img")
+    itemImg.className = "item-img"
+    let image = dataList["image"]
+    itemImg.src = image
+    itemContainer.appendChild(itemImg)
+    block.appendChild(itemContainer)
+  }else{
+    const itemImg = document.createElement("div")
+    itemImg.className = "item-img"
+    itemImg.innerText = "No data found"
+    itemContainer.appendChild(itemImg)
+    block.appendChild(itemContainer)
+  }
+  
 }
 
 async function initialPage(){
@@ -85,7 +93,7 @@ async function getNewestData() {
   let {yesterdayProduceMost, categoryYesterdayProduce, categoryStock, readyShippingStock} = await latestData
   renderMainImg(categoryStockContainer, categoryStock)
   renderMainImg(readyShippingStockContainer, readyShippingStock)
-  renderMainImg(yesterdayProduceMostContainer, categoryYesterdayProduce)
+  renderMainImg(CategoryYesterdayOutput, categoryYesterdayProduce)
   // renderMainBlock(readyShippingStockContainer, readyShippingStock)
   // renderMainBlock(yesterdayProduceMostContainer, yesterdayProduceMost)
   // renderMainBlock(categoryYesterdayConsumeContainer, categoryYesterdayConsume)

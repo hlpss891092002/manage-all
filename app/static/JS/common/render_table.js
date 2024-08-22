@@ -53,12 +53,14 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           </label>
           `
           row.addEventListener("click", (e)=>{
-            console.log(e.target.nodeName === "INPUT")
+            if(e.target.nodeName === "INPUT"){
+              row.classList.toggle("border-primary") 
+              row.classList.toggle("border") 
+            }
             // if(e.target.checked){
             //   console.log(row)
             //   console.log(row.classList)
-              row.classList.toggle("border-primary") 
-              row.classList.toggle("border") 
+
             // }else{
               // row.classList.remove(" border-primary")
             // } 

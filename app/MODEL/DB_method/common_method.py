@@ -52,89 +52,6 @@ def get_table_columns(table_name):
         cursor.close()
         con.close()
 
-def get_yesterday_produce_category():
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        now = date.today()
-        yesterday = now - timedelta(days=1)
-        print(yesterday)
-        sql="""SELECT category.name as category,  count(produce_record.id) as count
-        FROM produce_record        
-        inner JOIN variety
-        ON produce_record.variety_id = variety.id 
-        INNER JOIN category
-        ON variety.category_id = category.id  
-        where produce_date = %s  and in_stock = 1
-        group by category.name
-        
-        """
-        val = list()
-        val.append(yesterday)
-        cursor.execute(sql, val)
-        result = cursor.fetchall()
-        # print(result)
-        return result
-    except Exception as e:
-        raise e
-    finally:
-        cursor.close()
-        con.close()
-
-def get_category_stock():
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        now = date.today()
-        yesterday = now - timedelta(days=1)
-        print(yesterday)
-        sql="""SELECT category.name as category,  count(produce_record.id) as count 
-        FROM produce_record
-        inner JOIN variety
-        ON produce_record.variety_id = variety.id  
-        INNER JOIN category
-        ON variety.category_id = category.id
-        where in_stock = 1 
-        group by category.name 
-        ;
-        """
-        val = list()
-        val.append(yesterday)
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-
-def get_ready_stock():
-    con = connection_pool.get_connection()
-    cursor = con.cursor(dictionary = True, buffered = True)
-    try:
-        now = date.today()
-        # shipping_date_diff = now - timedelta(weeks=4)
-        sql="""SELECT category.name as category, variety.variety_code as variety_code ,  count(produce_record.id) as count 
-        FROM produce_record
-        inner JOIN variety
-        ON produce_record.variety_id = variety.id
-        INNER JOIN category
-        ON variety.category_id = category.id 
-        where in_stock = 1   and stage_id = 5  and DATEDIFF(%s, produce_date) >= 1
-        group by variety_code;
-        """
-        val = list()
-        val.append(now)
-        cursor.execute(sql, val)
-        result = cursor.fetchall()
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"{e}")
-    finally:
-        cursor.close()
-        con.close()
-    
 def get_foreign_column(table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
@@ -199,3 +116,89 @@ def get_column_value_distinct(column, table_name):
     finally:
         cursor.close()
         con.close()
+
+#for mainpage
+def get_yesterday_produce_category():
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        now = date.today()
+        yesterday = now - timedelta(days=1)
+        print(yesterday)
+        sql="""SELECT category.name as category,  count(produce_record.id) as count
+        FROM produce_record        
+        inner JOIN variety
+        ON produce_record.variety_id = variety.id 
+        INNER JOIN category
+        ON variety.category_id = category.id  
+        where produce_date = %s  and in_stock = 1
+        group by category.name
+        
+        """
+        val = list()
+        val.append(yesterday)
+        cursor.execute(sql, val)
+        result = cursor.fetchall()
+        print(result)
+        return result
+    except Exception as e:
+        raise e
+    finally:
+        cursor.close()
+        con.close()
+
+def get_category_stock():
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        now = date.today()
+        yesterday = now - timedelta(days=1)
+        print(yesterday)
+        sql="""SELECT category.name as category,  count(produce_record.id) as count 
+        FROM produce_record
+        inner JOIN variety
+        ON produce_record.variety_id = variety.id  
+        INNER JOIN category
+        ON variety.category_id = category.id
+        where in_stock = 1 
+        group by category.name 
+        ;
+        """
+        val = list()
+        val.append(yesterday)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
+def get_ready_stock():
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        now = date.today()
+        print(now)
+        # shipping_date_diff = now - timedelta(weeks=4)
+        sql="""SELECT category.name as category,   count(produce_record.id) as count 
+        FROM produce_record
+        inner JOIN variety
+        ON produce_record.variety_id = variety.id
+        INNER JOIN category
+        ON variety.category_id = category.id 
+        where in_stock = 1   and stage_id = 5  and DATEDIFF(%s, produce_date) > 30
+        group by category;
+        """
+        val = list()
+        val.append(now)
+        cursor.execute(sql, val)
+        result = cursor.fetchall()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+    

@@ -5,7 +5,7 @@
 }
 
 .main-block{
-  height: 600px;
+  height: 400px;
   margin: 30px 0;
   width: 100%;
 }
@@ -20,7 +20,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
-
+.item-img {
+  /* width: 640px;
+  height: 480px; */
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .item-row{
   display: grid;

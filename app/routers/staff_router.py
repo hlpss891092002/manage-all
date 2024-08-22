@@ -87,6 +87,11 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
       def get_yesterday_produce_category_sort():
          start = time()
          data_stock = get_yesterday_produce_category()
+         result["categoryYesterdayProduce"] = {}
+         if len(data_stock) == 0:
+            return
+         else:
+            pass 
          data_stock.sort(key=get_stage, reverse=True)
          chart_data = {}
          label_list = []
@@ -138,7 +143,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          chart_data["label_list"] = label_list
          chart_data["data_list"] = data_list 
          for data in data_stock:
-            label = data["category"] + "-" + data["variety_code"]
+            label = data["category"] 
             count = data["count"]
             label_list.append(label)
             data_list.append(count)
@@ -150,23 +155,19 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          end = time()
          print(f"get ready stock time = %.2f second" % (end -start))
 
-      def make_chart(data):
-         label_list, data_list = data
-         print(label_list)
-         print(data_list)
-
+     
       def run_threads():
          start = time()
          a = threading.Thread(target=get_yesterday_produce_category_sort)
-         # b = threading.Thread(target=get_yesterday_consumed_category_sort)
+         ## b = threading.Thread(target=get_yesterday_consumed_category_sort)
          c = threading.Thread(target=get_stock_category_sort)
          d = threading.Thread(target=get_ready_stock_sort)
          a.start()
-         # b.start()
+         ## b.start()
          c.start()
          d.start()
          a.join()
-         # b.join()
+         ## b.join()
          c.join()
          d.join()
          end = time()
@@ -188,7 +189,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
       
    except HTTPException as e:
       raise e    
-   except TypeError as e:
-         raise HTTPException(status_code=500, detail=f"{e}")
-   except Exception as e:
-         raise HTTPException(status_code=500, detail=f"{e}")
+   # except TypeError as e:
+   #       raise HTTPException(status_code=500, detail=f"{e}")
+   # except Exception as e:
+   #       raise HTTPException(status_code=500, detail=f"{e}")

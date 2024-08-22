@@ -11,7 +11,7 @@ def make_donut_chart(data_list, label_list, ):
   x = data_list
   today = date.today()
   colors = plt.get_cmap('Blues')(np.linspace(0.2, 0.7, len(x)))
-  fig, ax = plt.subplots()
+  fig, ax = plt.subplots(figsize=(4,4))
   def sort(list):
     for item in list: 
       return item 
@@ -22,7 +22,7 @@ def make_donut_chart(data_list, label_list, ):
           labeldistance = 0.8,
           startangle= 0,
           autopct= autopct_format,
-          pctdistance= -0.5,
+          pctdistance= 0.55,
           wedgeprops={'linewidth':3,'edgecolor':'w', 'width':0.5},
           )
 

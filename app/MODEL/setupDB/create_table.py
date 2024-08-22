@@ -39,7 +39,7 @@ def create_table(sql):
 
 simple_sql_authorization_level = """CREATE TABLE authorization(
             id BIGINT auto_increment, 
-            job_position varchar(100) NOT NULL,
+            job_position varchar(100) NOT NULL UNIQUE,
             authorization bool NOT NULL,
             category bool NOT NULL, 
             client bool NOT NULL, 

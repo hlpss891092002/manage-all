@@ -185,10 +185,10 @@ def insert_produce_record_with_produce_date(input_dict, produce_date , in_stock 
     cursor = con.cursor(dictionary = True)
     id, variety, media, employee_id, stage, mother_produce_id, consumed_reason = input_dict.values()
     try:
-        sql="""INSERT INTO produce_record(id, variety_id, media_id, stage_id, mother_produce_id, in_stock, consumed_reason, employee_id, consumed_date, produce_time)
-        VALUES (%s, (SELECT id FROM variety where variety_code = %s), (SELECT id FROM media where name = %s), (SELECT id FROM stage where name = %s), %s, %s, %s, (SELECT id FROM staff where employee_id = %s), %s, %s);
+        sql="""INSERT INTO produce_record(id, variety_id, media_id, stage_id, mother_produce_id, in_stock, consumed_reason, employee_id, consumed_date,produce_date, produce_time)
+        VALUES (%s, (SELECT id FROM variety where variety_code = %s), (SELECT id FROM media where name = %s), (SELECT id FROM stage where name = %s), %s, %s, %s, (SELECT id FROM staff where employee_id = %s), %s, %s, %s);
         """
-        val=(id, variety, media, stage, mother_produce_id, in_stock, consumed_reason, employee_id, consumed_date, produce_date)
+        val=(id, variety, media, stage, mother_produce_id, in_stock, consumed_reason, employee_id, consumed_date, produce_date, produce_date)
         cursor.execute(sql,val)
         con.commit()
         # print(f"insert {id} production")

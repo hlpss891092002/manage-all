@@ -34,8 +34,10 @@ sql_index_stage_name = """CREATE INDEX idx_stage_name ON stage (name);"""
 sql_index_variety_variety_code = """CREATE INDEX idx_variety_variety_code ON variety  (variety_code);"""
 sql_index_variety_category_id  = """CREATE INDEX idx_variety_category_id ON variety  (category_id);"""
 
-sql_index_produce_record_for_count = """-- CREATE INDEX idx_produce_record_count_ 
---     ON produce_record(variety_id, media_id, employee_id, stage_id, produce_date, in_stock,consumed_date, consumed_reason);"""
+sql_index_produce_record_for_count = """ CREATE INDEX idx_produce_record_count_ 
+     ON produce_record(variety_id, media_id, employee_id, stage_id, produce_date, in_stock,consumed_date, consumed_reason);"""
+sql_index_produce_record_for_foreign = """ CREATE INDEX idx_produce_record__foreign_keys_ 
+     ON produce_record(variety_id, media_id, employee_id, stage_id);"""
 
 cursor.execute(sql_index_category_category)
 cursor.execute(sql_index_client_name)
@@ -78,9 +80,9 @@ sql_count = f"""explain analyze Select count(produce_record.id) from produce_rec
 
 
 # cursor.execute(show_index)
-result = cursor.fetchall()
+# result = cursor.fetchall()
 # for index in result:
 #     print(index["Key_name"], " : ", index["Column_name"])
-print(result)
+# print(result)
 cursor.close()
 con.close()

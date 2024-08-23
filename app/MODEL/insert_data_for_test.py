@@ -424,40 +424,40 @@ def data_recent_week():
     recent_day = today - timedelta(days=num_random)
     
     
-    data_for_test_initial(recent_day)
+    # data_for_test_initial(recent_day)
     data_for_test_initial(yesterday)
-    data_for_test_propagation(propagation_day)
-    data_for_test_grown(grown_day)
-    data_for_test_strong(strong_day)
-    data_for_test_rooting(root_day)
+    # data_for_test_propagation(propagation_day)
+    # data_for_test_grown(grown_day)
+    # data_for_test_strong(strong_day)
+    # data_for_test_rooting(root_day)
 
 def multi_threads_test():
     start = time()
-    a = threading.Thread(target=data_for_test_rooting)
-    b = threading.Thread(target=data_for_test_strong)
-    c = threading.Thread(target=data_for_test_grown)
-    d = threading.Thread(target=data_for_test_propagation)
-    e = threading.Thread(target=data_for_test_initial)
-    # f = threading.Thread(target=data_recent_week)
-    a.start()
-    b.start()
-    c.start()
-    d.start()
-    e.start()
-    # f.start()
-    a.join()
-    b.join()
-    c.join()
-    d.join()
-    e.join()
+    # a = threading.Thread(target=data_for_test_rooting)
+    # b = threading.Thread(target=data_for_test_strong)
+    # c = threading.Thread(target=data_for_test_grown)
+    # d = threading.Thread(target=data_for_test_propagation)
+    # e = threading.Thread(target=data_for_test_initial)
+    f = threading.Thread(target=data_recent_week)
+    # a.start()
+    # b.start()
+    # c.start()
+    # d.start()
+    # e.start()
+    f.start()
+    # a.join()
+    # b.join()
+    # c.join()
+    # d.join()
+    # e.join()
     end = time()
     print(f"multi thread time = %.2f" % (end -start))
 
 
 loop_count = 0
-while loop_count <= 90: 
-    multi_threads_test()
-    loop_count += 1 
+# while loop_count <= 90: 
+multi_threads_test()
+    # loop_count += 1 
 
 
 

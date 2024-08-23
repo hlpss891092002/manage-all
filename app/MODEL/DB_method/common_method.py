@@ -63,6 +63,7 @@ def get_foreign_column(table_name):
                 WHERE
                 TABLE_NAME = %s
                 AND REFERENCED_TABLE_NAME IS NOT NULL
+                AND TABLE_SCHEMA = "manageall_database"
                 """
         val = list()
         val.append(table_name)
@@ -78,7 +79,7 @@ def get_foreign_column(table_name):
         cursor.close()
         con.close()
 
-def get_column_value_distinct(column, table_name):
+def get_column_value_distinct(column):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
@@ -88,26 +89,27 @@ def get_column_value_distinct(column, table_name):
             FK_table = "staff"
         else:
             FK_table = column.replace("_id", "")
-    
+
         if FK_table == "variety":
             FK_column = "variety_code"
         elif FK_table == "staff":
             FK_column = column
+        elif FK_table == "authorization":
+            FK_column = "job_position"
         else:
             FK_column = "name"
         
         sql = f"""
-                SELECT  DISTINCT {FK_table}.{FK_column} FROM {table_name}
-                INNER JOIN {FK_table}
-                ON {table_name}.{column} = {FK_table}.id
-                """     
-        print(sql)
+                SELECT  DISTINCT {FK_table}.{FK_column} FROM {FK_table}
+                
+                """ 
         cursor.execute(sql)
         result = cursor.fetchall()
         value_list= list()
+        print(sql)
         for key_pair in result:
             value = list(key_pair.values())[0]
-            value_list.append(value)
+            value_list.append(value)  
         return value_list
 
     except Exception as e:
@@ -139,7 +141,6 @@ def get_yesterday_produce_category():
         val.append(yesterday)
         cursor.execute(sql, val)
         result = cursor.fetchall()
-        print(result)
         return result
     except Exception as e:
         raise e
@@ -201,4 +202,30 @@ def get_ready_stock():
     finally:
         cursor.close()
         con.close()
+
+def get_seven_days_outs():
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        now = date.today()
+        print(now)
+        # shipping_date_diff = now - timedelta(weeks=4)
+        sql="""SELECT  produce_date,  count(produce_record.id) as count 
+        FROM produce_record
+        inner JOIN variety
+        ON produce_record.variety_id = variety.id
+        where in_stock = 1    and DATEDIFF(%s, produce_date) <= 7
+        group by  produce_date;
+        """
+        val = list()
+        val.append(now)
+        cursor.execute(sql, val)
+        result = cursor.fetchall()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
     
+  

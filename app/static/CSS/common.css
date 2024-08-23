@@ -1,6 +1,7 @@
 * {
   font-weight: 200;
   font-size: 20px;
+  font-family: "Noto Sans CJK TC", sans-serif, serif;
 }
 div{
   text-align: center;
@@ -49,7 +50,7 @@ button {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 15px;
   height: 8px;
 }
 
@@ -215,6 +216,11 @@ button {
 
 .form-check-input{
   border: #497196 solid 1.5px;
+}
+
+.side-title{
+  font-size: 25px;
+  font-weight: 300;
 }
 
 

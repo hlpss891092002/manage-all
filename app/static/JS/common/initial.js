@@ -77,7 +77,6 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     const columnInputResult = await sentFetchWithoutBody("get",`/api/${router}/tableItem/${tableName}`)
     const foreignColumnResult = await sentFetchWithoutBody("get",`/api/foreignList/${tableName}`)
     const foreignColumnArray = foreignColumnResult["data"]
-    console.log(foreignColumnArray)
     const columns = columnInputResult["data"]
     if(searchInputContainer){
       let searchIndex = ""
@@ -110,8 +109,8 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
         continue
       } else if(column === "produce_time"){
         continue
-      }else if(tableName !== "authorization" && column === "authorization"){
-        continue
+      }else if(tableName !==("authorization")  && column === "authorization"){
+        
       }
       const inputGroup = document.createElement("div")
       inputGroup.className = "input-group "
@@ -147,7 +146,6 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
         dropdown.appendChild(dropdownBtn)
         dropdown.appendChild(dropdownMenu)
         inputGroup.appendChild(inputItem)
-        // inputGroup.appendChild(clearBtn)
         inputGroup.append(dropdown)
         dropdownMenu.addEventListener("click", (e)=>{
           const targetText = e.target.innerText
@@ -206,3 +204,8 @@ export function showSideBlockFromRouter(router){
   sideSubList.classList.add("show")
 }
 
+export function renderSlogan(router){
+  const mainPAge=  document.querySelector("main-page")
+  const welcome = document.createElement("section")
+  mainPAge.prepend()
+}

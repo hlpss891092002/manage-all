@@ -8,8 +8,8 @@ const inputContainer = document.querySelector(".input-container")
 const searchInputContainer = document.querySelector(".search-input-container")
 const categoryStockContainer= document.querySelector(".category-stock")
 const readyShippingStockContainer = document.querySelector(".ready-shipping-stock")
-const CategoryYesterdayOutput = document.querySelector(".Category-yesterday-output")
-const categoryYesterdayConsumeContainer = document.querySelector(".category-yesterday-consume")
+const categoryYesterdayOutput = document.querySelector(".Category-yesterday-output")
+const sevenDaysOutsContainer = document.querySelector(".seven-days-outs")
 const table = document.querySelector(".table")
 const query = window.location.search
 const tableName = query.slice(1, query.length)
@@ -56,16 +56,30 @@ function renderMainBlock(block, dataList){
   block.appendChild(itemContainer)
 }
 
-function renderMainImg(block, dataList){
+function renderMainImg(block, dataList, title){
   const itemContainer = document.createElement("div") 
   itemContainer.className = "item-container"
+  let dataArray = dataList["data"]
+  let sum = 0
+  
   if (dataList["image"]){
     const itemImg = document.createElement("img")
     itemImg.className = "item-img"
     let image = dataList["image"]
     itemImg.src = image
+    
+    const countSum = document.createElement("div")
+    countSum.className = "count-sum"
+    for (let data of dataArray){
+      console.log(data["count"])
+      let count =  data["count"]
+      sum += count
+    }
+    countSum.innerText = ` ${title} : ${sum}`
+    itemContainer.appendChild(countSum)
     itemContainer.appendChild(itemImg)
     block.appendChild(itemContainer)
+    
   }else{
     const itemImg = document.createElement("div")
     itemImg.className = "item-img"
@@ -90,10 +104,11 @@ async function initialPage(){
 }
 async function getNewestData() {
   let latestData = await sentFetchWithoutBody("get", "/api/latest")
-  let {yesterdayProduceMost, categoryYesterdayProduce, categoryStock, readyShippingStock} = await latestData
-  renderMainImg(categoryStockContainer, categoryStock)
-  renderMainImg(readyShippingStockContainer, readyShippingStock)
-  renderMainImg(CategoryYesterdayOutput, categoryYesterdayProduce)
+  let {sevenDaysOuts, categoryYesterdayProduce, categoryStock, readyShippingStock} = await latestData
+  renderMainImg(categoryStockContainer, categoryStock, "Total Stock")
+  renderMainImg(readyShippingStockContainer, readyShippingStock, "Total Stock")
+  renderMainImg(categoryYesterdayOutput, categoryYesterdayProduce, "Total outputs")
+  renderMainImg(sevenDaysOutsContainer, sevenDaysOuts, "Total outputs")
   // renderMainBlock(readyShippingStockContainer, readyShippingStock)
   // renderMainBlock(yesterdayProduceMostContainer, yesterdayProduceMost)
   // renderMainBlock(categoryYesterdayConsumeContainer, categoryYesterdayConsume)

@@ -15,3 +15,13 @@ img {
 .pagination-container {
   position: relative;
 }
+
+.row-value-container {
+  display: flex;
+  min-width: 190px;
+  margin: 0 10px;
+  padding: 8px;
+}
+.dropdown-menu{
+  width: 100px;
+}

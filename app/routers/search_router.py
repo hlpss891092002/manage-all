@@ -21,6 +21,8 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
                     continue
             if column == "password":
                 continue
+            elif column == "authorization":
+                 column = "job_position"
             item_List.append(column)
 
         response = {
@@ -63,11 +65,13 @@ async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], 
         for column in column_list:
             if column =="mother_produce_id":
                 continue
-            column_value_list = get_column_value_distinct(column, table_name)
+            column_value_list = get_column_value_distinct(column)
             if column == "employee_id":
                 pass
             elif column == "variety_id":
                 column = "variety_code"
+            elif column == "authorization_id":
+                column = "job_position"
             else:
                 column = column.replace("_id", "")
             data[column] = column_value_list

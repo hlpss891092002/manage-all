@@ -77,8 +77,8 @@ async function search_and_render(nowPage){
     let body ={}
     for (let updatable of updatableArray){
       const updatableClassList = updatable.classList
-      const updateIndexColumn = updatableClassList[2].split("-")[1] 
-      const updateColumn = updatableClassList[3].split("-")[1]
+      const updateIndexColumn = updatableClassList[1].split("-")[1] 
+      const updateColumn = updatableClassList[2].split("-")[1]
       const updateValueOrigin  = updatable.placeholder
       const updateValue = updatable.value
       let updateIndexValue = []
@@ -88,7 +88,7 @@ async function search_and_render(nowPage){
         updateIndexValue = updateIndexArray.join(" ")
         console.log(updateIndexValue)
       }else{
-        const updateIndexArray = updatableClassList[4].split("-").splice(2,updatableClassList[3].length)
+        const updateIndexArray = updatableClassList[3].split("-").splice(2,updatableClassList[3].length)
         updateIndexValue = updateIndexArray.join("-") 
       }
       if(updateValue === "" && updateValueOrigin === "null"){

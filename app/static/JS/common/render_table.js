@@ -1,3 +1,5 @@
+import{sentFetchWithoutBody} from "../common/sent_fetch_get_response.js"
+
 export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount, router ) {
   const resultKeys = Object.keys(search_result)
   const tableTitle = document.createElement("div")
@@ -24,6 +26,7 @@ export async function render_result_table(search_result, tableName, tableTitleCo
   })
   table.appendChild(columnNameContainer)
   //append row value
+  const foreignColumnResult = await sentFetchWithoutBody("get",`/api/foreignList/${tableName}`)
   search_result.forEach((elementName)=>{
     const row = document.createElement("div")
     const elementArray = Object.entries(elementName)
@@ -71,15 +74,59 @@ export async function render_result_table(search_result, tableName, tableTitleCo
             updateIndexColumn = key
             updateIndexValue = value
           }
+          let rowValueContainer = document.createElement("div")
+          rowValueContainer.className = " row-value-container"
           rowValue = document.createElement("input")
-          rowValue.className = `row-value updatable index-${updateIndexColumn} column-${key} index-value-${updateIndexValue} `
+          rowValue.className = `updatable index-${updateIndexColumn} column-${key} index-value-${updateIndexValue} `
           rowValue.placeholder = `${value}`
           rowValue.value = value
           if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
             rowValue.disabled = true
           }
           // rowValue.setAttribute("contenteditable", "true")
-          row.appendChild(rowValue)
+          rowValueContainer.appendChild(rowValue)
+          row.appendChild(rowValueContainer)
+          const foreignColumnArray = foreignColumnResult["data"]
+          if (foreignColumnArray[key]){
+            let foreignColumnValueArray = foreignColumnArray[key]
+            const dropdown = document.createElement("div")
+            dropdown.className = "dropdown"
+            const dropdownBtn = document.createElement("button")
+            dropdownBtn.className = "btn btn-secondary dropdown-toggle"
+            dropdownBtn.setAttribute("data-bs-toggle", "dropdown" )
+            dropdownBtn.setAttribute("aria-expanded","false")
+            const dropdownMenu = document.createElement("ul")
+            dropdownMenu.className = `dropdown-menu dropdown-menu-${key} dropdown-menu-end scrollable-list`
+            dropdownMenu.id = ""
+            for(let value of foreignColumnValueArray){
+              if(foreignColumnValueArray.indexOf(value) === 0){
+                const dropdownItem = document.createElement("li")
+                dropdownItem.className = "dropdown-item clear-item"
+                dropdownItem.innerText = "CLEAR"
+                dropdownMenu.appendChild(dropdownItem)
+              }
+              const dropdownItem = document.createElement("li")
+              dropdownItem.className = "dropdown-item"
+              dropdownItem.innerText = value
+              dropdownMenu.appendChild(dropdownItem)
+            }
+            dropdown.appendChild(dropdownBtn)
+            dropdown.appendChild(dropdownMenu)
+            rowValueContainer.appendChild(dropdown)
+            
+            dropdownMenu.addEventListener("click", (e)=>{
+              const targetText = e.target.innerText
+              const targetElementName = e.target.nodeName
+              if(targetText === "CLEAR"){
+                rowValue.value = ""
+              }else if(targetElementName === "LI"){
+                rowValue.value = targetText
+              }else{
+                return
+              }
+            })
+          }
+          
         }else{
           row.appendChild(rowValue)
         }

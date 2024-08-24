@@ -1,16 +1,19 @@
 import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_response.js"
 
 export async function getAccountFromAutho() {
-    const autho = await sentFetchWithoutBody("get","/api/staff/auth")
+  const autho = await sentFetchWithoutBody("get","/api/staff/auth")
   const employee_id = await autho["employee_id"]
   const job_position = await autho["job_position"]
-  // console.log(employee_id)
-  // staffId = await employee_id
   let staffData = {}
   staffData["employee_id"] = employee_id
   staffData["job_position"] = job_position
+  if(autho["error"]){
+    return false
+  }else{
+    return staffData
+  }
   
-  return staffData
+  
 
 }
 
@@ -196,7 +199,7 @@ export function signOutFunction(){
   const sigOutBTN = document.querySelector(".sign-out")
   sigOutBTN.addEventListener("click",()=>{
     localStorage.clear()
-    location.reload()
+    location.assign("/")
   })
 }
 

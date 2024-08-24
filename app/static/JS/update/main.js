@@ -35,18 +35,6 @@ async function initialPage(){
   renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
   signOutFunction()
   showSideBlockFromRouter(router)
-
-
-    // select
-    // inputGroup.innerHTML = `<label class="input-group-text " for="${column}">${column}</label>`
-    // const inputSelect = document.createElement("select")
-    // inputSelect.className ="form-select"
-    // inputSelect.id = `${column}`
-    // const optionSelect = document.createElement("option")
-    // optionSelect.innerHTML = `<option selected>Choose...</option>`
-    // inputSelect.appendChild(optionSelect)
-    // inputGroup.appendChild(inputSelect)
-    // inputContainer.appendChild(inputGroup)
   
 }
 

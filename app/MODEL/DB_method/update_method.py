@@ -252,3 +252,50 @@ def update_variety_data(condition, table_name, index_value):
     finally:
         cursor.close()
         con.close()
+
+def update_staff_data(condition, table_name, index_value):
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    update_index_value = index_value
+    update_index_column = condition["indexColumn"]
+    print(update_index_value)
+    del condition["indexColumn"]
+    try:
+        sql=f"""UPDATE {table_name}"""
+        sql_condition=f" where {update_index_column} = %s"
+        sql_SET =" SET"
+        val = list()
+        column_list = list(condition.keys())
+        for column in column_list:
+            if column_list.index(column) == 0:
+                if column == "job_position":
+                    value = condition[column]
+                    sql_SET = sql_SET + f""" authorization_id = (SELECT id FROM authorization WHERE {column} = %s )"""
+                else:
+                    value = condition[column]
+                    sql_SET = sql_SET + f"""  {column} = %s """
+            else:
+                if column == "job_position":
+                    value = condition[column]
+                    sql_SET = sql_SET + f""" authorization_id = (SELECT id FROM authorization WHERE {column} = %s )"""
+                else:
+                    value = condition[column]
+                    sql_SET = sql_SET + f"""  , {column} = %s """
+            val.append(value)
+        sql = sql + sql_SET + sql_condition
+        val.append(update_index_value)
+        print(sql)
+        print(val)
+        cursor.execute(sql,val)
+        con.commit() 
+        if cursor.rowcount > 0 :
+            print(f"update  category {cursor.rowcount} ")
+            return 
+        else :
+            raise HTTPException(status_code=400, detail=f"No rows were affected by the update. Please check input value")
+
+    except mysql.connector.Error as e:
+        raise HTTPException(status_code=400, detail=f"Value in client or variety is invalid. Please check input value")
+    finally:
+        cursor.close()
+        con.close()

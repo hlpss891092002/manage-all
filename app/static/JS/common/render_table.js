@@ -1,6 +1,6 @@
 import{sentFetchWithoutBody} from "../common/sent_fetch_get_response.js"
 
-export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount, router ) {
+export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount, router, staffPosition = null ) {
   const resultKeys = Object.keys(search_result)
   const tableTitle = document.createElement("div")
   const DataCount = document.createElement("div")
@@ -82,12 +82,15 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           rowValue.value = value
           if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
             rowValue.disabled = true
+          }else if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
+            rowValue.disabled = true
           }
           // rowValue.setAttribute("contenteditable", "true")
           rowValueContainer.appendChild(rowValue)
           row.appendChild(rowValueContainer)
           const foreignColumnArray = foreignColumnResult["data"]
           if (foreignColumnArray[key]){
+            
             let foreignColumnValueArray = foreignColumnArray[key]
             const dropdown = document.createElement("div")
             dropdown.className = "dropdown"
@@ -99,6 +102,7 @@ export async function render_result_table(search_result, tableName, tableTitleCo
             dropdownMenu.className = `dropdown-menu dropdown-menu-${key} dropdown-menu-end scrollable-list`
             dropdownMenu.id = ""
             for(let value of foreignColumnValueArray){
+              
               if(foreignColumnValueArray.indexOf(value) === 0){
                 const dropdownItem = document.createElement("li")
                 dropdownItem.className = "dropdown-item clear-item"
@@ -110,7 +114,12 @@ export async function render_result_table(search_result, tableName, tableTitleCo
               dropdownItem.innerText = value
               dropdownMenu.appendChild(dropdownItem)
             }
-            dropdown.appendChild(dropdownBtn)
+            if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
+              return
+            }else{
+              dropdown.appendChild(dropdownBtn)
+            }
+            
             dropdown.appendChild(dropdownMenu)
             rowValueContainer.appendChild(dropdown)
             

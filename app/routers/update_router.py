@@ -44,6 +44,8 @@ async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_val
 
                 elif table_name == "variety":
                     update_variety_data(condition, table_name, index_value)
+                elif table_name == "staff":
+                     update_staff_data(condition, table_name, index_value)
                 else:
                     update_non_foreign_key_data(condition, table_name, index_value)
 

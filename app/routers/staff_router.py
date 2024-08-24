@@ -23,6 +23,7 @@ router = APIRouter()
 @router.get("/api/staff/auth")
 async def staff_validation(payload  : Annotated[dict, Depends(user_validation)]): 
     try:
+       print(payload)
        return payload
     except Exception as e:
        raise HTTPException(status_code=500, detail=f"server error {e}")
@@ -33,11 +34,12 @@ async def check_staff_exist(body: sign_in_data):
   password = body.password
   staff_data =  check_user(employee_id, password )
   if staff_data:
-    employee_id, name = staff_data.values()
+    employee_id, name, job_position = staff_data.values()
     payload = {
       "iss" : "manageAll",
       "employee_id" : employee_id,
       "sub" : name,
+      "job_position" : job_position,
       "exp" : datetime.now() + timedelta(days=1)
     }
     token = jwt.encode(payload, os.getenv("JWTSECRET"), algorithm="HS256")

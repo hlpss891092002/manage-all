@@ -3,9 +3,14 @@ import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_r
 export async function getAccountFromAutho() {
     const autho = await sentFetchWithoutBody("get","/api/staff/auth")
   const employee_id = await autho["employee_id"]
+  const job_position = await autho["job_position"]
   // console.log(employee_id)
   // staffId = await employee_id
-  return employee_id
+  let staffData = {}
+  staffData["employee_id"] = employee_id
+  staffData["job_position"] = job_position
+  
+  return staffData
 
 }
 
@@ -108,9 +113,9 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
       if (column === "id" && router === "add"){
         continue
       } else if(column === "produce_time"){
+        continue 
+      }else if (router === "add" && column ==="consumed_date"){
         continue
-      }else if(tableName !==("authorization")  && column === "authorization"){
-        
       }
       const inputGroup = document.createElement("div")
       inputGroup.className = "input-group "
@@ -177,7 +182,7 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
         inputContainer.style.gridTemplateColumns ="1fr 1fr 1fr" 
       }
       if (tableName === "produce_record" && router === "add"){
-        const producerInput = document.querySelector(".producer_id-input")
+        const producerInput = document.querySelector(".employee_id-input")
         producerInput.value = await employee_id
       }
     }else{

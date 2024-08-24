@@ -30,11 +30,14 @@ def check_user(employee_id, password):
     cursor = con.cursor(dictionary = True, buffered = True)
     print(employee_id)
     try: 
-      sql = """ SELECT employee_id, name FROM staff 
+      sql = """ SELECT employee_id, staff.name as name, authorization.job_position as job_position FROM staff
+      inner join authorization
+      on staff.authorization_id = authorization.id    
       where employee_id = %s and password = %s"""
       val = (employee_id, password)
       cursor.execute(sql,val)
       result = cursor.fetchone()
+      print(result)
       return (result)
     except Exception as e:
         pass

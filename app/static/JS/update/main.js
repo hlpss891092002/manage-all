@@ -18,20 +18,23 @@ const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
 let staffId = ""
+let staffPosition = ""
 let nowPage= 0
 let PageAmount = 0
 let dataAmount = 0
 
 async function initialPage(){
-  let employee_id = await getAccountFromAutho()
-  if(!employee_id){
+  let staffData = await getAccountFromAutho()
+  if(!staffData){
     localStorage.clear()
     window.location.assign("/")
   }
-  staffId = employee_id
+  staffId = staffData["employee_id"]
+  staffPosition = staffData["job_position"]
+  
   renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
   signOutFunction()
- showSideBlockFromRouter(router)
+  showSideBlockFromRouter(router)
 
 
     // select
@@ -67,7 +70,7 @@ async function search_and_render(nowPage){
       condition[`${columnName}`] = value ;
     }
   }
-  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router);
+  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router, staffPosition);
   PageAmount = result["PageAmount"]
   nowPage = parseInt(result["startPage"])
   dataAmount = parseInt(result["dataAmount"])

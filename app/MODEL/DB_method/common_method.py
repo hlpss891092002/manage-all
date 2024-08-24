@@ -106,14 +106,12 @@ def get_column_value_distinct(column):
         cursor.execute(sql)
         result = cursor.fetchall()
         value_list= list()
-        print(sql)
         for key_pair in result:
             value = list(key_pair.values())[0]
             value_list.append(value)  
         return value_list
 
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()

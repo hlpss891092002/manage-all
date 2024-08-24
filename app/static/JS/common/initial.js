@@ -4,17 +4,17 @@ export async function getAccountFromAutho() {
   const autho = await sentFetchWithoutBody("get","/api/staff/auth")
   const employee_id = await autho["employee_id"]
   const job_position = await autho["job_position"]
+  const name = await autho["sub"]
+  console.log(autho)
   let staffData = {}
   staffData["employee_id"] = employee_id
   staffData["job_position"] = job_position
+  staffData["name"] = name
   if(autho["error"]){
     return false
   }else{
     return staffData
-  }
-  
-  
-
+  }   
 }
 
 export async function renderSideBlockList(employee_id, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer){
@@ -119,6 +119,8 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
         continue 
       }else if (router === "add" && column ==="consumed_date"){
         continue
+      }else if( column === "authorization"){
+        column = "job_position"
       }
       const inputGroup = document.createElement("div")
       inputGroup.className = "input-group "
@@ -185,8 +187,10 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
         inputContainer.style.gridTemplateColumns ="1fr 1fr 1fr" 
       }
       if (tableName === "produce_record" && router === "add"){
+        console.log(employee_id)
         const producerInput = document.querySelector(".employee_id-input")
-        producerInput.value = await employee_id
+        producerInput.value =  employee_id
+        
       }
     }else{
       return
@@ -216,4 +220,15 @@ export function renderSlogan(router){
   const mainPAge=  document.querySelector("main-page")
   const welcome = document.createElement("section")
   mainPAge.prepend()
+}
+
+export async function renderStaffInNav(staffData){
+  const navbarNav = document.querySelector(".navbar-nav")
+  console.log(staffData)
+  const staffName = staffData["name"]
+  const staffPosition = staffData["job_position"]
+  const nameBlock = document.createElement("div")
+  nameBlock.className="name-block"
+  nameBlock.innerText = `${staffName} ${staffPosition}`
+  navbarNav.prepend(nameBlock)
 }

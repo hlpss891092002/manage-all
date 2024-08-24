@@ -1,5 +1,5 @@
 import{sentFetchWithoutBody} from "../common/sent_fetch_get_response.js"
-import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
+import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter, renderStaffInNav} from "../common/initial.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
 const updateSubList = document.querySelector("#update-sub-list")
@@ -15,6 +15,7 @@ const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
 let staffId = ""
+let staffPosition = ""
 
 function renderMainBlock(block, dataList){
   const itemContainer = document.createElement("div") 
@@ -91,16 +92,19 @@ function renderMainImg(block, dataList, title){
 }
 
 async function initialPage(){
-  let employee_id = await getAccountFromAutho()
-  staffId = employee_id
-  renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
-  signOutFunction()
-  
-  if(!employee_id){
+  let staffData = await getAccountFromAutho()
+  if(!staffData){
     localStorage.clear()
     window.location.assign("/")
   }
-
+  
+  staffId = staffData["employee_id"]
+  staffPosition = staffData["job_position"]
+  
+  renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
+  signOutFunction()
+  renderStaffInNav(staffData)
+  
 }
 async function getNewestData() {
   let latestData = await sentFetchWithoutBody("get", "/api/latest")
@@ -109,9 +113,7 @@ async function getNewestData() {
   renderMainImg(readyShippingStockContainer, readyShippingStock, "Total Stock")
   renderMainImg(categoryYesterdayOutput, categoryYesterdayProduce, "Total outputs")
   renderMainImg(sevenDaysOutsContainer, sevenDaysOuts, "Total outputs")
-  // renderMainBlock(readyShippingStockContainer, readyShippingStock)
-  // renderMainBlock(yesterdayProduceMostContainer, yesterdayProduceMost)
-  // renderMainBlock(categoryYesterdayConsumeContainer, categoryYesterdayConsume)
+
   console.log(latestData)
 }
 

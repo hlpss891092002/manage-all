@@ -1,6 +1,6 @@
 import{sentFetchWithoutBody, sentFetchWithBody, sentFetchWithParams} from "../common/sent_fetch_get_response.js"
 import {render_result_table, render_pagination, render_table_from_pagination, clearMessageAndTable} from "../common/render_table.js"
-import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
+import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter, renderStaffInNav} from "../common/initial.js"
 import {sent_input_search_and_render_table } from "../common/search_and_render.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
@@ -18,35 +18,25 @@ const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
 let staffId = ""
+let staffPosition = ""
 let nowPage= 0
 let PageAmount = 0
 let dataAmount = 0
 
 
 async function initialPage(){
-  let employee_id = await getAccountFromAutho()
-   if(!employee_id){
+  let staffData = await getAccountFromAutho()
+  if(!staffData){
     localStorage.clear()
     window.location.assign("/")
   }
-  staffId = employee_id
+  staffId = staffData["employee_id"]
+  staffPosition = staffData["job_position"]
+
   renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
   signOutFunction()
   showSideBlockFromRouter(router)
-
-    if(!employee_id){
-    window.location.assign("/")
-  }
-    // select
-    // inputGroup.innerHTML = `<label class="input-group-text " for="${column}">${column}</label>`
-    // const inputSelect = document.createElement("select")
-    // inputSelect.className ="form-select"
-    // inputSelect.id = `${column}`
-    // const optionSelect = document.createElement("option")
-    // optionSelect.innerHTML = `<option selected>Choose...</option>`
-    // inputSelect.appendChild(optionSelect)
-    // inputGroup.appendChild(inputSelect)
-    // inputContainer.appendChild(inputGroup)
+  renderStaffInNav(staffData)
   
 }
 

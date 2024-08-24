@@ -53,7 +53,7 @@ async def create_authorization(authorization_data: authorization_class, payload 
         raise HTTPException(status_code=500, detail=f"server error {e}")
 
 @router.post("/api/{tableName}")
-async def create_category(data : Union[variety_class, stage_class, staff_class, media_class, produce_record_class, order_class , category_class, client_class], payload  : Annotated[dict, Depends(user_validation)], tableName : str):
+async def create_category(data : Union[authorization_class,variety_class, stage_class, staff_class, media_class, produce_record_class, order_class , category_class, client_class], payload  : Annotated[dict, Depends(user_validation)], tableName : str):
     try:
         input_dict = data.dict()
         print(input_dict)

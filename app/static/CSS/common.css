@@ -75,6 +75,7 @@ button {
 }
 .updatable  {
   width: 100%;
+  
   text-align: center;
   margin-bottom: 5px;
   border-style: solid;
@@ -145,6 +146,7 @@ button {
 
 .table{
   overflow: auto;
+  min-height: 400px;
 }
 
 

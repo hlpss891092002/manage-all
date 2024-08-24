@@ -35,10 +35,8 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
 @router.get("/api/{table_name}")
 async def get_media_list(page:str, payload  : Annotated[dict, Depends(user_validation)], table_name:str, condition: str):
     try :
-        print(table_name)
         page = int(page)
         condition = json.loads(condition)
-        print(type(condition))
         start = time()
         data = None
         data = get_data_by_tablename(condition, page, table_name)
@@ -55,10 +53,8 @@ async def get_media_list(page:str, payload  : Annotated[dict, Depends(user_valid
 @router.get("/api/foreignList/{table_name}")
 async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], table_name:str):
     try :
-        print(table_name)
         start = time()
         column_list = get_foreign_column(table_name)
-        print(column_list)
         response = {}
         response["data"] = {}
         data = response["data"]
@@ -77,7 +73,6 @@ async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], 
             data[column] = column_value_list
             
         end = time()
-        print(response)
 
         print(f"multithread time = %.2f second" % (end -start))
         return JSONResponse(status_code=200, content=response)

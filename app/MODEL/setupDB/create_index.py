@@ -47,6 +47,7 @@ cursor.execute(sql_index_stage_name)
 cursor.execute(sql_index_variety_variety_code)
 cursor.execute(sql_index_variety_category_id)
 cursor.execute(sql_index_produce_record_for_count)
+cursor.execute(sql_index_produce_record_for_foreign)
 
 
 # sql_index_produce_record_foreign_key_variety = """

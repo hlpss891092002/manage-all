@@ -1,5 +1,5 @@
 import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_response.js"
-import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
+import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter, renderStaffInNav} from "../common/initial.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
 const updateSubList = document.querySelector("#update-sub-list")
@@ -12,6 +12,7 @@ const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
 let staffId = ""
+let staffPosition = ""
 let variety_dict ={}
 let media_dict = {}
 let stage_dict = { }
@@ -19,37 +20,18 @@ let stage_dict = { }
 console.log(tableName)
 
 async function initialPage(){
-  let employee_id = await getAccountFromAutho()
-   if(!employee_id){
+  let staffData = await getAccountFromAutho()
+  if(!staffData){
     localStorage.clear()
     window.location.assign("/")
   }
-  staffId = employee_id
+  staffId = staffData["employee_id"]
+  staffPosition = staffData["job_position"]
+
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction(tableName)
   showSideBlockFromRouter(router)
-  // // get variety list
-  // const varietyResponse = await sentFetchWithoutBody("get",`/api/variety`)
-  // const varietyResult = varietyResponse["data"]
-  // console.log(varietyResult)
-  // for (let variety of varietyResult){
-  //   variety_dict[`${variety["variety_code"]}`] = variety["id"];
-  // }
-  // // console.log(variety_dict)
-  // // get media list
-  // const mediaResponse = await sentFetchWithoutBody("get",`/api/media`)
-  // const mediaResult = mediaResponse["data"]
-  // for (let media of mediaResult ){
-  //   media_dict[`${media["name"]}`] = media["id"]
-  // }
-  // // console.log(media_dict)
-  //   // get stage list
-  // const stageResponse = await sentFetchWithoutBody("get",`/api/stage`)
-  // const stageResult = stageResponse["data"]
-  // for (let stage of stageResult){
-  //   stage_dict[`${stage["name"]}`] = stage["id"]
-  // }
-  // // console.log(stage_dict)
+  renderStaffInNav(staffData)
 
 
 }

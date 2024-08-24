@@ -426,10 +426,10 @@ def data_recent_week():
     
     # data_for_test_initial(recent_day)
     data_for_test_initial(yesterday)
-    # data_for_test_propagation(propagation_day)
-    # data_for_test_grown(grown_day)
-    # data_for_test_strong(strong_day)
-    # data_for_test_rooting(root_day)
+    data_for_test_propagation(propagation_day)
+    data_for_test_grown(grown_day)
+    data_for_test_strong(strong_day)
+    data_for_test_rooting(root_day)
 
 def multi_threads_test():
     start = time()

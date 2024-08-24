@@ -1,6 +1,6 @@
 import{sentFetchWithoutBody, sentFetchWithBody, sentFetchWithParams} from "../common/sent_fetch_get_response.js"
 import {render_result_table, render_pagination, render_table_from_pagination, clearMessageAndTable} from "../common/render_table.js"
-import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter} from "../common/initial.js"
+import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter, renderStaffInNav} from "../common/initial.js"
 import {sent_input_search_and_render_table } from "../common/search_and_render.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
@@ -12,6 +12,7 @@ const searchBtn = document.querySelector(".search-btn")
 const tableTitleContainer = document.querySelector(".table-title-container")
 const paginationContainer = document.querySelector(".pagination-container")
 const showDataSection = document.querySelector(".show-data-section")
+
 const table = document.querySelector(".table")
 const message = document.querySelector(".message")
 const query = window.location.search
@@ -35,6 +36,7 @@ async function initialPage(){
   renderSideBlockList(staffId, addSubList, searchSubList,updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer)
   signOutFunction()
   showSideBlockFromRouter(router)
+  renderStaffInNav(staffData)
   
 }
 

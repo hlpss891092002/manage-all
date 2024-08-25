@@ -32,8 +32,6 @@ async function initialPage(){
   staffPosition = staffData["job_position"]
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction()
-  showSideBlockFromRouter(router)
-  
 }
 
 

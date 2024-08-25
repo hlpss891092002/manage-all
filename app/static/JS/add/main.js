@@ -30,7 +30,6 @@ async function initialPage(){
 
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction(tableName)
-  showSideBlockFromRouter(router)
   renderStaffInNav(staffData)
 
 

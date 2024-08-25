@@ -21,65 +21,76 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
   if(!employee_id){
     localStorage.clear()
     window.location.assign("/")
-  }else if (tableName === "" &&  router !== "staffIndex"){
-    window.location.replace(`/${router}?category`)
   }
-  console.log(updateSubList)
+
   console.log(router)
   // get tables according auth
   const tables = await sentFetchWithoutBody("get","/api/staff/tables")
   //render side block
-  for (let tableName of tables){
-
-    const addListItem = document.createElement("li")
-    addListItem.className = `list-group-item `
-    addListItem.setAttribute("id", `add-${tableName}`)
-    const addItemLink = document.createElement("a")
-    addItemLink.href = `/add?${tableName}`
-    addItemLink.innerText= tableName
-    addListItem.appendChild(addItemLink)
-    addSubList.appendChild(addListItem)
-
-    const searchListItem = document.createElement("li")
-    searchListItem.className = `list-group-item `
-    searchListItem.setAttribute("id", `search-${tableName}`)
-    const searchItemLink = document.createElement("a")
-    searchItemLink.href = `/search?${tableName}`
-    searchItemLink.innerText= tableName
-    searchListItem.appendChild(searchItemLink)
-    searchSubList.appendChild(searchListItem)
-
-    
-    if(tableName === "authorization"){
-      continue
+  for (let table of tables){
+    const listGroup = document.querySelector(".list-group")
+    const sideMainList = document.createElement("li")
+    sideMainList.className ="list-group-item list-group-item-primary side-title "
+    sideMainList.id = `side-block-${table}`
+    sideMainList.setAttribute("data-bs-toggle", "collapse")
+    sideMainList.setAttribute("data-bs-target",`#${table}-sub-list`)
+    sideMainList.innerText = table
+    listGroup.appendChild(sideMainList)
+    const methodArray = ["add","search", "update", "delete"]
+    const subList = document.createElement("ul")
+    subList.className = "list-group  collapse"
+    subList.id = `${table}-sub-list`
+    listGroup.appendChild(subList)
+    for (let method of methodArray){
+      const listItem = document.createElement("li")
+      listItem.className = "list-group-item"
+      const methodItem = document.createElement("a")
+      switch (method){
+        case "add":
+          listItem.id = `add-${table}`
+          methodItem.className= ""
+          methodItem.href = `/add?${table}`
+          methodItem.innerText = "add"
+          listItem.appendChild(methodItem)
+          subList.appendChild(listItem)
+          break
+        case "search":
+          listItem.id = `search-${table}`
+          methodItem.className= ""
+          methodItem.href = `/search?${table}`
+          methodItem.innerText = "search"
+          listItem.appendChild(methodItem)
+          subList.appendChild(listItem)
+          break
+        case "update":
+          listItem.id = `update-${table}`
+          methodItem.className= ""
+          methodItem.href = `/update?${table}`
+          methodItem.innerText = "update"
+          listItem.appendChild(methodItem)
+          subList.appendChild(listItem)
+          break
+        case "delete":
+           listItem.id = `delete-${table}`
+          methodItem.className= ""
+          methodItem.href = `/delete?${table}`
+          methodItem.innerText = "delete"
+          listItem.appendChild(methodItem)
+          subList.appendChild(listItem)
+          break
+      }
     }
-    const updateListItem = document.createElement("li")
-    updateListItem.className = `list-group-item `
-    updateListItem.setAttribute("id", `update-${tableName}`)
-    const updateItemLink = document.createElement("a")
-    updateItemLink.href = `/update?${tableName}`
-    updateItemLink.innerText= tableName
-    updateListItem.appendChild(updateItemLink)
-    updateSubList.appendChild(updateListItem)
-
-    
-    const deleteListItem = document.createElement("li")
-    deleteListItem.className = `list-group-item `
-    deleteListItem.setAttribute("id", `delete-${tableName}`)
-    const deleteItemLink = document.createElement("a")
-    deleteItemLink.href = `/delete?${tableName}`
-    deleteItemLink.innerText= tableName
-    deleteListItem.appendChild(deleteItemLink)
-    deleteSubList.appendChild(deleteListItem)
   }
+    showSideBlockFromRouter(tableName)
     const activeSubListItem = document.querySelector(`#${router}-${tableName}`)
+    console.log()
     console.log(activeSubListItem)
     activeSubListItem.classList.add("active")
   //disabled select
-  const selectRouter = document.querySelector(`#side-block-${router}`) 
+  const selectRouter = document.querySelector(`#side-block-${tableName}`) 
   selectRouter.classList.add("disabled")
   selectRouter.style.backgroundColor = "#CFE2FF"
-
+  
   // get item according table
   if(router !== "staffIndex"){
     const columnInputResult = await sentFetchWithoutBody("get",`/api/${router}/tableItem/${tableName}`)
@@ -207,11 +218,12 @@ export function signOutFunction(){
   })
 }
 
-export function showSideBlockFromRouter(router){
-  const sideBlock = document.querySelector(`#side-block-${router}`)
-  const sideSubList = document.querySelector(`#${router}-sub-list`)
+export function showSideBlockFromRouter(tableName){
+  console.log(tableName)
+  const sideBlock = document.querySelector(`#side-block-${tableName}`)
+  console.log(`#side-block-${tableName}`)
   console.log(sideBlock)
-  console.log(sideSubList) 
+  const sideSubList = document.querySelector(`#${tableName}-sub-list`)
   sideBlock.classList.remove("collapsed")
   sideSubList.classList.add("show")
 }

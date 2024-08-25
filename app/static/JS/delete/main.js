@@ -61,7 +61,7 @@ async function search_and_render(nowPage){
       condition[`${columnName}`] = value ;
     }
   }
-  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router);
+  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router, staffPosition, searchBtn);
     PageAmount = result["PageAmount"]
     nowPage = parseInt(result["startPage"])
     dataAmount = parseInt(result["dataAmount"])
@@ -70,7 +70,7 @@ async function search_and_render(nowPage){
     deleteBtn.addEventListener("click", (e)=>{
       let body = {}
       const checkedArray = document.querySelectorAll(".form-check-input") 
-
+      deleteBtn.disabled = true
       let deleteColumnName = checkedArray[0].classList[1].split("-")[2] 
       body[`${deleteColumnName}`]=[]    
       for (let check of checkedArray){
@@ -121,6 +121,7 @@ searchBtn.addEventListener("click", (e)=>{
   nowPage= 0
   clearMessageAndTable()
   search_and_render(nowPage)
+  searchBtn.disabled = true;
 })
 
 

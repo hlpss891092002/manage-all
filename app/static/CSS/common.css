@@ -218,12 +218,14 @@ button {
 
 .form-check-input{
   border: #497196 solid 1.5px;
+  
 }
 
 .side-title{
   font-size: 25px;
   font-weight: 300;
 }
+
 
 
 @media (max-width:1600px) {

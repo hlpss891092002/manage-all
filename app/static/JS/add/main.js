@@ -84,6 +84,7 @@ window.addEventListener("load", (e)=>{
 })
 
 submitBtn.addEventListener("click", (e)=>{
+  
   const allData = document.querySelectorAll(".form-control");
   responseMessage.innerText =""
   let body = {};
@@ -97,12 +98,17 @@ submitBtn.addEventListener("click", (e)=>{
     let value =  String(data.value);
     if( (inputTitle === "mother_produce_id" | inputTitle === "consumed_reason" ) && value === ""){
       value = null
+      submitBtn.disabled = true
     }else if( value === ""){
       alert(`${inputTitle} can't be null`)
       return
     }
     body[`${inputTitle}`] = value ;
   };
-  sent_input_db(body);
+  let result = sent_input_db(body)
+
+  if (result){
+    submitBtn.disabled = false
+  }
 })
 

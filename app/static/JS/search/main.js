@@ -33,18 +33,6 @@ async function initialPage(){
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction()
   showSideBlockFromRouter(router)
-
- 
-    // select
-    // inputGroup.innerHTML = `<label class="input-group-text " for="${column}">${column}</label>`
-    // const inputSelect = document.createElement("select")
-    // inputSelect.className ="form-select"
-    // inputSelect.id = `${column}`
-    // const optionSelect = document.createElement("option")
-    // optionSelect.innerHTML = `<option selected>Choose...</option>`
-    // inputSelect.appendChild(optionSelect)
-    // inputGroup.appendChild(inputSelect)
-    // inputContainer.appendChild(inputGroup)
   
 }
 
@@ -52,6 +40,9 @@ async function initialPage(){
 
 async function search_and_render(nowPage){
   const allData = document.querySelectorAll(".form-control");
+  if (allData){
+    
+  }
   let body = {};
   body["page"] = nowPage
   let condition ={}
@@ -70,7 +61,7 @@ async function search_and_render(nowPage){
       condition[`${columnName}`] = value ;
     }
   };
- const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router);
+ const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router, staffPosition, submitBtn);
  PageAmount = result["PageAmount"]
  nowPage = parseInt(result["startPage"])
  dataAmount = parseInt(result["dataAmount"])
@@ -85,5 +76,6 @@ submitBtn.addEventListener("click", (e)=>{
   nowPage= 0
   clearMessageAndTable()
   search_and_render(nowPage)
+  submitBtn.disabled = true
 })
 

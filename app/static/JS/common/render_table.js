@@ -1,14 +1,16 @@
 import{sentFetchWithoutBody} from "../common/sent_fetch_get_response.js"
 
-export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount, router, staffPosition = null ) {
+export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount, router, staffPosition = null) {
   const resultKeys = Object.keys(search_result)
+  console.log(search_result)
+  tableTitleContainer.innerText =""
   const tableTitle = document.createElement("div")
   const DataCount = document.createElement("div")
   tableTitleContainer.appendChild(tableTitle)
   tableTitleContainer.appendChild(DataCount)
   tableTitle.innerText = `Table ${tableName}`
   DataCount.innerText = ` Amount of row ${dataAmount }`
-  table.textContent = ""
+  table.innerText = ""
   let columnNameArray  =  Object.keys(search_result[0])
   const columnNameContainer = document.createElement("div")
   const rowContainer = document.createElement("div")
@@ -24,6 +26,7 @@ export async function render_result_table(search_result, tableName, tableTitleCo
     columnName .innerText = element
     columnNameContainer.appendChild(columnName)
   })
+  console.log(1)
   table.appendChild(columnNameContainer)
   //append row value
   const foreignColumnResult = await sentFetchWithoutBody("get",`/api/foreignList/${tableName}`)
@@ -60,13 +63,6 @@ export async function render_result_table(search_result, tableName, tableTitleCo
               row.classList.toggle("border-primary") 
               row.classList.toggle("border") 
             }
-            // if(e.target.checked){
-            //   console.log(row)
-            //   console.log(row.classList)
-
-            // }else{
-              // row.classList.remove(" border-primary")
-            // } 
           })
           row.appendChild(formCheck)
         }else if(router === "update"){
@@ -85,12 +81,10 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           }else if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
             rowValue.disabled = true
           }
-          // rowValue.setAttribute("contenteditable", "true")
           rowValueContainer.appendChild(rowValue)
           row.appendChild(rowValueContainer)
           const foreignColumnArray = foreignColumnResult["data"]
           if (foreignColumnArray[key]){
-            
             let foreignColumnValueArray = foreignColumnArray[key]
             const dropdown = document.createElement("div")
             dropdown.className = "dropdown"
@@ -143,11 +137,15 @@ export async function render_result_table(search_result, tableName, tableTitleCo
       })
     rowContainer.appendChild(row)
     })
+  console.log(2)
   table.appendChild(rowContainer)
   
 };
 
 export async function render_pagination(pageAmount, paginationContainer, nowPage, router){
+  paginationContainer.innerText =""
+  console.log(nowPage)
+  console.log(pageAmount)
   const paginationNav= document.createElement("nav")
   paginationNav.className = "pagination-nav"
   paginationNav.setAttribute("aria-label", "Page navigation")
@@ -179,19 +177,17 @@ export async function render_pagination(pageAmount, paginationContainer, nowPage
   frontArrow.appendChild(frontSpan)
   pagination.appendChild(frontArrow)
 
-
+  
   if (nowPage <= 4){
     startPage = 0
   }else if( pageAmount - nowPage  <= 10){
     startPage =  pageAmount - 10
   }else{
-    startPage = nowPage - 5
+    startPage = nowPage - 4
   }
 
   if(pageAmount <10){
     endPage = endPage + pageAmount
-  }else if(pageAmount- nowPage < 6){
-    endPage = startPage + 5
   }else{
     endPage = endPage + 10
   }
@@ -218,16 +214,6 @@ export async function render_pagination(pageAmount, paginationContainer, nowPage
   backArrow.appendChild(backSpan)
   pagination.appendChild(backArrow)
 
-
-  // <nav aria-label="Page navigation example">
-  //   <ul class="pagination">
-  //     <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-  //     <li class="page-item"><a class="page-link" href="#">1</a></li>
-  //     <li class="page-item"><a class="page-link" href="#">2</a></li>
-  //     <li class="page-item"><a class="page-link" href="#">3</a></li>
-  //     <li class="page-item"><a class="page-link" href="#">Next</a></li>
-  //   </ul>
-  // </nav>
 }
 
 export function clearMessageAndTable(){
@@ -256,7 +242,6 @@ export async function render_table_from_pagination(nowPage, PageAmount, callback
     }else if(target === "Next" && nowPage === PageAmount -1 ){
       e.preventDefault()
     }else{
-      clearMessageAndTable()
       if(target === "Previous"){
           targetPage = nowPage - 1
       }else if(target === "Next"){

@@ -169,7 +169,6 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                         column = "variety_id"
                         condition_individual = f" {table_name}.{column} = %s"
                     elif "in_" in column:
-
                         if condition[f"{column}"] == "YES":
                             condition[f"{column}"] = 1
                         elif condition[f"{column}"] == "NO":
@@ -235,6 +234,14 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                         val.append(column_id)
                         column = "variety_id"
                         condition_individual = f" AND  {table_name}.{column} = %s"
+                    elif "in_" in column:
+                        if condition[f"{column}"] == "YES":
+                            condition[f"{column}"] = 1
+                        elif condition[f"{column}"] == "NO":
+                            condition[f"{column}"] = 0
+
+                        condition_individual = f" AND {table_name}.{column} = %s"
+                        val.append(condition[f"{column}"])
                     else:
                         condition_individual = f" AND  {table_name}.{column} = %s"
                         val.append(condition[f"{column}"])

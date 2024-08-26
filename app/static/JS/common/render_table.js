@@ -4,9 +4,9 @@ export async function render_result_table(search_result, tableName, tableTitleCo
   const resultKeys = Object.keys(search_result)
   console.log(search_result)
   tableTitleContainer.innerText =""
-  // const tableTitle = document.createElement("div")
+  const tableTitle = document.createElement("div")
   const DataCount = document.createElement("div")
-  // tableTitleContainer.appendChild(tableTitle)
+  tableTitleContainer.appendChild(tableTitle)
   tableTitleContainer.appendChild(DataCount)
   // tableTitle.innerText = `Table ${tableName}`
   DataCount.innerText = ` Amount of row ${dataAmount }`
@@ -61,9 +61,8 @@ export async function render_result_table(search_result, tableName, tableTitleCo
             if(e.target.nodeName === "INPUT" && e.target.classList.contains("form-check-input")){
               row.classList.toggle("border-primary") 
               row.classList.toggle("border") 
-              // const deleteBtn = document.querySelector(".delete-btn")
-              // console.log(deleteBtn)
-              // deleteBtn.classList.toggle("bg-primary")
+              // 
+              // 
             }
           })
           
@@ -78,7 +77,10 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           }else if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
             rowValue.disabled = true
           }
-          
+          rowValue.addEventListener("input",(e)=>{
+            const updateBtn = document.querySelector(".update-btn")
+            rowValue.value !== updateIndexValue ? updateBtn.classList.add("bg-primary") : updateBtn.classList.remove("bg-primary")
+          })
           rowValueContainer.appendChild(rowValue)
           formCheck.appendChild(rowValueContainer)
           row.appendChild(formCheck)
@@ -150,7 +152,30 @@ export async function render_result_table(search_result, tableName, tableTitleCo
     })
   console.log(2)
   table.appendChild(rowContainer)
-  
+  rowContainer.addEventListener("click",(e)=>{
+    const target = e.target
+    if (target.classList.contains("form-check-input")){
+      const deleteBtn = document.querySelector(".delete-btn")
+      let formCheckArray = document.querySelectorAll(".form-check-input")
+      console.log(formCheckArray.length)
+      let unselectedNum = 0
+      for (let check of formCheckArray){
+         if (check.checked === true){
+          continue
+         }else{
+          unselectedNum+=1                
+         }
+      }
+      console.log(unselectedNum)
+      console.log(formCheckArray.length)
+      console.log(deleteBtn)
+      if(unselectedNum === formCheckArray.length){
+        deleteBtn.classList.remove("bg-primary")
+      }else{
+        deleteBtn.classList.add("bg-primary")
+      }
+    }
+  })
 };
 
 export async function render_pagination(pageAmount, paginationContainer, nowPage, router){

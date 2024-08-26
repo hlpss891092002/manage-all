@@ -36,56 +36,45 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     sideMainList.setAttribute("data-bs-target",`#${table}-sub-list`)
     sideMainList.innerText = table
     listGroup.appendChild(sideMainList)
-    const methodArray = ["add","search", "update", "delete"]
+    const methodArray = ["add","search & modified"]
     const subList = document.createElement("ul")
     subList.className = "list-group  collapse"
     subList.id = `${table}-sub-list`
     listGroup.appendChild(subList)
-    // for (let method of methodArray){
-    //   const listItem = document.createElement("li")
-    //   listItem.className = "list-group-item"
-    //   const methodItem = document.createElement("a")
-    //   switch (method){
-    //     case "add":
-    //       listItem.id = `add-${table}`
-    //       methodItem.className= ""
-    //       methodItem.href = `/add?${table}`
-    //       methodItem.innerText = "add"
-    //       listItem.appendChild(methodItem)
-    //       subList.appendChild(listItem)
-    //       break
-    //     case "search":
-    //       listItem.id = `search-${table}`
-    //       methodItem.className= ""
-    //       methodItem.href = `/search?${table}`
-    //       methodItem.innerText = "search"
-    //       listItem.appendChild(methodItem)
-    //       subList.appendChild(listItem)
-    //       break
-    //     case "update":
-    //       listItem.id = `update-${table}`
-    //       methodItem.className= ""
-    //       methodItem.href = `/update?${table}`
-    //       methodItem.innerText = "update"
-    //       listItem.appendChild(methodItem)
-    //       subList.appendChild(listItem)
-    //       break
-    //     case "delete":
-    //        listItem.id = `delete-${table}`
-    //       methodItem.className= ""
-    //       methodItem.href = `/delete?${table}`
-    //       methodItem.innerText = "delete"
-    //       listItem.appendChild(methodItem)
-    //       subList.appendChild(listItem)
-    //       break
-    //   }
-    // }
+    for (let method of methodArray){
+      const listItem = document.createElement("li")
+      listItem.className = "list-group-item"
+      const methodItem = document.createElement("a")
+      switch (method){
+        case "add":
+          listItem.id = `add-${table}`
+          methodItem.className= ""
+          methodItem.href = `/add?${table}`
+          methodItem.innerText = "add"
+          listItem.appendChild(methodItem)
+          subList.appendChild(listItem)
+          break
+        case "search & modified":
+          listItem.id = `search-${table}`
+          methodItem.className= ""
+          methodItem.href = `/search?${table}`
+          methodItem.innerText = "search & modified"
+          listItem.appendChild(methodItem)
+          subList.appendChild(listItem)
+          break
+      }
+    }
   }
     showSideBlockFromRouter(tableName)
-    const activeSubListItem = document.querySelector(`#${router}-${tableName}`)
-    console.log()
-    console.log(activeSubListItem)
-    activeSubListItem.classList.add("active")
+    if (router === "add"){
+      const activeSubListItem = document.querySelector(`#${router}-${tableName}`)
+      activeSubListItem.classList.add("active")
+    }else if (router === "search"){
+      const activeSubListItem = document.querySelector(`#${router}-${tableName}`)
+      activeSubListItem.classList.add("active")
+    }
+
+    
   //disabled select
   const selectRouter = document.querySelector(`#side-block-${tableName}`) 
   selectRouter.classList.add("disabled")

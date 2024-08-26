@@ -25,14 +25,15 @@ async function initialPage(){
     localStorage.clear()
     window.location.assign("/")
   }
+  if(!tableName){
+    window.location.assign(`/${router}?category`)
+  }
   staffId = staffData["employee_id"]
   staffPosition = staffData["job_position"]
 
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction(tableName)
   renderStaffInNav(staffData)
-
-
 }
 
 async function sent_input_db(body){

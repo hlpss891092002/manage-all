@@ -7,7 +7,7 @@ const searchSubList = document.querySelector("#search-sub-list")
 const inputContainer = document.querySelector(".input-container")
 const updateSubList = document.querySelector("#update-sub-list")
 const deleteSubList = document.querySelector("#delete-sub-list")
-const submitBtn = document.querySelector(".submit-btn")
+const searchBtn = document.querySelector(".search-btn")
 const tableTitleContainer = document.querySelector(".table-title-container")
 const paginationContainer = document.querySelector(".pagination-container")
 const table = document.querySelector(".table")
@@ -28,13 +28,15 @@ async function initialPage(){
     localStorage.clear()
     window.location.assign("/")
   }
+  if(!tableName){
+    window.location.assign(`/${router}?category`)
+  }
   staffId = staffData["employee_id"]
   staffPosition = staffData["job_position"]
   renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
   signOutFunction()
+  renderStaffInNav(staffData)
 }
-
-
 
 async function search_and_render(nowPage){
   const allData = document.querySelectorAll(".form-control");
@@ -56,10 +58,12 @@ async function search_and_render(nowPage){
       condition[`${columnName}`] = value ;
     }
   };
-  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router, staffPosition, submitBtn);
+  const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router, staffPosition, searchBtn);
   PageAmount = result["PageAmount"]
   nowPage = parseInt(result["startPage"])
   dataAmount = parseInt(result["dataAmount"])
+  
+
   const updateBtn = document.querySelector(".update-btn")
   updateBtn.addEventListener("click",(e)=>{
     const updatableArray = document.querySelectorAll(".updatable")
@@ -126,7 +130,7 @@ async function search_and_render(nowPage){
     }else{
       sent_input_delete(body)
     }
-  })
+  })  
 }
 
 async function sent_input_update(body){
@@ -169,10 +173,10 @@ window.addEventListener("load", (e)=>{
   initialPage()
 })
 
-submitBtn.addEventListener("click", (e)=>{
+searchBtn.addEventListener("click", (e)=>{
   nowPage= 0
   clearMessageAndTable()
   search_and_render(nowPage)
-  submitBtn.disabled = true
+  searchBtn.disabled = true
 })
 

@@ -41,45 +41,45 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
     subList.className = "list-group  collapse"
     subList.id = `${table}-sub-list`
     listGroup.appendChild(subList)
-    for (let method of methodArray){
-      const listItem = document.createElement("li")
-      listItem.className = "list-group-item"
-      const methodItem = document.createElement("a")
-      switch (method){
-        case "add":
-          listItem.id = `add-${table}`
-          methodItem.className= ""
-          methodItem.href = `/add?${table}`
-          methodItem.innerText = "add"
-          listItem.appendChild(methodItem)
-          subList.appendChild(listItem)
-          break
-        case "search":
-          listItem.id = `search-${table}`
-          methodItem.className= ""
-          methodItem.href = `/search?${table}`
-          methodItem.innerText = "search"
-          listItem.appendChild(methodItem)
-          subList.appendChild(listItem)
-          break
-        case "update":
-          listItem.id = `update-${table}`
-          methodItem.className= ""
-          methodItem.href = `/update?${table}`
-          methodItem.innerText = "update"
-          listItem.appendChild(methodItem)
-          subList.appendChild(listItem)
-          break
-        case "delete":
-           listItem.id = `delete-${table}`
-          methodItem.className= ""
-          methodItem.href = `/delete?${table}`
-          methodItem.innerText = "delete"
-          listItem.appendChild(methodItem)
-          subList.appendChild(listItem)
-          break
-      }
-    }
+    // for (let method of methodArray){
+    //   const listItem = document.createElement("li")
+    //   listItem.className = "list-group-item"
+    //   const methodItem = document.createElement("a")
+    //   switch (method){
+    //     case "add":
+    //       listItem.id = `add-${table}`
+    //       methodItem.className= ""
+    //       methodItem.href = `/add?${table}`
+    //       methodItem.innerText = "add"
+    //       listItem.appendChild(methodItem)
+    //       subList.appendChild(listItem)
+    //       break
+    //     case "search":
+    //       listItem.id = `search-${table}`
+    //       methodItem.className= ""
+    //       methodItem.href = `/search?${table}`
+    //       methodItem.innerText = "search"
+    //       listItem.appendChild(methodItem)
+    //       subList.appendChild(listItem)
+    //       break
+    //     case "update":
+    //       listItem.id = `update-${table}`
+    //       methodItem.className= ""
+    //       methodItem.href = `/update?${table}`
+    //       methodItem.innerText = "update"
+    //       listItem.appendChild(methodItem)
+    //       subList.appendChild(listItem)
+    //       break
+    //     case "delete":
+    //        listItem.id = `delete-${table}`
+    //       methodItem.className= ""
+    //       methodItem.href = `/delete?${table}`
+    //       methodItem.innerText = "delete"
+    //       listItem.appendChild(methodItem)
+    //       subList.appendChild(listItem)
+    //       break
+    //   }
+    // }
   }
     showSideBlockFromRouter(tableName)
     const activeSubListItem = document.querySelector(`#${router}-${tableName}`)

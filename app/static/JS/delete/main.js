@@ -65,7 +65,6 @@ async function search_and_render(nowPage){
     nowPage = parseInt(result["startPage"])
     dataAmount = parseInt(result["dataAmount"])
     const deleteBtn = document.querySelector(".delete-btn")
-
     deleteBtn.addEventListener("click", (e)=>{
       let body = {}
       const checkedArray = document.querySelectorAll(".form-check-input") 

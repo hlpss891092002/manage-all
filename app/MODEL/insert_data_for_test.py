@@ -135,7 +135,7 @@ def insert_stage_for_test():
         body["description"] = f"{stage} for test"
         insert_tableName_data(body, "stage")
 # insert_stage_for_test()
-
+# 
 
 def insert_initial_produce_record_for_test(counting, initial_list, produce_date = None):
     variety_code_list = ["AAA001", "AAB002","CAA011","ZAK001","AKA020","AAZ101","ZBA087","KAG028","KVV044","KWK045","KVV044","ABP032","ALB022","AWS405","WAW400","UWU040","QAQ404","OAO010","QWQ104","EQD004","NHO011","NHK010","AKB001","EVA004","BAB054","NAA101","GAA009","ADP009","GPA001","GTA009"]
@@ -455,7 +455,7 @@ def multi_threads_test():
 
 
 loop_count = 0
-while loop_count <= 10: 
+while loop_count <= 50: 
     multi_threads_test()
     loop_count += 1 
 

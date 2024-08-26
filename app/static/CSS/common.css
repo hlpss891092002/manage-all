@@ -2,6 +2,7 @@
   font-weight: 200;
   font-size: 20px;
   font-family: "Noto Sans CJK TC", sans-serif, serif;
+  box-sizing: Border-box;
 }
 div{
   text-align: center;
@@ -200,7 +201,13 @@ button {
 }
 
 .checkbox{
-  width: 50px;
+  display: flex;
+}
+
+.inner-from-check{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .scrollable-list{
@@ -227,6 +234,13 @@ button {
 }
 
 
+.pagination-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  width: 100px;
+}
 
 @media (max-width:1600px) {
   .main-page{

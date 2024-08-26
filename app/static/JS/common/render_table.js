@@ -4,11 +4,11 @@ export async function render_result_table(search_result, tableName, tableTitleCo
   const resultKeys = Object.keys(search_result)
   console.log(search_result)
   tableTitleContainer.innerText =""
-  const tableTitle = document.createElement("div")
+  // const tableTitle = document.createElement("div")
   const DataCount = document.createElement("div")
-  tableTitleContainer.appendChild(tableTitle)
+  // tableTitleContainer.appendChild(tableTitle)
   tableTitleContainer.appendChild(DataCount)
-  tableTitle.innerText = `Table ${tableName}`
+  // tableTitle.innerText = `Table ${tableName}`
   DataCount.innerText = ` Amount of row ${dataAmount }`
   table.innerText = ""
   let columnNameArray  =  Object.keys(search_result[0])
@@ -49,27 +49,41 @@ export async function render_result_table(search_result, tableName, tableTitleCo
         let rowValue = document.createElement("div")
         rowValue.className = `row-value ${key}`
         rowValue.innerText = value
-        if(elementArray.indexOf(element)===0 && router === "delete"){
+        if(elementArray.indexOf(element)===0){
+          updateIndexColumn = key
+          updateIndexValue = value
           const formCheck = document.createElement("div")
           formCheck.className = `form-check checkbox row-value ${key}`
-          formCheck.innerHTML= `<div class="form-check">
+          formCheck.innerHTML= `<div class="form-check inner-from-check">
           <input class="form-check-input column-name-${key}" type="checkbox" id="${value}">
-          <label class="form-check-label" for="${value}">
-            ${value}
-          </label>
           `
           row.addEventListener("click", (e)=>{
-            if(e.target.nodeName === "INPUT"){
+            if(e.target.nodeName === "INPUT" && e.target.classList.contains("form-check-input")){
               row.classList.toggle("border-primary") 
               row.classList.toggle("border") 
+              // const deleteBtn = document.querySelector(".delete-btn")
+              // console.log(deleteBtn)
+              // deleteBtn.classList.toggle("bg-primary")
             }
           })
-          row.appendChild(formCheck)
-        }else if(router === "update"){
-          if (elementArray.indexOf(element)===0){
-            updateIndexColumn = key
-            updateIndexValue = value
+          
+          let rowValueContainer = document.createElement("div")
+          rowValueContainer.className = " row-value-container"
+          rowValue = document.createElement("input")
+          rowValue.className = `updatable index-${updateIndexColumn} column-${key} index-value-${updateIndexValue} `
+          rowValue.placeholder = `${value}`
+          rowValue.value = value
+          if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
+            rowValue.disabled = true
+          }else if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
+            rowValue.disabled = true
           }
+          
+          rowValueContainer.appendChild(rowValue)
+          formCheck.appendChild(rowValueContainer)
+          row.appendChild(formCheck)
+          
+        }else{
           let rowValueContainer = document.createElement("div")
           rowValueContainer.className = " row-value-container"
           rowValue = document.createElement("input")
@@ -129,9 +143,6 @@ export async function render_result_table(search_result, tableName, tableTitleCo
               }
             })
           }
-          
-        }else{
-          row.appendChild(rowValue)
         }
   
       })
@@ -153,21 +164,23 @@ export async function render_pagination(pageAmount, paginationContainer, nowPage
   let startPage = 0
   let endPage = 0
   paginationContainer.appendChild(pagination)
-  if (router === "delete"){
-    const deleteBTN = document.createElement("button")
-    deleteBTN.className = `${router}-btn `
-    const img = document.createElement("img")
-    img.src = "./static/icon/trash-can.png"
-    deleteBTN.appendChild(img)
-    paginationContainer.appendChild(deleteBTN)
-  }else if(router === "update"){
+
     const updateBTN = document.createElement("button")
-    updateBTN.className = `${router}-btn`
-    const img = document.createElement("img")
-    img.src = "./static/icon/upload.png"
-    updateBTN.appendChild(img)
+    updateBTN.className = `update-btn`
+    const updateImg = document.createElement("img")
+    updateImg.src = "./static/icon/upload.png"
+    updateBTN.appendChild(updateImg)
     paginationContainer.appendChild(updateBTN)
-  }
+
+    const deleteBTN = document.createElement("button")
+    deleteBTN.className = `delete-btn `
+    const deleteImg = document.createElement("img")
+    deleteImg.src = "./static/icon/trash-can.png"
+    deleteBTN.appendChild(deleteImg)
+    paginationContainer.appendChild(deleteBTN)
+
+    
+ 
   pagination.className = "pagination justify-content-center"
   const frontArrow = document.createElement("li")
   frontArrow.className = "page-item front-arrow"

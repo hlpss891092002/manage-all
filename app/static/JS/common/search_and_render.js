@@ -25,9 +25,20 @@ export async function sent_input_search_and_render_table(body, tableName, PageAm
     PageAmount = searchResult["PageAmount"]
     // render_table_from_pagination(nowPage, PageAmount)
     render_pagination(PageAmount, paginationContainer, nowPage, router)
-    render_table_from_pagination(nowPage, PageAmount, search_and_render)
+    render_table_from_pagination(nowPage, PageAmount, addSpinner, search_and_render, table)
     render_result_table(data, tableName, tableTitleContainer, table, PageAmount, dataAmount, router, staffPosition )
     
   }
   return searchResult
 };
+
+export function addSpinner(table){
+  const spinnerBorder = document.createElement("div")
+  spinnerBorder.className = "spinner-border"
+  spinnerBorder.setAttribute("role", "status")
+  const spinner = document.createElement("span")
+  spinner.className = "sr-only"
+  spinnerBorder.appendChild(spinner)
+  table.innerText = ""
+  table.appendChild(spinnerBorder)
+}

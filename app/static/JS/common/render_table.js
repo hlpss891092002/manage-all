@@ -1,4 +1,5 @@
 import{sentFetchWithoutBody} from "../common/sent_fetch_get_response.js"
+import{addSpinner} from "../common/search_and_render.js"
 
 export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount, router, staffPosition = null) {
   const resultKeys = Object.keys(search_result)
@@ -278,7 +279,7 @@ export function clearMessageAndTable(){
   paginationContainer.innerText = ""
 }
 
-export async function render_table_from_pagination(nowPage, PageAmount, callback) {
+export async function render_table_from_pagination(nowPage, PageAmount, callback1, callback2,table) {
   const pagination = document.querySelector(".pagination")
   let targetPage = 0
   pagination.addEventListener("click",(e)=>{
@@ -300,7 +301,8 @@ export async function render_table_from_pagination(nowPage, PageAmount, callback
       }else{
         targetPage = target - 1
       }
-      callback(targetPage)
+      callback1(table)
+      callback2(targetPage)
     }
   })
 }

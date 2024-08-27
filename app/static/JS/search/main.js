@@ -1,7 +1,7 @@
 import{sentFetchWithoutBody,sentFetchWithBody, sentFetchWithParams} from "../common/sent_fetch_get_response.js"
 import {render_result_table, render_pagination, render_table_from_pagination, clearMessageAndTable} from "../common/render_table.js"
 import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter, renderStaffInNav} from "../common/initial.js"
-import {sent_input_search_and_render_table } from "../common/search_and_render.js"
+import {sent_input_search_and_render_table,addSpinner } from "../common/search_and_render.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
 const inputContainer = document.querySelector(".input-container")
@@ -58,6 +58,7 @@ async function search_and_render(nowPage){
       condition[`${columnName}`] = value ;
     }
   };
+  
   const result = await sent_input_search_and_render_table(body, tableName, PageAmount, paginationContainer, nowPage, search_and_render, tableTitleContainer, message, table, dataAmount, router, staffPosition, searchBtn);
   PageAmount = result["PageAmount"]
   nowPage = parseInt(result["startPage"])
@@ -146,6 +147,7 @@ async function sent_input_update(body){
   }else{
     message.innerText = "update success"
     clearMessageAndTable()
+    addSpinner(table)
     search_and_render(nowPage)
   }
 };
@@ -165,6 +167,7 @@ async function sent_input_delete(body){
   }else{
     message.innerText = "delete success"
     clearMessageAndTable()
+    addSpinner(table)
     search_and_render(nowPage)
   }
 };
@@ -173,21 +176,22 @@ window.addEventListener("load", (e)=>{
   initialPage()
 })
 
-
+// function addSpinner(table){
+//   const spinnerBorder = document.createElement("div")
+//   spinnerBorder.className = "spinner-border"
+//   spinnerBorder.setAttribute("role", "status")
+//   const spinner = document.createElement("span")
+//   spinner.className = "sr-only"
+//   spinnerBorder.appendChild(spinner)
+//   table.innerText = ""
+//   table.appendChild(spinnerBorder)
+// }
 
 searchBtn.addEventListener("click", (e)=>{
   nowPage= 0
   clearMessageAndTable()
-  const spinnerBorder = document.createElement("div")
-  spinnerBorder.className = "spinner-border"
-  spinnerBorder.setAttribute("role", "status")
-  const spinner = document.createElement("span")
-  spinner.className = "sr-only"
-  spinnerBorder.appendChild(spinner)
-  table.appendChild(spinnerBorder)
+  addSpinner(table)
   search_and_render(nowPage)
   searchBtn.disabled = true
-  
-  
 })
 

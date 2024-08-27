@@ -242,6 +242,10 @@ button {
   width: 100px;
 }
 
+.page-item{
+  cursor: pointer;
+}
+
 @media (max-width:1600px) {
   .main-page{
     width: 1000px;
@@ -249,9 +253,7 @@ button {
   .input-container {
       grid-template-columns: 1fr 1fr 1fr 
     }
-  /* .main-page {
-    width: 800px;
-  } */
+
 }
 
 @media (max-width:1300px) {

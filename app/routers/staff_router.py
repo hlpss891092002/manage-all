@@ -160,7 +160,6 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
          start = time()
          data_stock = get_seven_days_outs()
          data_stock.sort(key=get_produce_date)
-         # print( "seven day", data_stock)
          today = date.today()
          chart_data = {}
          chart_data["produce_date"] = []
@@ -171,7 +170,6 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
             produce_date = produce_date.strftime("%m /%d")
             produce_date_list.append(produce_date)
             count -= 1
-         print(data_stock)
          chart_data["count"] = [0, 0, 0, 0, 0, 0, 0]
          for data in data_stock:
             produce_date = data["produce_date"].strftime("%m /%d")
@@ -179,13 +177,10 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
             for P_date in chart_data["produce_date"]:
                if P_date == produce_date:
                   index_num = chart_data["produce_date"].index(P_date)
-                  print(index_num)
-                  print(outputs_count)
                   chart_data["count"][index_num] = outputs_count
          result["sevenDaysOuts"] = {}
          result["sevenDaysOuts"]["data"] = data_stock
          line_chart_data_dict["sevenDaysOuts"] = chart_data
-         print(chart_data)
          end = time()
          print(f"get ready stock time = %.2f second" % (end -start))
 
@@ -215,10 +210,8 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
 
 
          for key in line_keys:
-            print(key)
             data = line_chart_data_dict[key]
             time_list, value_list = data.values()
-            print(time_list, value_list)
             chart = make_one_line_chart(time_list, value_list)
             result[key]["image"] = f"data:image/png;base64,{chart}"
          print(f"get run threads = %.2f second" % (end -start))

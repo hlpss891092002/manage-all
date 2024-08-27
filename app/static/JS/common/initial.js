@@ -64,6 +64,10 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
           break
       }
     }
+    // sideMainList.addEventListener("click",(e)=>{
+    //   e.preventDefault()
+    //   window.location.assign(`/search?${table}`)
+    // })
   }
     showSideBlockFromRouter(tableName)
     if (router === "add"){

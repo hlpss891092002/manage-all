@@ -297,7 +297,7 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
         response["startPage"] = page
         response["data"] = result
         # print(f"sql_count  : {sql_count}")
-        # print(f"sql  : {sql}, val {val}")
+        print(f"sql  : {sql}, val {val}")
         return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")

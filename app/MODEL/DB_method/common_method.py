@@ -225,5 +225,22 @@ def get_seven_days_outs():
     finally:
         cursor.close()
         con.close()
-    
+
+def optimize_index():
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        now = date.today()
+        print(now)
+        sql="""OPTIMIZE TABLE produce_record;
+        """
+        cursor.execute(sql)
+        print("complete")
+        result = cursor.fetchall()
+        print(result)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
   

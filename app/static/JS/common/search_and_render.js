@@ -21,6 +21,8 @@ export async function sent_input_search_and_render_table(body, tableName, PageAm
     
   }else if(data.length < 1){
     message.innerText = "no data"
+    console.log(table)
+    table.innerText = ""
   }else{
     PageAmount = searchResult["PageAmount"]
     // render_table_from_pagination(nowPage, PageAmount)

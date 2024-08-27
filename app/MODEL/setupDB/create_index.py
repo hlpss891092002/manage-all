@@ -41,6 +41,8 @@ sql_index_produce_record_for_all_nPK = """ CREATE INDEX idx_produce_record_for_a
 sql_index_produce_record_for_foreign = """ CREATE INDEX idx_produce_record__foreign_keys 
      ON produce_record(variety_id, media_id, employee_id, stage_id);"""
 sql_index_produce_record_for_latest ="""create index idx_produce_record_latest on produce_record(variety_id, stage_id, produce_date, in_stock)"""
+
+optimize_index = """OPTIMIZE TABLE produce_record"""
 # cursor.execute(sql_index_category_category)
 # cursor.execute(sql_index_client_name)
 # cursor.execute(sql_index_media_name)

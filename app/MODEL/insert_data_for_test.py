@@ -455,7 +455,7 @@ def multi_threads_test():
 
 
 loop_count = 0
-while loop_count <= 50: 
+while loop_count <= 10: 
     multi_threads_test()
     loop_count += 1 
 

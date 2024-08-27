@@ -26,7 +26,6 @@ export async function render_result_table(search_result, tableName, tableTitleCo
     columnName .innerText = element
     columnNameContainer.appendChild(columnName)
   })
-  console.log(1)
   table.appendChild(columnNameContainer)
   //append row value
   const foreignColumnResult = await sentFetchWithoutBody("get",`/api/foreignList/${tableName}`)
@@ -78,11 +77,11 @@ export async function render_result_table(search_result, tableName, tableTitleCo
             rowValue.disabled = true
           }
           rowValue.addEventListener("input",(e)=>{
+            console.log("change")
             const updateBtn = document.querySelector(".update-btn")
             rowValue.value !== updateIndexValue ? updateBtn.classList.add("bg-primary") : updateBtn.classList.remove("bg-primary")
           })
-          rowValueContainer.appendChild(rowValue)
-          formCheck.appendChild(rowValueContainer)
+          formCheck.appendChild(rowValue)
           row.appendChild(formCheck)
           
         }else{
@@ -92,11 +91,19 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           rowValue.className = `updatable index-${updateIndexColumn} column-${key} index-value-${updateIndexValue} `
           rowValue.placeholder = `${value}`
           rowValue.value = value
-          if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
+          if(key === "id"){
+            rowValue.disabled = true
+            rowValue.style.width = "auto"
+          }else if( (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
             rowValue.disabled = true
           }else if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
             rowValue.disabled = true
           }
+          rowValue.addEventListener("input",(e)=>{
+            console.log("change")
+            const updateBtn = document.querySelector(".update-btn")
+            rowValue.value !== updateIndexValue ? updateBtn.classList.add("bg-primary") : updateBtn.classList.remove("bg-primary")
+          })
           rowValueContainer.appendChild(rowValue)
           row.appendChild(rowValueContainer)
           const foreignColumnArray = foreignColumnResult["data"]
@@ -139,7 +146,14 @@ export async function render_result_table(search_result, tableName, tableTitleCo
               if(targetText === "CLEAR"){
                 rowValue.value = ""
               }else if(targetElementName === "LI"){
-                rowValue.value = targetText
+                if(rowValue.value === targetText){
+                  return
+                }else{
+                  rowValue.value = targetText
+                  const updateBtn = document.querySelector(".update-btn")
+                  updateBtn.classList.add("bg-primary")  
+                }
+                
               }else{
                 return
               }
@@ -150,7 +164,6 @@ export async function render_result_table(search_result, tableName, tableTitleCo
       })
     rowContainer.appendChild(row)
     })
-  console.log(2)
   table.appendChild(rowContainer)
   rowContainer.addEventListener("click",(e)=>{
     const target = e.target

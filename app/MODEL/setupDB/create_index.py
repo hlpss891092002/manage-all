@@ -41,15 +41,16 @@ sql_index_produce_record_for_all_nPK = """ CREATE INDEX idx_produce_record_for_a
 sql_index_produce_record_for_foreign = """ CREATE INDEX idx_produce_record__foreign_keys 
      ON produce_record(variety_id, media_id, employee_id, stage_id);"""
 
-cursor.execute(sql_index_category_category)
-cursor.execute(sql_index_client_name)
-cursor.execute(sql_index_media_name)
-cursor.execute(sql_index_staff_name)
-cursor.execute(sql_index_stage_name)
-cursor.execute(sql_index_variety_variety_code)
-cursor.execute(sql_index_variety_category_id)
+# cursor.execute(sql_index_category_category)
+# cursor.execute(sql_index_client_name)
+# cursor.execute(sql_index_media_name)
+# cursor.execute(sql_index_staff_name)
+# cursor.execute(sql_index_stage_name)
+# cursor.execute(sql_index_variety_variety_code)
+# cursor.execute(sql_index_variety_category_id)
+cursor.execute(sql_index_produce_record_for_all_nPK)
 cursor.execute(sql_index_produce_record_for_all_column)
-cursor.execute(sql_index_produce_record_for_foreign)
+# cursor.execute(sql_index_produce_record_for_foreign)
 
 
 # sql_index_produce_record_foreign_key_variety = """

@@ -13,6 +13,7 @@ export async function sent_input_search_and_render_table(body, tableName, PageAm
   console.log(nowPage)
   if (error){
     const errorMessage = searchResult["message"]
+    table.innerText = ""
     if(errorMessage.includes("NoneType")){
       message.innerText = "The input value isn't exist.  Please check input value"
     }else{

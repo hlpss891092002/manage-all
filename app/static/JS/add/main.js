@@ -42,19 +42,16 @@ async function sent_input_db(body){
     responseMessage.innerText = "add success"
   }else{
     const message = result["message"].replaceAll("'", "")
-    console.log(message)
+
     const  messageArray = message.split(" ")
     if (message.includes("Duplicate entry")){
       const key = messageArray[messageArray.indexOf("key")+1].split(".")[1]
-      console.log(key)
       const value = body[`${key}`]
-      console.log()
       responseMessage.innerText = `${key} : "${value}"  already exist`
     }else if(message.includes("cannot be null")){
       const column = messageArray[messageArray.indexOf("Column")+1].split("_")[0]
       let item = ""
       let value = ""
-      console.log(column)
       if(column === "variety"){
         item = column + "_code"
         value = body[`${item}`]
@@ -74,8 +71,11 @@ function createRandomId(){
   let now = new Date();
   let seconds = String(now.getSeconds());
   let minutes = String(now.getMinutes());
-  let random = String(Math.floor(Math.random() * 10000)).padStart(2,"0");
-  let productionId = seconds + minutes + random ;
+  let milliseconds = String(now.getMilliseconds());
+  let random = String(Math.floor(Math.random() * 100000000)).padStart(8,"0");
+  const uuid = String(crypto.randomUUID());
+  let productionId = seconds + minutes + milliseconds + random +  uuid;
+ 
   return productionId;
 };
 
@@ -84,11 +84,16 @@ window.addEventListener("load", (e)=>{
 })
 
 submitBtn.addEventListener("click", (e)=>{
+  const spinnerBorder = document.createElement("div")
+  spinnerBorder.className = "spinner-border"
+  spinnerBorder.setAttribute("role", "status")
+  const spinner = document.createElement("span")
+  spinner.className = "sr-only"
+  spinnerBorder.appendChild(spinner)
   
   const allData = document.querySelectorAll(".form-control");
   responseMessage.innerText =""
   let body = {};
-  console.log(allData.length)
   if (tableName === "produce_record"){
     body["id"] = createRandomId();
   };
@@ -99,6 +104,7 @@ submitBtn.addEventListener("click", (e)=>{
     if( (inputTitle === "mother_produce_id" | inputTitle === "consumed_reason" ) && value === ""){
       value = null
       submitBtn.disabled = true
+      responseMessage.appendChild(spinnerBorder)
     }else if( value === ""){
       alert(`${inputTitle} can't be null`)
       return

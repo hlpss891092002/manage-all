@@ -62,7 +62,11 @@ function renderMainImg(block, dataList, title){
   itemContainer.className = "item-container"
   let dataArray = dataList["data"]
   let sum = 0
-  
+  const spinnerArray = document.querySelectorAll(".spinner-border")
+  for (let spinner of spinnerArray){
+    console.log(spinner.style.display)
+    spinner.style.display = "none"
+  }
   if (dataList["image"]){
     const itemImg = document.createElement("img")
     itemImg.className = "item-img"

@@ -173,10 +173,21 @@ window.addEventListener("load", (e)=>{
   initialPage()
 })
 
+
+
 searchBtn.addEventListener("click", (e)=>{
   nowPage= 0
   clearMessageAndTable()
+  const spinnerBorder = document.createElement("div")
+  spinnerBorder.className = "spinner-border"
+  spinnerBorder.setAttribute("role", "status")
+  const spinner = document.createElement("span")
+  spinner.className = "sr-only"
+  spinnerBorder.appendChild(spinner)
+  table.appendChild(spinnerBorder)
   search_and_render(nowPage)
   searchBtn.disabled = true
+  
+  
 })
 

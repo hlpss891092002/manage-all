@@ -27,6 +27,8 @@ div{
 }
 
 .block-container{
+  width: 800px;
+  min-height: 300px;
   display: flex;
   border-style: solid;
   border-color: black;
@@ -64,4 +66,39 @@ input {
 
 .introduce-text{
   margin-top: 150px ;
+}
+
+.introduce-block{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 400px;
+  margin: 50px 0
+}
+.test-account{
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.introduce-words{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+}
+.test-title{
+  margin-bottom: 20px;
+}
+
+.account{
+  margin-bottom: 20px;
+}
+.title{
+  margin-bottom: 20px;
+}
+.content{
+  padding: 20px;
 }

@@ -266,8 +266,6 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
 
             print("execute sql")
         else:
-
-
             count_start = time()
             cursor.execute(sql_count)
             count_end = time()
@@ -298,9 +296,8 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
         response["dataAmount"] = data_amount
         response["startPage"] = page
         response["data"] = result
-        # print(f"sql  : {sql}")
         # print(f"sql_count  : {sql_count}")
-        # print(f"val {val}")
+        # print(f"sql  : {sql}, val {val}")
         return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")

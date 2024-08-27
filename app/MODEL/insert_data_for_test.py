@@ -161,7 +161,7 @@ def insert_initial_produce_record_for_test(counting, initial_list, produce_date 
             second = now.second
             min = now.minute
             microsec = now.microsecond
-            random_num =  str(random.randint(0, 99999999)).zfill(2)
+            random_num =  str(random.randint(0, 99999999)).zfill(8)
             id = str(second) + str(min) + str(microsec) + random_num + str(uid)
             body= {}
             body["id"] = id

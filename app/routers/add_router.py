@@ -13,11 +13,11 @@ from app.CONTROL.jwt_function import user_validation
 router = APIRouter()
 
 
-@router.get("/api/add/tableItem/{table_name}")
-async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(user_validation)]):
+@router.get("/api/add/tableItem/{tableName}")
+async def get_input_item(tableName: str, payload  : Annotated[dict, Depends(user_validation)]):
     try :
-        print(table_name)
-        columns = get_table_columns(table_name)
+        print(tableName)
+        columns = get_table_columns(tableName)
         print(columns)
         columnList = []
         for column in columns:
@@ -55,6 +55,13 @@ async def create_authorization(authorization_data: authorization_class, payload 
 @router.post("/api/{tableName}")
 async def create_category(data : Union[authorization_class,variety_class, stage_class, staff_class, media_class, produce_record_class, order_class , category_class, client_class], payload  : Annotated[dict, Depends(user_validation)], tableName : str):
     try:
+        job_position = payload["job_position"]
+        if (tableName =="staff" or tableName == "authorization" )and job_position != "Engineer":
+            response = {
+                "error": True,
+                "message" : "User authorization is not enough "
+            }
+            return  JSONResponse(status_code=403, content=response)
         input_dict = data.dict()
         print(input_dict)
         print(tableName)

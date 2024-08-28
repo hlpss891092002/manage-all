@@ -8,13 +8,13 @@ from app.MODEL.DB_method.common_method import *
 
 router = APIRouter()
 
-@router.get("/api/update/tableItem/{table_name}")
-async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(user_validation)]):
+@router.get("/api/update/tableItem/{tableName}")
+async def get_input_item(tableName: str, payload  : Annotated[dict, Depends(user_validation)]):
     try :
-        columns_list =  get_table_columns(table_name)
+        columns_list =  get_table_columns(tableName)
         item_List = []
         for column in columns_list:
-            if table_name == "produce_record" or table_name == "client_order" :
+            if tableName == "produce_record" or tableName == "client_order" :
                 pass
             else :
                 if column == "id":
@@ -30,24 +30,30 @@ async def get_input_item(table_name: str, payload  : Annotated[dict, Depends(use
     except Exception  as e:
         raise HTTPException(status_code=500, detail=f"server error {e}")
 
-@router.put("/api/{table_name}")
-async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], table_name:str):
+@router.put("/api/{tableName}")
+async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], tableName:str):
     try :
-        print(body)
+        job_position = payload["job_position"]
+        if( tableName =="staff" or tableName == "authorization") and job_position != "Engineer":
+            response = {
+                "error": True,
+                "message" : "User authorization is not enough "
+            }
+            return  JSONResponse(status_code=403, content=response)
         for index_value in body : 
                 condition = body[index_value]
-                if table_name == "produce_record":
-                    update_produce_record_data(condition, table_name, index_value)
+                if tableName == "produce_record":
+                    update_produce_record_data(condition, tableName, index_value)
 
-                elif table_name == "client_order":
-                    update_client_order_data(condition, table_name, index_value)
+                elif tableName == "client_order":
+                    update_client_order_data(condition, tableName, index_value)
 
-                elif table_name == "variety":
-                    update_variety_data(condition, table_name, index_value)
-                elif table_name == "staff":
-                     update_staff_data(condition, table_name, index_value)
+                elif tableName == "variety":
+                    update_variety_data(condition, tableName, index_value)
+                elif tableName == "staff":
+                     update_staff_data(condition, tableName, index_value)
                 else:
-                    update_non_foreign_key_data(condition, table_name, index_value)
+                    update_non_foreign_key_data(condition, tableName, index_value)
 
         response = {
             "ok" : True

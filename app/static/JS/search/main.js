@@ -33,7 +33,7 @@ async function initialPage(){
   }
   staffId = staffData["employee_id"]
   staffPosition = staffData["job_position"]
-  renderSideBlockList(staffId, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router)
+  renderSideBlockList(staffId,  staffPosition, inputContainer, tableName, router)
   signOutFunction()
   renderStaffInNav(staffData)
 }

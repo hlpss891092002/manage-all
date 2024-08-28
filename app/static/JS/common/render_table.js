@@ -3,7 +3,6 @@ import{addSpinner} from "../common/search_and_render.js"
 
 export async function render_result_table(search_result, tableName, tableTitleContainer, table, PageAmount, dataAmount, router, staffPosition = null) {
   const resultKeys = Object.keys(search_result)
-  console.log(search_result)
   tableTitleContainer.innerText =""
   const tableTitle = document.createElement("div")
   const DataCount = document.createElement("div")
@@ -50,22 +49,27 @@ export async function render_result_table(search_result, tableName, tableTitleCo
         rowValue.className = `row-value ${key}`
         rowValue.innerText = value
         if(elementArray.indexOf(element)===0){
+          if (tableName ==="staff" && staffPosition === "Engineer"){
+            return
+          }
           updateIndexColumn = key
           updateIndexValue = value
           const formCheck = document.createElement("div")
           formCheck.className = `form-check checkbox row-value ${key}`
-          formCheck.innerHTML= `<div class="form-check inner-from-check">
-          <input class="form-check-input column-name-${key}" type="checkbox" id="${value}">
-          `
+          if (staffPosition !== "Engineer" && tableName === "staff"){
+            
+          }else{
+            formCheck.innerHTML= `<div class="form-check inner-from-check">
+            <input class="form-check-input column-name-${key}" type="checkbox" id="${value}">
+            `
+          }
+          
           row.addEventListener("click", (e)=>{
             if(e.target.nodeName === "INPUT" && e.target.classList.contains("form-check-input")){
               row.classList.toggle("border-primary") 
               row.classList.toggle("border") 
-              // 
-              // 
             }
           })
-          
           let rowValueContainer = document.createElement("div")
           rowValueContainer.className = " row-value-container"
           rowValue = document.createElement("input")
@@ -74,11 +78,13 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           rowValue.value = value
           if(key === "id" || (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
             rowValue.disabled = true
-          }else if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
+          }else if ( tableName === "staff" && staffPosition !== 'Engineer'){
+            rowValue.disabled = true
+          }else if (staffPosition === 'Operator' && key === "employee_id"){
+            console.log(staffPosition , key)
             rowValue.disabled = true
           }
           rowValue.addEventListener("input",(e)=>{
-            console.log("change")
             const updateBtn = document.querySelector(".update-btn")
             rowValue.value !== updateIndexValue ? updateBtn.classList.add("bg-primary") : updateBtn.classList.remove("bg-primary")
           })
@@ -97,11 +103,12 @@ export async function render_result_table(search_result, tableName, tableTitleCo
             rowValue.style.width = "auto"
           }else if( (tableName === "produce_record" && key ==="variety") ||  (tableName === "produce_record" && key ==="producer") ){
             rowValue.disabled = true
-          }else if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
+          }else if ( tableName === "staff"  && staffPosition !== 'Engineer'){
+            rowValue.disabled = true
+          }else if (staffPosition === 'Operator' && (key !== "variety_code"  || key !== "stage")){
             rowValue.disabled = true
           }
           rowValue.addEventListener("input",(e)=>{
-            console.log("change")
             const updateBtn = document.querySelector(".update-btn")
             rowValue.value !== updateIndexValue ? updateBtn.classList.add("bg-primary") : updateBtn.classList.remove("bg-primary")
           })
@@ -133,6 +140,8 @@ export async function render_result_table(search_result, tableName, tableTitleCo
               dropdownMenu.appendChild(dropdownItem)
             }
             if ( tableName === "staff" && key === "job_position" && staffPosition !== 'Engineer'){
+              return
+            }else if(staffPosition === 'Operator' && key === "employee_id"){
               return
             }else{
               dropdown.appendChild(dropdownBtn)
@@ -171,7 +180,7 @@ export async function render_result_table(search_result, tableName, tableTitleCo
     if (target.classList.contains("form-check-input")){
       const deleteBtn = document.querySelector(".delete-btn")
       let formCheckArray = document.querySelectorAll(".form-check-input")
-      console.log(formCheckArray.length)
+
       let unselectedNum = 0
       for (let check of formCheckArray){
          if (check.checked === true){
@@ -180,9 +189,6 @@ export async function render_result_table(search_result, tableName, tableTitleCo
           unselectedNum+=1                
          }
       }
-      console.log(unselectedNum)
-      console.log(formCheckArray.length)
-      console.log(deleteBtn)
       if(unselectedNum === formCheckArray.length){
         deleteBtn.classList.remove("bg-primary")
       }else{
@@ -194,8 +200,6 @@ export async function render_result_table(search_result, tableName, tableTitleCo
 
 export async function render_pagination(pageAmount, paginationContainer, nowPage, router){
   paginationContainer.innerText =""
-  console.log(nowPage)
-  console.log(pageAmount)
   const paginationNav= document.createElement("nav")
   paginationNav.className = "pagination-nav"
   paginationNav.setAttribute("aria-label", "Page navigation")

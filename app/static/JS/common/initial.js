@@ -17,7 +17,7 @@ export async function getAccountFromAutho() {
   }   
 }
 
-export async function renderSideBlockList(employee_id, addSubList, searchSubList, updateSubList, deleteSubList, inputContainer, tableName, router, searchInputContainer){
+export async function renderSideBlockList(employee_id, staffPosition, inputContainer, tableName, router, searchInputContainer){
   if(!employee_id){
     localStorage.clear()
     window.location.assign("/")
@@ -47,13 +47,17 @@ export async function renderSideBlockList(employee_id, addSubList, searchSubList
       const methodItem = document.createElement("a")
       switch (method){
         case "add":
-          listItem.id = `add-${table}`
-          methodItem.className= ""
-          methodItem.href = `/add?${table}`
-          methodItem.innerText = "add"
-          listItem.appendChild(methodItem)
-          subList.appendChild(listItem)
-          break
+          if(table == "staff" && staffPosition !="Engineer"){
+            break
+          }else{
+            listItem.id = `add-${table}`
+            methodItem.className= ""
+            methodItem.href = `/add?${table}`
+            methodItem.innerText = "add"
+            listItem.appendChild(methodItem)
+            subList.appendChild(listItem)
+            break
+          }
         case "search & modified":
           listItem.id = `search-${table}`
           methodItem.className= ""

@@ -1,5 +1,10 @@
 *{
   font-size: 24px;
+  font-family: "Noto Sans TC", system-ui, "Noto Sans CJK TC", sans-serif, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  box-sizing: Border-box;
 }
 
 body{
@@ -19,29 +24,20 @@ div{
   margin: 50px 0 ;
 }
 
-.decorator-bar{
-  background-color: aqua;
-  height: 10px;
-  width: 100%;
-  margin-bottom: 20px;
-}
+
 
 .block-container{
   width: 800px;
   min-height: 300px;
   display: flex;
   border-style: solid;
-  border-color: black;
+  /* border-color: black; */
   border-radius: 5px;
 }
 
-.sign-in-input-container{
-  background-color: azure;
-  display: flex;
-  flex-direction: column;
-  justify-content:center ;
 
-}
+
+
 input {
   padding-left: 20px;
   border-radius: 5px;
@@ -58,47 +54,132 @@ input {
   margin-bottom: 40px;
 }
 
+.main-page-image {
+  position: absolute;
+
+  width: 1000px;
+  right: 0;
+  top: 0;
+  z-index: 0;
+}
+
+.introduce-block {
+  position: absolute;
+  top: 500px;
+  z-index: 10;
+  right: 800px ;
+  width: 400px;
+
+}
+
 .introduce{
   height: 100%;
   width: 400px;
   align-items: center;
 }
 
-.introduce-text{
-  margin-top: 150px ;
+.introduce-title{
+  background-color: white;
+
 }
 
-.introduce-block{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 400px;
-  margin: 50px 0
+.introduce-title > div{
+  font-size: 50px
 }
-.test-account{
-  flex: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.introduce-text{
+
+  margin-top: 15px ;
+  font-size: 24px;
 }
-.introduce-words{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 400px;
-}
+
+
 .test-title{
   margin-bottom: 20px;
 }
 
-.account{
-  margin-bottom: 20px;
-}
 .title{
   margin-bottom: 20px;
 }
 .content{
-  padding: 20px;
+  padding: 10px;
+}
+
+.account-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.right-side{
+  height: 1100px;
+}
+.sign-in-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.test-account-section{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-info{
+  margin-bottom: 20px;
+}
+.account-info > div{
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.input-group{
+  justify-content: center;
+  align-items: center;
+}
+
+
+.sign-input{
+  max-width: 300px;
+  height: 70px;
+  border: 0px;
+}
+
+#sign-in-btn{
+  max-width: 200px;
+}
+.introduce-section{
+  position: relative;
+  height: 100%;
+}
+#left-side{
+  height: 900PX;
+  position: relative;
+  /* background-image: url("../icon/main-page.png"); */
+
+}
+
+.sign-in-input-container {
+  /* background-color: #60C2FF; */
+  background-image: url("../icon/id-card-img.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  border-radius: 10PX;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 600px;
+  height: 800px;
+}
+
+.test-account{
+  width: 600px;
+}
+.sign-in-input-container div{
+  font-size: 24px;
+}
+.input-group-text{
+  height: 70px;
+  font-size: 24px;
 }

@@ -28,6 +28,9 @@ export async function renderSideBlockList(employee_id, staffPosition, inputConta
   const tables = await sentFetchWithoutBody("get","/api/staff/tables")
   //render side block
   for (let table of tables){
+    if(table === "authorization"){
+      continue
+    }
     const listGroup = document.querySelector(".list-group")
     const sideMainList = document.createElement("li")
     sideMainList.className ="list-group-item list-group-item-primary side-title "

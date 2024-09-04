@@ -21,6 +21,12 @@ let nowPage= 0
 let PageAmount = 0
 let dataAmount = 0
 
+function clearInputValue(){
+  const allInput = document.querySelectorAll(".form-control")
+  for (let input of allInput){
+    input.value = ""
+  }
+}
 
 async function initialPage(){
   let staffData = await getAccountFromAutho()
@@ -38,7 +44,7 @@ async function initialPage(){
   renderStaffInNav(staffData)
 }
 
-async function search_and_render(nowPage){
+async function  search_and_render(nowPage){
   const allData = document.querySelectorAll(".form-control");
   let body = {};
   body["page"] = nowPage
@@ -105,6 +111,7 @@ async function search_and_render(nowPage){
     if(Object.keys(body).length === 0){
       e.preventDefault()
     }else{
+      clearInputValue()
       sent_input_update(body)
     }
     
@@ -129,6 +136,7 @@ async function search_and_render(nowPage){
       e.preventDefault()
       return
     }else{
+      clearInputValue()
       sent_input_delete(body)
     }
   })  
@@ -145,10 +153,10 @@ async function sent_input_update(body){
     }
     
   }else{
-    message.innerText = "update success"
     clearMessageAndTable()
     addSpinner(table)
     search_and_render(nowPage)
+    message.innerText = "update success"
   }
 };
 
@@ -165,10 +173,10 @@ async function sent_input_delete(body){
     }
     
   }else{
-    message.innerText = "delete success"
     clearMessageAndTable()
     addSpinner(table)
     search_and_render(nowPage)
+    message.innerText = "delete success"
   }
 };
 

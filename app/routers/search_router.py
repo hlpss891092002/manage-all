@@ -56,7 +56,9 @@ async def get_data_from_table(page:str, payload  : Annotated[dict, Depends(user_
     except Exception as e:
             raise HTTPException(status_code=500, detail=f"{e}")
 
-@router.get("/api/foreignList/{table_name}", tags=["foreign List"])
+@router.get("/api/foreignList/{table_name}",
+             tags=["foreign List"],
+             responses=foreign_list_response_example)
 async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], table_name:str):
     try :
         start = time()

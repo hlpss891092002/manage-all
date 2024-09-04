@@ -21,7 +21,9 @@ from app.MODEL.swagger_ui.response_example import *
 load_dotenv()
 router = APIRouter()
 
-@router.get("/api/staff/auth", tags=["Staff"])
+@router.get("/api/staff/auth",
+             tags=["Staff"],
+             responses=auth_get_response_example)
 async def staff_validation(payload  : Annotated[dict, Depends(user_validation)]): 
     try:
        print(payload)
@@ -29,7 +31,9 @@ async def staff_validation(payload  : Annotated[dict, Depends(user_validation)])
     except Exception as e:
        raise HTTPException(status_code=500, detail=f"server error {e}")
 
-@router.put("/api/staff/auth", tags=["Staff"] )
+@router.put("/api/staff/auth",
+             tags=["Staff"],
+              responses=auth_put_response_example )
 async def check_staff_exist(body: sign_in_data): 
   employee_id = body.employee_id
   password = body.password
@@ -55,7 +59,10 @@ async def check_staff_exist(body: sign_in_data):
 			)
     return JSONResponse(status_code=400, content=error_message_signup_fail.dict())
   
-@router.get("/api/staff/tables", tags=["Staff"])
+@router.get("/api/staff/tables",
+             tags=["Staff"],
+             responses=staff_tables_response_example
+             )
 async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
     try:
       #  table_list = show_table()
@@ -70,7 +77,9 @@ async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
     except Exception as e:
        raise HTTPException(status_code=500, detail=f"server error {e}")
     
-@router.get("/api/latest", tags=["Latest"])
+@router.get("/api/latest",
+             tags=["Latest"],
+             responses=latest_response_example)
 async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
    try:
 

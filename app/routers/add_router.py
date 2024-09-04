@@ -6,6 +6,7 @@ from app.MODEL.data_class.response_class import *
 from app.MODEL.DB_method.add_method import *
 from app.MODEL.DB_method.common_method import *
 from app.MODEL.DB_method.search_method import *
+from app.MODEL.swagger_ui.response_example import *
 
 from app.CONTROL.jwt_function import user_validation
 
@@ -13,7 +14,10 @@ from app.CONTROL.jwt_function import user_validation
 router = APIRouter()
 
 
-@router.get("/api/add/tableItem/{tableName}")
+@router.get("/api/tableItem/add/{tableName}",
+             tags=["Table Item"],
+             responses = table_item_response_example  
+             )
 async def get_input_item(tableName: str, payload  : Annotated[dict, Depends(user_validation)]):
     try :
         print(tableName)
@@ -37,23 +41,21 @@ async def get_input_item(tableName: str, payload  : Annotated[dict, Depends(user
         response = {
             "data" :  columnList
         }
-        return response
+        return  JSONResponse(status_code=200, content=response)
 
-    except Exception  as e:
-        raise e
+    except HTTPException as e:
+        raise e    
+    except TypeError as e:
+            raise HTTPException(status_code=500, detail=f"{e}")
+    except Exception as e:
+            raise HTTPException(status_code=500, detail=f"{e}")
 
 
-@router.post("/api/add/authorization")
-async def create_authorization(authorization_data: authorization_class, payload  : Annotated[dict, Depends(user_validation)]):
-    try :
-        job_position, authorization = authorization_data
-        return insert_authorization(job_position, authorization)
-        
-    except Exception  as e:
-        raise HTTPException(status_code=500, detail=f"server error {e}")
 
-@router.post("/api/{tableName}")
-async def create_category(data : Union[authorization_class,variety_class, stage_class, staff_class, media_class, produce_record_class, order_class , category_class, client_class], payload  : Annotated[dict, Depends(user_validation)], tableName : str):
+@router.post("/api/{tableName}",
+              tags=["Table Method"],
+              responses=table_CUD_response_example)
+async def add_data_in_table(data : Union[variety_class, authorization_class,stage_class, staff_class, media_class, produce_record_class, order_class , category_class, client_class], payload  : Annotated[dict, Depends(user_validation)], tableName : str):
     try:
         job_position = payload["job_position"]
         if (tableName =="staff" or tableName == "authorization" )and job_position != "Engineer":

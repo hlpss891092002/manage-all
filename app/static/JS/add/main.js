@@ -1,5 +1,6 @@
 import{sentFetchWithoutBody, sentFetchWithBody} from "../common/sent_fetch_get_response.js"
 import{getAccountFromAutho, renderSideBlockList, signOutFunction, showSideBlockFromRouter, renderStaffInNav} from "../common/initial.js"
+import { formateAddResponse } from "../common/formate_response_message.js"
 const addSubList = document.querySelector("#add-sub-list")
 const searchSubList = document.querySelector("#search-sub-list")
 const updateSubList = document.querySelector("#update-sub-list")
@@ -7,7 +8,6 @@ const deleteSubList = document.querySelector("#delete-sub-list")
 const inputContainer = document.querySelector(".input-container")
 const submitBtn = document.querySelector(".submit-btn")
 const responseMessage = document.querySelector(".response-message")
-
 const query = window.location.search
 const tableName = query.slice(1, query.length)
 const router = location.pathname.replace("/", "")
@@ -37,33 +37,10 @@ async function initialPage(){
 }
 
 async function sent_input_db(body){
+  const keys = Object.keys(body)
+  const firstColumnValue = body[keys[0]]
   const  result = await sentFetchWithBody("post", body, `/api/${tableName}`)
-  if (result["ok"]){
-    responseMessage.innerText = "add success"
-  }else{
-    const message = result["message"].replaceAll("'", "")
-
-    const  messageArray = message.split(" ")
-    if (message.includes("Duplicate entry")){
-      const key = messageArray[messageArray.indexOf("key")+1].split(".")[1]
-      const value = body[`${key}`]
-      responseMessage.innerText = `${key} : "${value}"  already exist`
-    }else if(message.includes("cannot be null")){
-      const column = messageArray[messageArray.indexOf("Column")+1].split("_")[0]
-      let item = ""
-      let value = ""
-      if(column === "variety"){
-        item = column + "_code"
-        value = body[`${item}`]
-      }else{
-        item = column
-        value = body[`${item}`]
-      }
-      responseMessage.innerText = `${item} : "${value}"  is not  exist`
-    }else{
-      responseMessage.innerText = message
-    }
-  }
+  formateAddResponse(result, responseMessage, tableName, firstColumnValue)
 
 };
 

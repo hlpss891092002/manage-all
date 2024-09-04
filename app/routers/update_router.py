@@ -4,11 +4,14 @@ from typing import Annotated
 from app.CONTROL.jwt_function import user_validation
 from app.MODEL.DB_method.update_method import*
 from app.MODEL.DB_method.common_method import *
+from app.MODEL.swagger_ui.response_example import *
 
 
 router = APIRouter()
 
-@router.get("/api/update/tableItem/{tableName}")
+@router.get("/api/tableItem/update/{tableName}",
+             tags=["Table Item"],
+             responses = table_item_response_example )
 async def get_input_item(tableName: str, payload  : Annotated[dict, Depends(user_validation)]):
     try :
         columns_list =  get_table_columns(tableName)
@@ -30,8 +33,10 @@ async def get_input_item(tableName: str, payload  : Annotated[dict, Depends(user
     except Exception  as e:
         raise HTTPException(status_code=500, detail=f"server error {e}")
 
-@router.put("/api/{tableName}")
-async def get_media_list(body: dict, payload  : Annotated[dict, Depends(user_validation)], tableName:str):
+@router.put("/api/{tableName}",
+             tags=["Table Method"], 
+            responses=table_CUD_response_example)
+async def update_data_from_table(body: dict, payload  : Annotated[dict, Depends(user_validation)], tableName:str):
     try :
         job_position = payload["job_position"]
         if( tableName =="staff" or tableName == "authorization") and job_position != "Engineer":

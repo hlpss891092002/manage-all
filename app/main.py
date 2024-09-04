@@ -65,13 +65,7 @@ async def insertPage(request: Request):
 async def insertPage(request: Request):
 	return FileResponse("app/static/HTML/search.html", media_type="text/html")
 
-# @app.get("/update", include_in_schema=False)
-# async def insertPage(request: Request):
-# 	return FileResponse("app/static/HTML/update.html", media_type="text/html")
 
-# @app.get("/delete", include_in_schema=False)
-# async def insertPage(request: Request):
-# 	return FileResponse("app/static/HTML/delete.html", media_type="text/html")
 def main():
 	def optimize_midnight():
 		optimize_index()

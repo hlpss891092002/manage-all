@@ -93,7 +93,7 @@ export async function renderSideBlockList(employee_id, staffPosition, inputConta
   
   // get item according table
   if(router !== "staffIndex"){
-    const columnInputResult = await sentFetchWithoutBody("get",`/api/${router}/tableItem/${tableName}`)
+    const columnInputResult = await sentFetchWithoutBody("get",`/api/tableItem/${router}/${tableName}`)
     const foreignColumnResult = await sentFetchWithoutBody("get",`/api/foreignList/${tableName}`)
     const foreignColumnArray = foreignColumnResult["data"]
     const columns = columnInputResult["data"]

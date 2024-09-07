@@ -95,7 +95,7 @@ export function createGuideSearch(guidMessage, firstColumnValue,tableName){
   guidLinkSearch.className = "guid-link-search"
   const guidSearchText = document.createElement("div")
   guidSearchText.className = "guid-search-text"
-  guidSearchText.innerText=`Would  you  to  check the information of  ${firstColumnValue} ${tableName} ?`
+  guidSearchText.innerText=`Would  you  to  check the other information in ${tableName} ?`
   guidLinkSearch.innerText="Please click here"
   guidLinkSearch.href = `/search?${tableName}`
   guidSearchBlock.appendChild(guidSearchText) 

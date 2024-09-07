@@ -40,6 +40,10 @@ async function sent_input_db(body){
   const keys = Object.keys(body)
   const firstColumnValue = body[keys[0]]
   const  result = await sentFetchWithBody("post", body, `/api/${tableName}`)
+  if(result){
+    responseMessage.innerText=""
+  }
+
   formateAddResponse(result, responseMessage, tableName, firstColumnValue)
 
 };
@@ -92,6 +96,7 @@ submitBtn.addEventListener("click", (e)=>{
 
   if (result){
     submitBtn.disabled = false
+
   }
 })
 

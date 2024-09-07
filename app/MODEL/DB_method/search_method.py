@@ -32,7 +32,7 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
     try:
         int(page)
         sql = ""
-        sql_count = f""" Select count({table_name}.id) as count from {table_name} 
+        sql_count = f""" Select count(*) as count from {table_name} 
         """
         if table_name == "client_order":
             sql="""SELECT client_order.id as id, client.name as client, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  

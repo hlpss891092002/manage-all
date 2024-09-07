@@ -1,0 +1,183 @@
+*{
+  font-size: 24px;
+  font-family: "Noto Sans TC", system-ui, "Noto Sans CJK TC", sans-serif, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  box-sizing: Border-box;
+}
+
+body{
+  background-color: rgb(250, 255, 255);
+}
+
+div{
+  text-align: center;
+}
+
+.sign-in-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 50px 0 ;
+}
+
+
+
+.block-container{
+  min-height: 300px;
+  display: flex;
+  border-style: solid;
+  /* border-color: black; */
+  border-radius: 5px;
+}
+
+
+
+
+input {
+  padding-left: 20px;
+  border-radius: 5px;
+  height: 50px;
+  display: block;
+
+}
+
+#sign-in-btn{
+  margin-bottom: 20px;
+}
+
+.response-message{
+  margin-bottom: 40px;
+}
+
+.main-page-image {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 0;
+  height: 80vh;
+}
+
+.introduce-block {
+  width: 400px;
+  position: absolute;
+  top: 30vw;
+  z-index: 10;
+  left: 5vw ;
+}
+
+.introduce{
+  height: 100%;
+  align-items: center;
+}
+
+.introduce-title{
+  background-color: white;
+
+}
+
+.introduce-title > div{
+  font-size: 50px
+}
+.introduce-text{
+
+  margin-top: 15px ;
+  font-size: 24px;
+}
+
+
+.test-title{
+  margin-bottom: 20px;
+}
+
+.title{
+  margin-bottom: 20px;
+}
+.content{
+  padding: 10px;
+}
+
+.account-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.right-side{
+  height: 100vh;
+}
+.sign-in-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.test-account-section{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-info{
+  margin-bottom: 20px;
+}
+.account-info > div{
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+
+
+
+
+#sign-in-btn{
+  max-width: 200px;
+}
+.introduce-section{
+  position: relative;
+  height: 100%;
+}
+#left-side{
+  height: 100vh;
+  position: relative;
+  /* background-image: url("../icon/main-page.png"); */
+
+}
+
+.sign-in-input-container {
+  /* background-color: #60C2FF; */
+  background-image: url("../icon/id-card-img.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  border-radius: 10PX;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80vh;
+}
+
+.test-account{
+  width: 600px;
+}
+.sign-in-input-container div{
+  font-size: 24px;
+}
+.input-group{
+  display: flex;
+  flex-wrap: nowrap;
+  margin-bottom: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.sign-input {
+  max-width: 300px;
+  height: 70px;
+  border: 0px;
+}
+.input-group-text{
+  height: 70px;
+  font-size: 24px;
+}

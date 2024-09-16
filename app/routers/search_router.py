@@ -62,7 +62,9 @@ async def get_data_from_table(page:str, payload  : Annotated[dict, Depends(user_
 async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], table_name:str):
     try :
         start = time()
+        print(table_name)
         column_list = get_foreign_column(table_name)
+        print(column_list)
         response = {}
         response["data"] = {}
         data = response["data"]

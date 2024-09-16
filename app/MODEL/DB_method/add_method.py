@@ -110,7 +110,6 @@ def insert_produce_record(input_dict , in_stock = True, consumed_date = None):
         val=(id, variety, media, stage, mother_produce_id, in_stock, consumed_reason, employee_id, consumed_date)
         cursor.execute(sql,val)
         con.commit()
-        # print(f"insert {id} production")
         return True
     except Exception as e:
             print(f"{e}")
@@ -122,7 +121,6 @@ def insert_produce_record(input_dict , in_stock = True, consumed_date = None):
 
 def insert_staff( input_dict, in_employment = True):
     name, email, cellphone, employee_id, password, job_position =input_dict.values()
-    print(name, email, cellphone, employee_id, password, job_position)
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:

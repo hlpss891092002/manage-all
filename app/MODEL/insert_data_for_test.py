@@ -345,8 +345,8 @@ def data_for_test_rooting(root_day = None):
     insert_strong_produce_record_for_test(counting, grown_list, strong_list)
     insert_rooting_produce_record_for_test(counting, strong_list)
     end = time()
-    print(f"rooting time = %.2f" % (end -start))
-    print(f"amount rooting {len(counting)}")
+    # print(f"rooting time = %.2f" % (end -start))
+    # print(f"amount rooting {len(counting)}")
 
 def data_for_test_strong(strong_day= None):
     start = time()
@@ -361,8 +361,8 @@ def data_for_test_strong(strong_day= None):
     insert_strong_produce_record_for_test(counting, grown_list, strong_list)
     # insert_rooting_produce_record_for_test(counting, strong_list)
     end = time()
-    print(f"strong time = %.2f" % (end -start))
-    print(f"amount strong {len(counting)}")
+    # print(f"strong time = %.2f" % (end -start))
+    # print(f"amount strong {len(counting)}")
 
 def data_for_test_grown(grown_day = None):
     start = time()
@@ -377,8 +377,8 @@ def data_for_test_grown(grown_day = None):
     # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
     # insert_rooting_produce_record_for_test(counting, strong_list)()
     end = time()
-    print(f"grown time = %.2f" % (end -start))
-    print(f" grown amount {len(counting)}")
+    # print(f"grown time = %.2f" % (end -start))
+    # print(f" grown amount {len(counting)}")
 
 def data_for_test_propagation(propagation_day = None):
     start = time()
@@ -393,8 +393,8 @@ def data_for_test_propagation(propagation_day = None):
     # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
     # insert_rooting_produce_record_for_test(counting, strong_list)
     end = time()
-    print(f"propagation time = %.2f" % (end -start))
-    print(f"amount propagation {len(counting)}")
+    # print(f"propagation time = %.2f" % (end -start))
+    # print(f"amount propagation {len(counting)}")
 
 def data_for_test_initial(recent_day = None):
     start = time()
@@ -409,8 +409,8 @@ def data_for_test_initial(recent_day = None):
     # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
     # insert_rooting_produce_record_for_test(counting, strong_list)
     end = time()
-    print(f"initial time = %.2f" % (end -start))
-    print(f"amount initial {len(counting)}")
+    # print(f"initial time = %.2f" % (end -start))
+    # print(f"amount initial {len(counting)}")
     
 def data_recent_week():
     today = date.today()

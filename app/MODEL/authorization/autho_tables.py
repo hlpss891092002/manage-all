@@ -39,7 +39,7 @@ def show_table():
                 continue
             table_list.append(tableName)
         table_list.sort()
-        print(table_list)
+
         return table_list
     except Exception as e:
         print (e)
@@ -58,7 +58,6 @@ def get_table_list_from_auth( employee_id):
         WHERE employee_id = %s
          """
         val = (employee_id,)
-        print(employee_id)
         cursor.execute(sql,val)
         result = cursor.fetchone()
         return result

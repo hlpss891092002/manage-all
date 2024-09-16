@@ -1,4 +1,6 @@
 import logging
+from pytz import timezone
+from datetime import datetime, date
 from fastapi import  Request, FastAPI, HTTPException, WebSocketException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import FileResponse, JSONResponse
@@ -6,12 +8,13 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import  HTTPException as StarletteHTTPException
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.routers import add_router, staff_router, update_router, delete_router, search_router
-from app.MODEL.DB_method.common_method import optimize_index
+from app.MODEL.DB_method.common_method import optimize_index, recreate_produce_record
 from app.MODEL.data_class.response_class import databaseException
 # from app.MODEL.data_class.validation_data_class import RequestValidationError
+
+scheduler = AsyncIOScheduler(timezone=timezone("ROC"))
 
 app= FastAPI()
 app.include_router(add_router.router)
@@ -22,7 +25,7 @@ app.include_router(search_router.router)
 # app.add_middleware(LogRequestMiddleware)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-
+now_day = date.today()
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
@@ -65,22 +68,9 @@ async def insertPage(request: Request):
 async def insertPage(request: Request):
 	return FileResponse("app/static/HTML/search.html", media_type="text/html")
 
+@scheduler.scheduled_job("interval", days = 1, start_date=f"{now_day} 23:00:00")
+async def optimize_table():
+	optimize_index()
+	#recreate 功能尚未做完
+	# recreate_produce_record()
 
-def main():
-	def optimize_midnight():
-		optimize_index()
-		print("optimize complete")
-	def optimize_midday():
-		optimize_index()
-		print("optimize complete")
-
-	schedular = BackgroundScheduler()
-	trigger_mn =  CronTrigger(hour = 23, minute = 59)
-	trigger_md =  CronTrigger(hour = 12, minute = 30)
-	schedular.add_job(optimize_midnight, trigger_mn)
-	schedular.add_job(optimize_midday, trigger_md)
-	print("optimize")
-	schedular.start()
-
-
-main()

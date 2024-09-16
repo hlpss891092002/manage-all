@@ -55,6 +55,7 @@ def get_table_columns(table_name):
 def get_foreign_column(table_name):
     con = connection_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
+    print(table_name)
     try:
         sql = """
                 SELECT     COLUMN_NAME 
@@ -66,9 +67,12 @@ def get_foreign_column(table_name):
                 AND TABLE_SCHEMA = "manageall_database"
                 """
         val = list()
+        
         val.append(table_name)
         cursor.execute(sql, val)
+        print(sql)
         result = cursor.fetchall()
+        print(result)
         column_list = list()
         for column in result:
             column_list.append(column["COLUMN_NAME"])
@@ -124,7 +128,7 @@ def get_yesterday_produce_category():
     try:
         now = date.today()
         yesterday = now - timedelta(days=1)
-        print(yesterday)
+
         sql="""SELECT category.name as category,  count(produce_record.id) as count
         FROM produce_record        
         inner JOIN variety
@@ -179,7 +183,7 @@ def get_ready_stock():
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        print(now)
+
         # shipping_date_diff = now - timedelta(weeks=4)
         sql="""SELECT category.name as category,   count(produce_record.id) as count 
         FROM produce_record
@@ -206,7 +210,7 @@ def get_seven_days_outs():
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        print(now)
+
         # shipping_date_diff = now - timedelta(weeks=4)
         sql="""SELECT  produce_date,  count(produce_record.id) as count 
         FROM produce_record
@@ -231,16 +235,82 @@ def optimize_index():
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        print(now)
+
         sql="""OPTIMIZE TABLE produce_record;
         """
         cursor.execute(sql)
         print("complete")
-        result = cursor.fetchall()
-        print(result)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
-  
+
+def recreate_produce_record():
+    con = connection_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql=f"""CREATE TABLE backup AS SELECT * FROM produce_record;
+        drop table produce_record;
+        RENAME TABLE backup to produce_record;
+        """
+        sql_alter_PK="""ALTER TABLE produce_record
+                        ADD PRIMARY KEY (id);"""
+        sql_alter_variety="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_variety_produce_record
+            FOREIGN KEY (variety_id)
+            REFERENCES variety(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;
+            """
+        sql_alter_media="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_media_produce_record
+            FOREIGN KEY (media_id)
+            REFERENCES media(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;"""
+        sql_alter_staff="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_staff_produce_record
+            FOREIGN KEY (employee_id)
+            REFERENCES staff(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;"""
+        sql_alter_stage="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_stage_produce_record
+            FOREIGN KEY (stage_id)
+            REFERENCES stage(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;"""
+        sql_alter_mother_id="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_mother_produce_id
+            FOREIGN KEY (mother_produce_id)
+            REFERENCES produce_record(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE"""
+        cursor.execute(sql)
+        # print("complete produce_record")
+        # cursor.execute(sql_alter_PK)
+        # print("complete PK")
+        # cursor.execute(sql_alter_variety)
+        # print("complete variety")
+        # cursor.execute(sql_alter_media)
+        # print("complete media")
+        # cursor.execute(sql_alter_staff)
+        # print("complete staff")
+        # cursor.execute(sql_alter_stage)
+        # print("complete stage")
+        # cursor.execute(sql_alter_mother_id)
+        # print("complete mother")
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
+recreate_produce_record()

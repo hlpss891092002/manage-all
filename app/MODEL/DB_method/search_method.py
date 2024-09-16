@@ -145,7 +145,7 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                     elif column == "job_position":
                         sql_sub = f"""select id from authorization where job_position = %s"""
                         val_sub = list()
-                        print(condition[f"{column}"])
+
                         val_sub.append(condition[f"{column}"])
                         start = time()
                         cursor.execute(sql_sub, val_sub)
@@ -210,7 +210,6 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                     elif column == "job_position":
                         sql_sub = f"""select id from authorization where job_position = %s"""
                         val_sub = list()
-                        print(condition[f"{column}"])
                         val_sub.append(condition[f"{column}"])
                         start = time()
                         cursor.execute(sql_sub, val_sub)
@@ -249,7 +248,7 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                 sql_count = sql_count  + condition_individual  
 
             count_start = time()
-            print(sql_count, val)
+
             cursor.execute(sql_count,val)
             count_end = time()
             print(f"get count = %.2f second" % (count_end -count_start))
@@ -297,7 +296,7 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
         response["startPage"] = page
         response["data"] = result
         # print(f"sql_count  : {sql_count}")
-        print(f"sql  : {sql}, val {val}")
+        # print(f"sql  : {sql}, val {val}")
         return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")

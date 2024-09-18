@@ -7,7 +7,7 @@ import threading
 from datetime import datetime, timedelta, date
 from time import time
 import multiprocessing as mp
-from DB_method.add_method import *
+from db.add_method import *
 from authorization.autho_tables import *
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
@@ -345,8 +345,7 @@ def data_for_test_rooting(root_day = None):
     insert_strong_produce_record_for_test(counting, grown_list, strong_list)
     insert_rooting_produce_record_for_test(counting, strong_list)
     end = time()
-    print(f"rooting time = %.2f" % (end -start))
-    print(f"amount rooting {len(counting)}")
+
 
 def data_for_test_strong(strong_day= None):
     start = time()
@@ -359,10 +358,8 @@ def data_for_test_strong(strong_day= None):
     insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
     insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
     insert_strong_produce_record_for_test(counting, grown_list, strong_list)
-    # insert_rooting_produce_record_for_test(counting, strong_list)
+
     end = time()
-    print(f"strong time = %.2f" % (end -start))
-    print(f"amount strong {len(counting)}")
 
 def data_for_test_grown(grown_day = None):
     start = time()
@@ -374,11 +371,9 @@ def data_for_test_grown(grown_day = None):
     insert_initial_produce_record_for_test(counting, initial_list, grown_day)
     insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
     insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
-    # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
-    # insert_rooting_produce_record_for_test(counting, strong_list)()
+
     end = time()
-    print(f"grown time = %.2f" % (end -start))
-    print(f" grown amount {len(counting)}")
+
 
 def data_for_test_propagation(propagation_day = None):
     start = time()
@@ -389,12 +384,9 @@ def data_for_test_propagation(propagation_day = None):
     strong_list = [] 
     insert_initial_produce_record_for_test(counting, initial_list, propagation_day)
     insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
-    # insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
-    # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
-    # insert_rooting_produce_record_for_test(counting, strong_list)
+
     end = time()
-    print(f"propagation time = %.2f" % (end -start))
-    print(f"amount propagation {len(counting)}")
+
 
 def data_for_test_initial(recent_day = None):
     start = time()
@@ -404,13 +396,8 @@ def data_for_test_initial(recent_day = None):
     grown_list = []
     strong_list = [] 
     insert_initial_produce_record_for_test(counting, initial_list, recent_day)
-    # insert_propagation_produce_record_for_test(counting, initial_list, propagation_list)
-    # insert_grown_produce_record_for_test(counting, propagation_list, grown_list)
-    # insert_strong_produce_record_for_test(counting, grown_list, strong_list)
-    # insert_rooting_produce_record_for_test(counting, strong_list)
     end = time()
-    print(f"initial time = %.2f" % (end -start))
-    print(f"amount initial {len(counting)}")
+
     
 def data_recent_week():
     today = date.today()

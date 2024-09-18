@@ -4,11 +4,8 @@ from datetime import datetime
 
 
 
-class authorization_class(BaseModel):
-    job_position: str
-    authorization: str
     
-class staff_class(BaseModel):
+class STAFF(BaseModel):
     name : str
     email : Union[EmailStr, None]
     cellphone : Union[str, None]
@@ -17,34 +14,34 @@ class staff_class(BaseModel):
     job_position :str
     
 
-class media_class(BaseModel):
+class MEDIA(BaseModel):
     name: str
     description: str
 
-class stage_class(BaseModel):
+class STAGE(BaseModel):
     name: str
     description: str
 
-class category_class(BaseModel):
+class CATEGORY(BaseModel):
     category: str
     description: str
 
-class client_class(BaseModel):
+class CLIENT(BaseModel):
     name: str
     description: str
 
-class variety_class(BaseModel):
+class VARIETY(BaseModel):
     variety_code : str
     name : str
     description : str
     category : str
 
-class order_class(BaseModel):
+class ORDER(BaseModel):
     client : str
     variety_code : str
     amount : int
     shipping_date: datetime
-class produce_record_class(BaseModel):
+class PRODUCE_RECORD(BaseModel):
   id:str
   variety_code : str
   media : str
@@ -53,7 +50,7 @@ class produce_record_class(BaseModel):
   mother_produce_id : Union[str, None]
   consumed_reason : Union[str, None]
 
-class authorization_class(BaseModel):
+class AUTHORIZATION(BaseModel):
     authorization : str
     category:  str
     client : str

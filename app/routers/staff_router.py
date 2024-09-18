@@ -2,21 +2,20 @@
 import os
 import jwt
 import threading
-import pandas as pd
 from time import time
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import  JSONResponse
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import Annotated
-from app.MODEL.matplotlib_function.make_chart import  make_donut_chart,  make_one_line_chart
-from app.CONTROL.jwt_function import user_validation
-from app.MODEL.data_class.user_data import sign_in_data
-from app.MODEL.data_class.response_class import error_message
-from app.MODEL.DB_method.sigin_method import check_user
-from app.MODEL.authorization.autho_tables import get_table_list_from_auth, show_table
-from app.MODEL.DB_method.common_method import *
-from app.MODEL.swagger_ui.response_example import *
+from app.model.matplotlib_function.make_chart import  make_donut_chart,  make_one_line_chart
+from app.controller.jwt_function import user_validation
+from app.model.data_class.user_data import SIGN_IN_DATA
+from app.model.data_class.response_class import error_message
+from app.model.db.sigin_method import check_user
+from app.model.authorization.autho_tables import get_table_list_from_auth, show_table
+from app.model.db.common_method import *
+from app.model.swagger_ui.response_example import *
 
 load_dotenv()
 router = APIRouter()
@@ -26,7 +25,6 @@ router = APIRouter()
              responses=auth_get_response_example)
 async def staff_validation(payload  : Annotated[dict, Depends(user_validation)]): 
     try:
-       print(payload)
        return payload
     except Exception as e:
        raise HTTPException(status_code=500, detail=f"server error {e}")
@@ -34,7 +32,7 @@ async def staff_validation(payload  : Annotated[dict, Depends(user_validation)])
 @router.put("/api/staff/auth",
              tags=["Staff"],
               responses=auth_put_response_example )
-async def check_staff_exist(body: sign_in_data): 
+async def check_staff_exist(body: SIGN_IN_DATA): 
   employee_id = body.employee_id
   password = body.password
   staff_data =  check_user(employee_id, password )
@@ -82,7 +80,6 @@ async def get_table_list(payload  : Annotated[dict, Depends(user_validation)]):
              responses=latest_response_example)
 async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
    try:
-
       result = {}
       donut_chart_data_dict = {}
       line_chart_data_dict = {}
@@ -228,13 +225,7 @@ async def get_latest(payload  : Annotated[dict, Depends(user_validation)]):
         
          return result
          
-         
       response = run_threads()
       return response
-      
    except HTTPException as e:
       raise e    
-   # except TypeError as e:
-   #       raise HTTPException(status_code=500, detail=f"{e}")
-   # except Exception as e:
-   #       raise HTTPException(status_code=500, detail=f"{e}")

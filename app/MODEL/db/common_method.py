@@ -1,31 +1,16 @@
 import mysql.connector
 import mysql.connector.pooling
-import os
 from time import time
-from datetime import datetime, date, timedelta
-from dotenv import load_dotenv
+from datetime import date, timedelta
 from fastapi import  HTTPException
+from app.model.db import DB
 
-load_dotenv()
-
-try:
-    dbconfig = {
-        'host': os.getenv('DBHOST'),
-        'user': os.getenv('DBUSER'),
-        'password': os.getenv('DBPASSWORD'),
-        'database':'manageall_database',
-    }
-    connection_pool = mysql.connector.pooling.MySQLConnectionPool(
-        pool_name='mypool',
-        pool_size=5,
-        **dbconfig
-    )
-    # print('database connected')
-except Exception as e:
-    print(f'database connection fail {e}')
+#DB instantiated
+myDB = DB.DB(database = "manageall_database")
+myDB.initialize()
 
 def get_table_columns(table_name):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql=f"""SHOW COLUMNS FROM {table_name};
@@ -45,7 +30,6 @@ def get_table_columns(table_name):
             columnName = column["Field"].replace("_id", "")
             columns_list.append(columnName)
         return(columns_list)
-        # print(f"get media list")
     except Exception as e:
         raise e
     finally:
@@ -53,7 +37,7 @@ def get_table_columns(table_name):
         con.close()
 
 def get_foreign_column(table_name):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql = """
@@ -66,6 +50,7 @@ def get_foreign_column(table_name):
                 AND TABLE_SCHEMA = "manageall_database"
                 """
         val = list()
+        
         val.append(table_name)
         cursor.execute(sql, val)
         result = cursor.fetchall()
@@ -80,7 +65,7 @@ def get_foreign_column(table_name):
         con.close()
 
 def get_column_value_distinct(column):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         if column == "mother_produce_id":
@@ -119,12 +104,12 @@ def get_column_value_distinct(column):
 
 #for mainpage
 def get_yesterday_produce_category():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
         yesterday = now - timedelta(days=1)
-        print(yesterday)
+
         sql="""SELECT category.name as category,  count(produce_record.id) as count
         FROM produce_record        
         inner JOIN variety
@@ -147,12 +132,11 @@ def get_yesterday_produce_category():
         con.close()
 
 def get_category_stock():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
         yesterday = now - timedelta(days=1)
-        print(yesterday)
         sql="""SELECT category.name as category,  count(produce_record.id) as count 
         FROM produce_record
         inner JOIN variety
@@ -175,11 +159,11 @@ def get_category_stock():
         con.close()
 
 def get_ready_stock():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        print(now)
+
         # shipping_date_diff = now - timedelta(weeks=4)
         sql="""SELECT category.name as category,   count(produce_record.id) as count 
         FROM produce_record
@@ -202,11 +186,11 @@ def get_ready_stock():
         con.close()
 
 def get_seven_days_outs():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        print(now)
+
         # shipping_date_diff = now - timedelta(weeks=4)
         sql="""SELECT  produce_date,  count(produce_record.id) as count 
         FROM produce_record
@@ -227,20 +211,71 @@ def get_seven_days_outs():
         con.close()
 
 def optimize_index():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
-        print(now)
+
         sql="""OPTIMIZE TABLE produce_record;
         """
         cursor.execute(sql)
-        print("complete")
-        result = cursor.fetchall()
-        print(result)
+        print("OPTIMIZE complete")
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
-  
+
+def recreate_produce_record():
+    con = myDB.cnx_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql=f"""CREATE TABLE backup AS SELECT * FROM produce_record;
+        drop table produce_record;
+        RENAME TABLE backup to produce_record;
+        """
+        sql_alter_PK="""ALTER TABLE produce_record
+                        ADD PRIMARY KEY (id);"""
+        sql_alter_variety="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_variety_produce_record
+            FOREIGN KEY (variety_id)
+            REFERENCES variety(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;
+            """
+        sql_alter_media="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_media_produce_record
+            FOREIGN KEY (media_id)
+            REFERENCES media(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;"""
+        sql_alter_staff="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_staff_produce_record
+            FOREIGN KEY (employee_id)
+            REFERENCES staff(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;"""
+        sql_alter_stage="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_stage_produce_record
+            FOREIGN KEY (stage_id)
+            REFERENCES stage(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;"""
+        sql_alter_mother_id="""
+            ALTER TABLE produce_record
+            ADD CONSTRAINT fk_mother_produce_id
+            FOREIGN KEY (mother_produce_id)
+            REFERENCES produce_record(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE"""
+        cursor.execute(sql)
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()

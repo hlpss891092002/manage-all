@@ -1,7 +1,4 @@
 import uuid
-import os
-import mysql.connector
-import mysql.connector.pooling
 import random
 import threading
 from datetime import datetime, timedelta, date
@@ -9,7 +6,6 @@ from time import time
 import multiprocessing as mp
 from db.add_method import *
 from authorization.autho_tables import *
-from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 
 

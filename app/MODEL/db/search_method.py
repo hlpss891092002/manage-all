@@ -1,7 +1,6 @@
 from time import time
 import math
 from datetime import datetime
-from dotenv import load_dotenv
 from fastapi import  HTTPException
 from app.model.db import DB
 

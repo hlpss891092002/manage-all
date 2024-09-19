@@ -1,5 +1,5 @@
 import mysql.connector
-import mysql.connector.pooling
+
 from time import time
 from datetime import date, timedelta
 from fastapi import  HTTPException

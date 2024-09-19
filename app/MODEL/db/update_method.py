@@ -1,8 +1,5 @@
-from time import time
 import mysql.connector
-from dotenv import load_dotenv
 from fastapi import  HTTPException
-from app.model.data_class.response_class import databaseException
 from app.model.db import DB
 
 #DB instantiated

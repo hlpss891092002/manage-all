@@ -1,10 +1,7 @@
 from pydantic import BaseModel, EmailStr
-from typing import Any, Dict, Optional, Sequence, Type, Union, Annotated
+from typing import Union
 from datetime import datetime
 
-
-
-    
 class STAFF(BaseModel):
     name : str
     email : Union[EmailStr, None]
@@ -13,7 +10,6 @@ class STAFF(BaseModel):
     password : str
     job_position :str
     
-
 class MEDIA(BaseModel):
     name: str
     description: str

@@ -3,12 +3,9 @@ from time import time
 from datetime import date
 from app.model.db import DB
 
-
-
 #DB instantiated
 myDB = DB.DB(database = "manageall_database")
 myDB.initialize()
-
 
 def insert_authorization(input_dict, tableName):
     con = myDB.cnx_pool.get_connection()

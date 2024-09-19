@@ -2,15 +2,9 @@
 from fastapi import HTTPException
 from app.model.db import DB
 
-
-
-
 #DB instantiated
 myDB = DB.DB(database = "manageall_database")
 myDB.initialize()
-
-
-
 
 def show_table():
     con = myDB.cnx_pool.get_connection()

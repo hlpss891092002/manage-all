@@ -17,12 +17,13 @@ from app.model.data_class.response_class import databaseException
 scheduler = AsyncIOScheduler(timezone=timezone("ROC"))
 
 app= FastAPI()
+app.include_router(staticPage.router)
 app.include_router(add_router.router)
 app.include_router(update_router.router)
 app.include_router(delete_router.router)
 app.include_router(staff_router.router)
 app.include_router(search_router.router)
-app.include_router(staticPage.router)
+
 # app.add_middleware(LogRequestMiddleware)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 

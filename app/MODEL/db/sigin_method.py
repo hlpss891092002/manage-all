@@ -1,6 +1,3 @@
-import mysql.connector
-import mysql.connector.pooling
-import os
 from app.model.db import DB
 
 

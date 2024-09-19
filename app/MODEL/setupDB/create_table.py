@@ -1,4 +1,3 @@
-import mysql.connector
 from app.model.db import DB
 
 #DB instantiated

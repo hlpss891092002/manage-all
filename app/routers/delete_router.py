@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import  JSONResponse
 from typing import Annotated
-from app.CONTROL.jwt_function import user_validation
-from app.MODEL.DB_method.delete_method import*
-from app.MODEL.DB_method.common_method import *
-from app.MODEL.swagger_ui.response_example import *
+from app.controller.jwt_function import user_validation
+from app.model.db.delete_method import*
+from app.model.db.common_method import *
+from app.model.swagger_ui.response_example import *
 
 
 router = APIRouter()

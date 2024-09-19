@@ -1,31 +1,16 @@
 import mysql.connector
-import mysql.connector.pooling
-import os
+
 from time import time
-from datetime import datetime, date, timedelta
-from dotenv import load_dotenv
+from datetime import date, timedelta
 from fastapi import  HTTPException
+from app.model.db import DB
 
-load_dotenv()
-
-try:
-    dbconfig = {
-        'host': os.getenv('DBHOST'),
-        'user': os.getenv('DBUSER'),
-        'password': os.getenv('DBPASSWORD'),
-        'database':'manageall_database',
-    }
-    connection_pool = mysql.connector.pooling.MySQLConnectionPool(
-        pool_name='mypool',
-        pool_size=5,
-        **dbconfig
-    )
-    # print('database connected')
-except Exception as e:
-    print(f'database connection fail {e}')
+#DB instantiated
+myDB = DB.DB(database = "manageall_database")
+myDB.initialize()
 
 def get_table_columns(table_name):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql=f"""SHOW COLUMNS FROM {table_name};
@@ -45,7 +30,6 @@ def get_table_columns(table_name):
             columnName = column["Field"].replace("_id", "")
             columns_list.append(columnName)
         return(columns_list)
-        # print(f"get media list")
     except Exception as e:
         raise e
     finally:
@@ -53,7 +37,7 @@ def get_table_columns(table_name):
         con.close()
 
 def get_foreign_column(table_name):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     print(table_name)
     try:
@@ -84,7 +68,7 @@ def get_foreign_column(table_name):
         con.close()
 
 def get_column_value_distinct(column):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         if column == "mother_produce_id":
@@ -123,7 +107,7 @@ def get_column_value_distinct(column):
 
 #for mainpage
 def get_yesterday_produce_category():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
@@ -151,12 +135,11 @@ def get_yesterday_produce_category():
         con.close()
 
 def get_category_stock():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
         yesterday = now - timedelta(days=1)
-        print(yesterday)
         sql="""SELECT category.name as category,  count(produce_record.id) as count 
         FROM produce_record
         inner JOIN variety
@@ -179,7 +162,7 @@ def get_category_stock():
         con.close()
 
 def get_ready_stock():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
@@ -206,7 +189,7 @@ def get_ready_stock():
         con.close()
 
 def get_seven_days_outs():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
@@ -231,7 +214,7 @@ def get_seven_days_outs():
         con.close()
 
 def optimize_index():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         now = date.today()
@@ -239,7 +222,7 @@ def optimize_index():
         sql="""OPTIMIZE TABLE produce_record;
         """
         cursor.execute(sql)
-        print("complete")
+        print("OPTIMIZE complete")
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
@@ -247,7 +230,7 @@ def optimize_index():
         con.close()
 
 def recreate_produce_record():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql=f"""CREATE TABLE backup AS SELECT * FROM produce_record;
@@ -293,24 +276,9 @@ def recreate_produce_record():
             ON DELETE SET NULL
             ON UPDATE CASCADE"""
         cursor.execute(sql)
-        # print("complete produce_record")
-        # cursor.execute(sql_alter_PK)
-        # print("complete PK")
-        # cursor.execute(sql_alter_variety)
-        # print("complete variety")
-        # cursor.execute(sql_alter_media)
-        # print("complete media")
-        # cursor.execute(sql_alter_staff)
-        # print("complete staff")
-        # cursor.execute(sql_alter_stage)
-        # print("complete stage")
-        # cursor.execute(sql_alter_mother_id)
-        # print("complete mother")
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
-
-recreate_produce_record()

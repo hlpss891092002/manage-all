@@ -1,4 +1,3 @@
-import logging
 import mysql.connector
 import mysql.connector.pooling
 from dotenv import load_dotenv

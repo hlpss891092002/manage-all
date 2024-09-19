@@ -1,18 +1,16 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import  JSONResponse
 from typing import Annotated, Union
-from app.MODEL.data_class.request_data_class import *
-from app.MODEL.data_class.response_class import *
-from app.MODEL.DB_method.add_method import *
-from app.MODEL.DB_method.common_method import *
-from app.MODEL.DB_method.search_method import *
-from app.MODEL.swagger_ui.response_example import *
+from app.model.data_class.request_data_class import *
+from app.model.data_class.response_class import *
+from app.model.db.add_method import *
+from app.model.db.common_method import *
+from app.model.db.search_method import *
+from app.model.swagger_ui.response_example import *
 
-from app.CONTROL.jwt_function import user_validation
-
+from app.controller.jwt_function import user_validation
 
 router = APIRouter()
-
 
 @router.get("/api/tableItem/add/{tableName}",
              tags=["Table Item"],
@@ -20,22 +18,11 @@ router = APIRouter()
              )
 async def get_input_item(tableName: str, payload  : Annotated[dict, Depends(user_validation)]):
     try :
-        print(tableName)
         columns = get_table_columns(tableName)
-        print(columns)
         columnList = []
+        skip_column = ["id", "in_employment", "produce_date", "produce_time", "in_stock", "creation_date"]
         for column in columns:
-            if column == "id":
-                continue
-            elif  column == "in_employment":
-                continue
-            elif column == "produce_date":
-                continue
-            elif column == "produce_time":
-                continue
-            elif column == "in_stock":
-                continue
-            elif column == "creation_date":
+            if column in skip_column:
                 continue
             columnList.append(column)
         response = {
@@ -50,12 +37,10 @@ async def get_input_item(tableName: str, payload  : Annotated[dict, Depends(user
     except Exception as e:
             raise HTTPException(status_code=500, detail=f"{e}")
 
-
-
 @router.post("/api/{tableName}",
               tags=["Table Method"],
               responses=table_CUD_response_example)
-async def add_data_in_table(data : Union[variety_class, authorization_class,stage_class, staff_class, media_class, produce_record_class, order_class , category_class, client_class], payload  : Annotated[dict, Depends(user_validation)], tableName : str):
+async def add_data_in_table(data : Union[VARIETY, AUTHORIZATION, STAGE, STAFF, MEDIA, PRODUCE_RECORD, ORDER, CATEGORY, CLIENT], payload  : Annotated[dict, Depends(user_validation)], tableName : str):
     try:
         job_position = payload["job_position"]
         if (tableName =="staff" or tableName == "authorization" )and job_position != "Engineer":
@@ -65,8 +50,6 @@ async def add_data_in_table(data : Union[variety_class, authorization_class,stag
             }
             return  JSONResponse(status_code=403, content=response)
         input_dict = data.dict()
-        print(input_dict)
-        print(tableName)
         if tableName == "authorization":
              insert_authorization(input_dict, tableName)
         elif tableName == "client_order":

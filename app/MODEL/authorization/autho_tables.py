@@ -1,31 +1,13 @@
-import mysql.connector
-import mysql.connector.pooling
-import os
+
 from fastapi import HTTPException
-from time import time
-from datetime import datetime
-from dotenv import load_dotenv
+from app.model.db import DB
 
-
-load_dotenv()
-
-#create connection pool
-
-dbconfig = {
-    'host': os.getenv('DBHOST'),
-    'user': os.getenv('DBUSER'),
-    'password': os.getenv('DBPASSWORD'),
-    'database':'manageall_database',
-}
-connection_pool = mysql.connector.pooling.MySQLConnectionPool(
-    pool_name='mypool',
-    pool_size=5,
-    **dbconfig
-)
-# print('database connected')
+#DB instantiated
+myDB = DB.DB(database = "manageall_database")
+myDB.initialize()
 
 def show_table():
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary=True, buffered = True)
     try:
         sql = """SHOW TABLES 
@@ -48,7 +30,7 @@ def show_table():
         con.close()
 
 def get_table_list_from_auth( employee_id):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary=True, buffered = True)
  
     try:

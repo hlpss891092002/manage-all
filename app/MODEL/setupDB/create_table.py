@@ -1,32 +1,12 @@
-import logging
-import mysql.connector
-import mysql.connector.pooling
-from dotenv import load_dotenv
-import os
+from app.model.db import DB
 
-load_dotenv()
+#DB instantiated
+myDB = DB.DB(database = "manageall_database")
+myDB.initialize()
 
-def connection():
-    try:
-        dbconfig = {
-            'host': os.getenv('DBHOST'),
-            'user': os.getenv('DBUSER'),
-            'password': os.getenv('DBPASSWORD'),
-            'database':'manageall_database',
-        }
-        cnxpool = mysql.connector.pooling.MySQLConnectionPool(
-            pool_name='mypool',
-            pool_size=3,
-            **dbconfig
-        )
-        cnx1 = cnxpool.get_connection()
-        print('database connected')
-        return cnx1
-    except Exception as e:
-        print(f'database connection fail {e}')
 
 def create_table(sql):
-    con = connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
         cursor.execute(sql)

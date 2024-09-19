@@ -1,11 +1,9 @@
 import jwt
 import os
-from fastapi import APIRouter, Depends, HTTPException, Security, status
-from fastapi.security import  OAuth2PasswordBearer,  OAuth2PasswordRequestForm,   SecurityScopes
+from fastapi import  Depends, HTTPException, Security, status
+from fastapi.security import  OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
-from dotenv import load_dotenv
-from datetime import datetime, timedelta
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 from typing import Annotated
 
 class Token(BaseModel):

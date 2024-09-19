@@ -1,38 +1,17 @@
 import mysql.connector
-import mysql.connector.pooling
-import os
 from time import time
-from datetime import datetime
-from dotenv import load_dotenv
 from fastapi import  HTTPException
-from app.MODEL.data_class.response_class import databaseException
+from app.model.db import DB
 
-load_dotenv()
-
-try:
-    dbconfig = {
-        'host': os.getenv('DBHOST'),
-        'user': os.getenv('DBUSER'),
-        'password': os.getenv('DBPASSWORD'),
-        'database':'manageall_database',
-    }
-    connection_pool = mysql.connector.pooling.MySQLConnectionPool(
-        pool_name='mypool',
-        pool_size=5,
-        **dbconfig
-    )
-    # print('database connected')
-except mysql.connector.Error as e:
-    print(f'database connection fail {e}')
+#DB instantiated
+myDB = DB.DB(database = "manageall_database")
+myDB.initialize()
 
 def delete_data(condition, table_name):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
-    print(condition)
     delete_index_column= list(condition.keys())[0]
-    print(delete_index_column)
     values = condition[delete_index_column]
-    print(values)
     try:
         val = list(values)
         sql = f"""DELETE FROM  {table_name} """
@@ -54,10 +33,7 @@ def delete_data(condition, table_name):
         sql = sql + sql_condition
         cursor.execute(sql,val)
         con.commit()
-        if cursor.rowcount > 0 :
-            print(f"delete  category {cursor.rowcount} ")
-            return 
-        else :
+        if cursor.rowcount == 0 :
             raise HTTPException(status_code=400, detail=f"No rows were affected by the delete, please check input value")
     except mysql.connector.Error as e:
         raise HTTPException(status_code=400, detail=f"{e}")

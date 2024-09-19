@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from datetime import datetime, date 
 import io 
 import base64
 
@@ -11,9 +10,6 @@ def make_donut_chart(data_list, label_list, ):
   x = data_list
   colors = plt.get_cmap('Blues')(np.linspace(0.2, 0.7, len(x)))
   fig, ax = plt.subplots(figsize=(4.5,4))
-  def sort(list):
-    for item in list: 
-      return item 
   ax.pie(x, 
           colors=colors,
           radius=1.5, 
@@ -36,8 +32,6 @@ def make_donut_chart(data_list, label_list, ):
 def make_grouped_bar_chart(time_list, value_list ):
   time_line = tuple(time_list)
   category_count = value_list
-  print(time_line)
-  print(category_count)
   colors = plt.get_cmap('Blues')
   x = np.arange(len(time_line))
   width = 0.2

@@ -1,35 +1,14 @@
-import mysql.connector
-import mysql.connector.pooling
-import os
 from fastapi import HTTPException
 from time import time
-from datetime import datetime, date
-from dotenv import load_dotenv
+from datetime import date
+from app.model.db import DB
 
-
-load_dotenv()
-
-#create connection pool
-try:
-    dbconfig = {
-        "host": os.getenv("DBHOST"),
-        "user": os.getenv("DBUSER"),
-        "password": os.getenv("DBPASSWORD"),
-        "database":"manageall_database",
-    }
-    connection_pool = mysql.connector.pooling.MySQLConnectionPool(
-        pool_name="mypool",
-        pool_size=10,
-        **dbconfig
-    )
-
-    # print("database connected")
-    
-except Exception as e:
-        raise HTTPException(status_code=500, detail=f"{e}")
+#DB instantiated
+myDB = DB.DB(database = "manageall_database")
+myDB.initialize()
 
 def insert_authorization(input_dict, tableName):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
         columns = list(input_dict.keys())
@@ -37,10 +16,8 @@ def insert_authorization(input_dict, tableName):
         sql=f"""INSERT INTO {tableName} (authorization, category, client, client_order, job_position, media, produce_record, staff, stage, variety)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
-
         cursor.execute(sql,val)
         con.commit()
-        print(f"insert {val[4]} authorization")
         return True
     except Exception as e:
             raise HTTPException(status_code=400, detail=f"{e}")
@@ -50,7 +27,7 @@ def insert_authorization(input_dict, tableName):
 
 def insert_tableName_data(input_dict, tableName):
     # category, description = input_dict.values()
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
         sql = f"""INSERT INTO {tableName} ( """
@@ -80,7 +57,7 @@ def insert_tableName_data(input_dict, tableName):
 
 def insert_client_order(input_dict, tableName):
     client, variety, amount,  shipping_date = input_dict.values()
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
         sql=f"""INSERT INTO {tableName} (client_id, variety_id, amount, shipping_date)
@@ -89,18 +66,16 @@ def insert_client_order(input_dict, tableName):
         val=(client, variety, amount, shipping_date)
         cursor.execute(sql,val)
         con.commit()
-        print(f"insert {client}, {amount} in order")
         return True
     except Exception as e:
-            print(e)
+
             raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
 def insert_produce_record(input_dict , in_stock = True, consumed_date = None):
-    # print(input_dict)
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     id, variety, media, employee_id, stage, mother_produce_id, consumed_reason = input_dict.values()
     try:
@@ -112,16 +87,14 @@ def insert_produce_record(input_dict , in_stock = True, consumed_date = None):
         con.commit()
         return True
     except Exception as e:
-            print(f"{e}")
             raise HTTPException(status_code=400, detail=f"{e}")
-        # return False
     finally:
         cursor.close()
         con.close()
 
 def insert_staff( input_dict, in_employment = True):
     name, email, cellphone, employee_id, password, job_position =input_dict.values()
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
         sql="""INSERT INTO staff(name, email, cellphone, employee_id, password, authorization_id, in_employment )
@@ -130,7 +103,6 @@ def insert_staff( input_dict, in_employment = True):
         val=(name, email, cellphone, employee_id, password, job_position,in_employment)
         cursor.execute(sql,val)
         con.commit()
-        print(f"insert {id} staff")
         return True
     except Exception as e:
             raise HTTPException(status_code=400, detail=f"{e}")
@@ -140,7 +112,7 @@ def insert_staff( input_dict, in_employment = True):
 
 def insert_variety(input_dict):
     variety_code, name, description, category = input_dict.values()
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
         sql="""INSERT INTO variety(variety_code, name, description, category_id)
@@ -149,7 +121,6 @@ def insert_variety(input_dict):
         val=(variety_code, name, description, category)
         cursor.execute(sql,val)
         con.commit()
-        print(f"insert {variety_code} variety")
         return True
     except Exception as e:
             raise HTTPException(status_code=400, detail=f"{e}")
@@ -158,7 +129,7 @@ def insert_variety(input_dict):
         con.close()
 
 def consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False ):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
         today = date.today()
@@ -172,14 +143,15 @@ def consume_mother_stock(mother_produce_id, consumed_reason, in_stock = False ):
         con.commit()
         return True
     except Exception as e:
+        
             raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
 
 def insert_produce_record_with_produce_date(input_dict, produce_date , in_stock = True, consumed_date = None ):
-    # print(input_dict)
-    con = connection_pool.get_connection()
+
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     id, variety, media, employee_id, stage, mother_produce_id, consumed_reason = input_dict.values()
     try:
@@ -189,18 +161,16 @@ def insert_produce_record_with_produce_date(input_dict, produce_date , in_stock 
         val=(id, variety, media, stage, mother_produce_id, in_stock, consumed_reason, employee_id, consumed_date, produce_date, produce_date)
         cursor.execute(sql,val)
         con.commit()
-        # print(f"insert {id} production")
+
         return True
     except Exception as e:
-            print(f"{e}")
             raise HTTPException(status_code=400, detail=f"{e}")
-        # return False
     finally:
         cursor.close()
         con.close()
 
 def consume_mother_stock_with_consumed_date(mother_produce_id, consumed_reason, consumed_date, in_stock = False ):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True)
     try:
         sql1="""UPDATE produce_record   

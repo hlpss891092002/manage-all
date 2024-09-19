@@ -3,10 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import  JSONResponse
 from typing import Annotated
 from time import time
-from app.CONTROL.jwt_function import user_validation
-from app.MODEL.DB_method.search_method import*
-from app.MODEL.DB_method.common_method import *
-from app.MODEL.swagger_ui.response_example import *
+from app.controller.jwt_function import user_validation
+from app.model.db.search_method import*
+from app.model.db.common_method import *
+from app.model.swagger_ui.response_example import *
 
 
 router = APIRouter()
@@ -43,11 +43,8 @@ async def get_data_from_table(page:str, payload  : Annotated[dict, Depends(user_
     try :
         page = int(page)
         condition = json.loads(condition)
-        start = time()
         data = None
         data = get_data_by_tablename(condition, page, table_name)
-        end = time()
-        print(f"multithread time = %.2f second" % (end -start))
         return JSONResponse(status_code=200, content=data)
     except HTTPException as e:
         raise e    
@@ -84,7 +81,7 @@ async def get_foreignList(payload  : Annotated[dict, Depends(user_validation)], 
             
         end = time()
 
-        print(f"multithread time = %.2f second" % (end -start))
+        (f"multithread time = %.2f second" % (end -start))
         return JSONResponse(status_code=200, content=response)
     except HTTPException as e:
         raise e    

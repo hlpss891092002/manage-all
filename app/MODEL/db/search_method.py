@@ -1,33 +1,17 @@
-import mysql.connector
-import mysql.connector.pooling
-import os
 from time import time
 import math
 from datetime import datetime
-from dotenv import load_dotenv
 from fastapi import  HTTPException
+from app.model.db import DB
 
-load_dotenv()
+#DB instantiated
+myDB = DB.DB(database = "manageall_database")
+myDB.initialize()
 
-try:
-    dbconfig = {
-        'host': os.getenv('DBHOST'),
-        'user': os.getenv('DBUSER'),
-        'password': os.getenv('DBPASSWORD'),
-        'database':'manageall_database',
-    }
-    connection_pool = mysql.connector.pooling.MySQLConnectionPool(
-        pool_name='mypool',
-        pool_size=5,
-        **dbconfig
-    )
-    # print('database connected')
-except Exception as e:
-    print(f'database connection fail {e}')
 
 
 def get_data_by_tablename(condition, page, table_name, full_get = None):
-    con = connection_pool.get_connection()
+    con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         int(page)
@@ -114,8 +98,7 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                 INNER JOIN  category
                 ON variety.category_id = category.id"""
             else:
-                print("set fail")
-            sql_count = sql_count + sql_condition        
+                sql_count = sql_count + sql_condition        
             for column in columns:
                 if columns.index(column) == 0 :
                     if column == "client" or column == "stage" or column == "media" or column =="category":
@@ -295,8 +278,6 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
         response["dataAmount"] = data_amount
         response["startPage"] = page
         response["data"] = result
-        # print(f"sql_count  : {sql_count}")
-        # print(f"sql  : {sql}, val {val}")
         return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")

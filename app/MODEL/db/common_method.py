@@ -9,6 +9,14 @@ from app.model.db import DB
 myDB = DB.DB(database = "manageall_database")
 myDB.initialize()
 
+def timeit(func):
+    start_time = time()
+    result = func()
+    end_time = time()
+    execute_time = end_time - start_time
+    print(f"{func.__name__} executed in {execute_time:.4f} seconds")
+    return result
+
 def get_table_columns(table_name):
     con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
@@ -226,22 +234,45 @@ def optimize_index():
         cursor.close()
         con.close()
 
+@timeit
 def recreate_produce_record():
     con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
-        sql=f"""CREATE TABLE backup AS SELECT * FROM produce_record;
-        drop table produce_record;
-        RENAME TABLE backup to produce_record;
+        sql_create_backup=f"""
+        CREATE TABLE backup AS SELECT * FROM produce_record;
         """
-        sql_alter_PK="""ALTER TABLE produce_record
-                        ADD PRIMARY KEY (id);"""
+        sql_drop_produce = "DROP TABLE produce_record;"
+        sql_rename_backup = "RENAME TABLE backup TO produce_record;"
+
+        cursor.execute(sql_create_backup)
+        print("Created backup table.")
+        
+        cursor.execute(sql_drop_produce)
+        print("Dropped produce_record table.")
+        
+        cursor.execute(sql_rename_backup)
+        print("Renamed backup table to produce_record.")
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
+@timeit
+def set_key_on_produce_record_created():
+    con = myDB.cnx_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql_alter_PK="""
+            ALTER TABLE produce_record
+            ADD PRIMARY KEY (id);"""
         sql_alter_variety="""
             ALTER TABLE produce_record
             ADD CONSTRAINT fk_variety_produce_record
             FOREIGN KEY (variety_id)
             REFERENCES variety(id)
-            ON DELETE SET NULL
             ON UPDATE CASCADE;
             """
         sql_alter_media="""
@@ -249,33 +280,102 @@ def recreate_produce_record():
             ADD CONSTRAINT fk_media_produce_record
             FOREIGN KEY (media_id)
             REFERENCES media(id)
-            ON DELETE SET NULL
             ON UPDATE CASCADE;"""
         sql_alter_staff="""
             ALTER TABLE produce_record
             ADD CONSTRAINT fk_staff_produce_record
             FOREIGN KEY (employee_id)
             REFERENCES staff(id)
-            ON DELETE SET NULL
             ON UPDATE CASCADE;"""
         sql_alter_stage="""
             ALTER TABLE produce_record
             ADD CONSTRAINT fk_stage_produce_record
             FOREIGN KEY (stage_id)
             REFERENCES stage(id)
-            ON DELETE SET NULL
             ON UPDATE CASCADE;"""
         sql_alter_mother_id="""
             ALTER TABLE produce_record
             ADD CONSTRAINT fk_mother_produce_id
             FOREIGN KEY (mother_produce_id)
             REFERENCES produce_record(id)
-            ON DELETE SET NULL
-            ON UPDATE CASCADE"""
-        cursor.execute(sql)
+            ON DELETE SET NULL;
+            """
+        cursor.execute(sql_alter_PK)
+        print("Set primary key")
+        cursor.execute(sql_alter_variety)
+        print("Set foreign key on variety")
+        cursor.execute(sql_alter_media)
+        print("Set foreign key on media")
+        cursor.execute(sql_alter_staff)
+        print("Set foreign key on staff")
+        cursor.execute(sql_alter_stage)
+        print("Set foreign key on stage")
+        cursor.execute(sql_alter_mother_id)
+        print("Set foreign key on mother_id")
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
     finally:
         cursor.close()
         con.close()
+
+@timeit
+def set_indexed_on_produce_record_created():
+    con = myDB.cnx_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql_begin = "begin;"
+        sql_index_produce_record_variety_id_composite = """
+            CREATE INDEX idx_produce_record_variety_id_composite
+            ON produce_record(variety_id, media_id, employee_id, stage_id, produce_date, in_stock,consumed_date, consumed_reason);
+        """
+        sql_index_produce_record_media_id_composite = """
+            CREATE INDEX idx_produce_record_media_id_composite
+            ON produce_record( media_id, employee_id, stage_id, produce_date, in_stock,consumed_date, consumed_reason);
+        """
+        sql_index_produce_record_employee_id_composite = """
+            CREATE INDEX idx_produce_record_employee_id_composite
+            ON produce_record(employee_id, stage_id, produce_date, in_stock,consumed_date, consumed_reason);
+        """
+        sql_index_produce_record_stage_id_composite = """
+            CREATE INDEX idx_produce_record_stage_id_composite
+            ON produce_record(stage_id, produce_date, in_stock,consumed_date, consumed_reason);
+        """
+        sql_index_produce_record_produce_date_composite = """
+            CREATE INDEX idx_produce_record_produce_date_composite
+            ON produce_record(produce_date, in_stock, consumed_date, consumed_reason);
+        """
+        sql_index_produce_record_in_stock_composite = """
+            CREATE INDEX idx_produce_record_in_stock_composite
+            ON produce_record(in_stock, consumed_date, consumed_reason);
+        """
+        sql_index_produce_record_consumed_date_composite = """
+            CREATE INDEX idx_produce_record_consumed_date_composite
+            ON produce_record(consumed_date, consumed_reason);
+        """
+        sql_index_produce_record_consumed_reason = """
+            CREATE INDEX idx_produce_record_produce_consumed_reason
+            ON produce_record(consumed_reason);
+        """
+        sql_commit = """
+                        commit;
+                        """
+        cursor.execute(sql_begin)
+        cursor.execute(sql_index_produce_record_variety_id_composite)
+        cursor.execute(sql_index_produce_record_media_id_composite)
+        cursor.execute(sql_index_produce_record_employee_id_composite)
+        cursor.execute(sql_index_produce_record_stage_id_composite)
+        cursor.execute(sql_index_produce_record_produce_date_composite)
+        cursor.execute(sql_index_produce_record_in_stock_composite)
+        cursor.execute(sql_index_produce_record_consumed_date_composite)
+        cursor.execute(sql_index_produce_record_consumed_reason)
+        cursor.execute(sql_commit)
+        
+        print("Set all index on produce record")
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+

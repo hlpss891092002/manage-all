@@ -1,6 +1,7 @@
 import uuid
 import random
 import threading
+import asyncio
 from datetime import datetime, timedelta, date
 from time import time
 import multiprocessing as mp
@@ -416,23 +417,22 @@ def data_recent_week():
 
 def multi_threads_test():
     start = time()
-    a = threading.Thread(target=data_for_test_rooting)
-    b = threading.Thread(target=data_for_test_strong)
-    c = threading.Thread(target=data_for_test_grown)
-    d = threading.Thread(target=data_for_test_propagation)
-    e = threading.Thread(target=data_for_test_initial)
+    add_until_root = threading.Thread(target=data_for_test_rooting)
+    add_until_strong = threading.Thread(target=data_for_test_strong)
+    add_until_grown = threading.Thread(target=data_for_test_grown)
+    add_until_propagation = threading.Thread(target=data_for_test_propagation)
+    add_until_initial = threading.Thread(target=data_for_test_initial)
     # f = threading.Thread(target=data_recent_week)
-    a.start()
-    b.start()
-    c.start()
-    d.start()
-    e.start()
-    # f.start()
-    a.join()
-    b.join()
-    c.join()
-    d.join()
-    e.join()
+    add_until_root.start()
+    add_until_strong.start()
+    add_until_grown.start()
+    add_until_propagation.start()
+    add_until_initial.start()
+    add_until_root.join()
+    add_until_strong.join()
+    add_until_grown.join()
+    add_until_propagation.join()
+    add_until_initial.join()
     end = time()
     print(f"multi thread time = %.2f" % (end -start))
 

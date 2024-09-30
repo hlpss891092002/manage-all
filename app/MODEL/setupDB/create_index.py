@@ -33,13 +33,6 @@ sql_index_stage_name = """CREATE INDEX idx_stage_name ON stage (name);"""
 sql_index_variety_variety_code = """CREATE INDEX idx_variety_variety_code ON variety  (variety_code);"""
 sql_index_variety_category_id  = """CREATE INDEX idx_variety_category_id ON variety  (category_id);"""
 
-sql_index_produce_record_for_all_column = """ CREATE INDEX idx_produce_record_for_all_column 
-     ON produce_record(variety_id, media_id, employee_id, stage_id, produce_date, in_stock,consumed_date, consumed_reason);"""
-sql_index_produce_record_for_all_nPK = """ CREATE INDEX idx_produce_record_for_all_nPK 
-     ON produce_record( produce_date, in_stock,consumed_date, consumed_reason);"""
-sql_index_produce_record_for_foreign = """ CREATE INDEX idx_produce_record__foreign_keys 
-     ON produce_record(variety_id, media_id, employee_id, stage_id);"""
-sql_index_produce_record_for_latest ="""create index idx_produce_record_latest on produce_record(variety_id, stage_id, produce_date, in_stock)"""
 
 optimize_index = """OPTIMIZE TABLE produce_record"""
 # cursor.execute(sql_index_category_category)
@@ -51,7 +44,6 @@ optimize_index = """OPTIMIZE TABLE produce_record"""
 # cursor.execute(sql_index_variety_category_id)
 # cursor.execute(sql_index_produce_record_for_all_nPK)
 # cursor.execute(sql_index_produce_record_for_all_column)
-cursor.execute(sql_index_produce_record_for_latest)
 # cursor.execute(sql_index_produce_record_for_foreign)
 
 

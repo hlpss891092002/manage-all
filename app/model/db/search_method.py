@@ -109,7 +109,6 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                         val.append(column_id)
                         condition_individual = f" {table_name}.{column} = %s"
                     elif table_name != "variety" and column == "variety_code":
-
                         sql_sub = f"""select id from variety where {column} = %s"""
                         val_sub = list()
                         val_sub.append(condition[f"{column}"])
@@ -126,7 +125,6 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                             condition[f"{column}"] = 1
                         elif condition[f"{column}"] == "NO":
                             condition[f"{column}"] = 0
-
                         condition_individual = f" {table_name}.{column} = %s"
                         val.append(condition[f"{column}"])
                     else:
@@ -261,6 +259,68 @@ def get_data_by_table_without_foreign(condition, page, table_name, full_get = No
     cursor = con.cursor(dictionary = True, buffered = True)
     try:
         sql = f"""Select name, description from {table_name}
+        """
+        sql_count = f""" Select count(*) as count from {table_name} 
+        """
+        sql_limit = """ limit %s , 10"""
+        data_amount = 0
+        val = list()
+        if condition :
+            sql_condition=f"""  where  """
+            sql = sql + sql_condition
+            sql_count = sql_count + sql_condition  
+            columns = list(condition.keys())
+            columns_set = set(columns)
+            condition_individual = ""
+            for column in columns:
+                if columns.index(column) == 0 :
+                    condition_individual = f" {table_name}.{column} = %s"
+                    val.append(condition[f"{column}"])
+                else:
+                    condition_individual = f" AND  {table_name}.{column} = %s"
+                    val.append(condition[f"{column}"])
+            sql = sql + condition_individual
+            sql_count = sql_count  + condition_individual
+
+        cursor.execute(sql_count)
+        count = cursor.fetchall()[0]["count"]
+        data_amount = count
+        sql = sql  + sql_limit
+        if full_get is None:
+            val.append(page*10)
+        cursor.execute(sql,val) 
+        result = cursor.fetchall()
+        for data in result:
+            keys = data.keys()
+            for key in keys:
+                if "date" in key:
+                    if data[f"{key}"] is None:
+                        continue
+                    else:
+                        data[f"{key}"] = datetime.strftime(data[f"{key}"], "%Y-%m-%d")
+        response = {}
+        page_amount = math.ceil(data_amount/10)
+        response["PageAmount"] = page_amount
+        response["dataAmount"] = data_amount
+        response["startPage"] = page
+        response["data"] = result
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()
+
+def get_data_by_table_client_order(condition, page, table_name, full_get = None):
+    con = myDB.cnx_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql = f"""
+        SELECT client_order.id as id, client.name as client, variety.variety_code, amount, creation_date, shipping_date FROM  client_order  
+            inner join client 
+            on  client_order.client_id =  client.id inner 
+            join  variety 
+            on client_order.variety_id = variety.id  from {table_name}
         """
         sql_count = f""" Select count(*) as count from {table_name} 
         """

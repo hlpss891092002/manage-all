@@ -13,6 +13,7 @@ myDB.initialize()
 def get_data_by_tablename(condition, page, table_name, full_get = None):
     con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
+    print(condition)
     try:
         int(page)
         sql = ""
@@ -67,38 +68,7 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
             sql = sql + sql_condition
             
             columns = list(condition.keys())
-            columns_set = set(columns)
-            client_order_FK_set = {"variety_code", "client"}
-            produce_record_FK_set = {"variety_code", "media", "employee_id", "stage",}
-            variety_FK_set = {"category"}
-
-            if table_name == "produce_record" and columns_set & produce_record_FK_set:
-
-                sql_join = """
-                INNER JOIN  variety
-                ON  produce_record.variety_id = variety.id
-                INNER JOIN  media
-                ON  produce_record.media_id = media.id
-                INNER JOIN  staff
-                ON  produce_record.employee_id = staff.id
-                INNER JOIN  stage
-                ON  produce_record.stage_id = stage.id"""
-                sql_count = sql_count +  sql_join
-
-            elif table_name == "client_order" and columns_set & client_order_FK_set :
-
-                sql_count = sql_count + """
-                inner join client 
-                on  client_order.client_id =  client.id inner 
-                join  variety 
-                on client_order.variety_id = variety.id """
-            elif table_name == "variety" and columns_set & variety_FK_set :
-
-                sql_count = sql_count + """
-                INNER JOIN  category
-                ON variety.category_id = category.id"""
-            else:
-                sql_count = sql_count + sql_condition        
+            sql_count = sql_count + sql_condition        
             for column in columns:
                 if columns.index(column) == 0 :
                     if column == "client" or column == "stage" or column == "media" or column =="category":
@@ -231,6 +201,7 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
                 sql_count = sql_count  + condition_individual  
 
             count_start = time()
+            print(sql_count)
 
             cursor.execute(sql_count,val)
             count_end = time()
@@ -285,3 +256,67 @@ def get_data_by_tablename(condition, page, table_name, full_get = None):
         cursor.close()
         con.close()
 
+def get_data_by_table_without_foreign(condition, page, table_name, full_get = None):
+    con = myDB.cnx_pool.get_connection()
+    cursor = con.cursor(dictionary = True, buffered = True)
+    try:
+        sql = f"""Select name, description from {table_name}
+        """
+        sql_count = f""" Select count(*) as count from {table_name} 
+        """
+        sql_limit = """ limit %s , 10"""
+        data_amount = 0
+        val = list()
+        if condition :
+            sql_condition=f"""  where  """
+            sql = sql + sql_condition
+            sql_count = sql_count + sql_condition  
+            columns = list(condition.keys())
+            columns_set = set(columns)
+            condition_individual = ""
+            for column in columns:
+                if columns.index(column) == 0 :
+                    condition_individual = f" {table_name}.{column} = %s"
+                    val.append(condition[f"{column}"])
+                else:
+                    condition_individual = f" AND  {table_name}.{column} = %s"
+                    val.append(condition[f"{column}"])
+            sql = sql + condition_individual
+            sql_count = sql_count  + condition_individual
+        count_start = time()
+        cursor.execute(sql_count)
+        count_end = time()
+        print(f"get count = %.2f second" % (count_end -count_start))
+        print("execute count")
+        count = cursor.fetchall()[0]["count"]
+        data_amount = count
+        sql = sql  + sql_limit
+        if full_get is None:
+            val.append(page*10)
+        data_start = time()
+        cursor.execute(sql,val) 
+        data_end = time()
+        print(f"get data = %.2f second" % (data_end -data_start))
+        print("execute sql")
+        print(sql)
+        result = cursor.fetchall()
+        for data in result:
+            keys = data.keys()
+            for key in keys:
+                if "date" in key:
+                    if data[f"{key}"] is None:
+                        continue
+                    else:
+                        data[f"{key}"] = datetime.strftime(data[f"{key}"], "%Y-%m-%d")
+        response = {}
+        page_amount = math.ceil(data_amount/10)
+        response["PageAmount"] = page_amount
+        response["dataAmount"] = data_amount
+        response["startPage"] = page
+        response["data"] = result
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
+    finally:
+        cursor.close()
+        con.close()

@@ -234,7 +234,6 @@ def optimize_index():
         cursor.close()
         con.close()
 
-@timeit
 def recreate_produce_record():
     con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
@@ -260,7 +259,6 @@ def recreate_produce_record():
         cursor.close()
         con.close()
 
-@timeit
 def set_key_on_produce_record_created():
     con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)
@@ -319,7 +317,6 @@ def set_key_on_produce_record_created():
         cursor.close()
         con.close()
 
-@timeit
 def set_indexed_on_produce_record_created():
     con = myDB.cnx_pool.get_connection()
     cursor = con.cursor(dictionary = True, buffered = True)

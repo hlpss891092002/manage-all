@@ -9,10 +9,9 @@ from starlette.exceptions import  HTTPException as StarletteHTTPException
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.controller import staticPage
 from app.routers import add_router, staff_router, update_router, delete_router, search_router
-
 from app.model.db.common_method import recreate_produce_record, set_key_on_produce_record_created, set_indexed_on_produce_record_created
-from app.model.data_class.response_class import databaseException
-# from app.model.data_class.validation_data_class import RequestValidationError
+
+
 
 scheduler = AsyncIOScheduler(timezone=timezone("ROC"))
 
@@ -52,14 +51,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 						}),
     )
 
-
 @scheduler.scheduled_job("interval", days = 1, start_date=f"{now_day} 23:00:00")
 async def optimize_table():
-	print("recreate start")
-	recreate_produce_record()
-	set_key_on_produce_record_created()
-	set_indexed_on_produce_record_created()
-	print("recreate end")
+        print("recreate start")
+        recreate_produce_record()
+        set_key_on_produce_record_created()
+        set_indexed_on_produce_record_created()
+        print("recreate end")
+
 	
 
 
